@@ -206,3 +206,68 @@ D. For every sales employee who needs access to the sales tool application, give
 5. Monitor and audit access with Cloud Audit Logs and IAP logs.
 
 **Final answer:** **A**
+
+---
+
+# 5. Google Cloud Case Study — Protecting and Managing PII for Mountkirk Games
+
+## Question
+
+You are the data compliance officer for Mountkirk Games and must protect customers' personally identifiable information (PII). Mountkirk Games wants to make sure they can generate anonymized usage reports about their new game and delete PII data after a specific period of time. The solution should have minimal cost. You need to ensure compliance while meeting business and technical requirements. What should you do?
+
+A. Archive audit logs in Cloud Storage, and manually generate reports.  
+B. Write a Cloud Logging filter to export specific date ranges to Pub/Sub.  
+C. Archive audit logs in BigQuery, and generate reports using Google Data Studio.  
+D. Archive user logs on a locally attached persistent disk, and cat them to a text file for auditing.  
+
+---
+
+## ✅ **Correct Answer: C**  
+**Archive audit logs in BigQuery, and generate reports using Google Data Studio.**
+
+---
+
+## Explanation
+
+### Why **C** is correct
+- **BigQuery** provides a **low-cost, serverless, and scalable** data warehouse for storing and analyzing structured or semi-structured logs, including those containing user data or anonymized fields.  
+- You can configure **Cloud Logging sinks** to **export logs to BigQuery** in near real-time, allowing you to query and analyze usage data efficiently.  
+- With **BigQuery**, you can:
+  - Use SQL queries to **anonymize or pseudonymize** data (e.g., remove or hash PII fields).
+  - Apply **data retention policies** to automatically delete records after a specified time period (fulfilling the compliance requirement to delete PII).  
+  - Integrate directly with **Google Data Studio (now Looker Studio)** for **visual, real-time reporting** without extra cost for visualization.  
+
+This provides a **compliant, cost-effective, and automated** solution for generating anonymized reports and managing data lifecycle.
+
+---
+
+### Why the other options are not suitable
+
+**A. Archive audit logs in Cloud Storage, and manually generate reports**  
+- Storing logs in Cloud Storage is cheap, but generating reports manually is inefficient and prone to error.  
+- No built-in capability for automated anonymization, analytics, or data lifecycle management.  
+
+**B. Write a Cloud Logging filter to export specific date ranges to Pub/Sub**  
+- Pub/Sub is for **streaming/event-driven pipelines**, not for long-term storage or analytical reporting.  
+- You’d still need another system (e.g., Dataflow, BigQuery) to process and store logs, which increases complexity and cost.  
+
+**D. Archive user logs on a locally attached persistent disk, and cat them to a text file for auditing**  
+- This is not scalable, secure, or compliant.  
+- No automatic anonymization, no lifecycle management, and no centralized analysis capabilities.  
+- Persistent disks also incur costs and are not suitable for large or long-term data storage.  
+
+---
+
+## Implementation Steps (Summary)
+
+1. **Create a Cloud Logging sink** to export relevant game usage logs to **BigQuery**.  
+2. In **BigQuery**, use SQL queries or scheduled jobs to:
+   - Remove or hash PII fields for anonymization.  
+   - Configure **table expiration times** to automatically delete logs after the compliance period.  
+3. Connect **Google Data Studio** (Looker Studio) to the BigQuery dataset to build dashboards and generate anonymized usage reports.  
+4. Use **IAM and audit logs** to ensure only authorized users can access sensitive datasets.  
+
+---
+
+## ✅ Final Answer
+**C. Archive audit logs in BigQuery, and generate reports using Google Data Studio.**
