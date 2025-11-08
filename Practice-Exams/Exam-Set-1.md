@@ -114,3 +114,95 @@ D. Provision a Dedicated Interconnect connection.
 ---
 
 **Final Answer:** **C — Provision a Partner Interconnect connection.**
+
+---
+
+# 3. Google Cloud Case Study — Data Residency for Cloud Storage
+
+## Question
+
+One of EHR’s healthcare customers is an internationally renowned research and hospital facility. Many of their patients are well-known public personalities. Sources both inside and outside have tried many times to obtain health information on these patients for malicious purposes. The hospital requires that patient information stored in Cloud Storage buckets not leave the geographic areas in which the buckets are hosted. You need to ensure that information stored in Cloud Storage buckets in the "europe-west2" region does not leave that area. What should you do?
+
+A. Encrypt the data in the application on-premises before the data is stored in the "europe-west2" region.  
+B. Enable Virtual Private Cloud Service Controls, and create a service perimeter around the Cloud Storage resources.  
+C. Assign the Identity and Access Management (IAM) "storage.objectViewer" role only to users and service accounts that need to use the data.  
+D. Create an access control list (ACL) that limits access to the bucket to authorized users only, and apply it to the buckets in the "europe-west2" region.  
+
+---
+
+## ✅ **Correct Answer: B**  
+**Enable Virtual Private Cloud Service Controls, and create a service perimeter around the Cloud Storage resources.**
+
+---
+
+## Explanation
+
+**Why B is correct**
+- **VPC Service Controls (VPC-SC)** are designed to prevent data exfiltration from Google Cloud services by defining a *service perimeter* around the resources (for example, Cloud Storage buckets).  
+- With a properly configured perimeter and *access levels*, API calls that would move or access data from outside the allowed boundary (for example, from other regions or from the public Internet) are blocked.  
+- This directly addresses the requirement to **ensure Cloud Storage data does not leave the geographic area** by preventing access or API-based transfers from resources or principals outside the perimeter.
+
+**Implementation / defense-in-depth suggestions**
+- Put the buckets in the `europe-west2` region (set bucket location) to ensure data is stored in the desired region.  
+- Configure a **VPC-SC service perimeter** that includes the Cloud Storage resources and any projects that should legitimately access them.  
+- Use **Access Context Manager** access levels (IP, device, or identity-based conditions) to restrict which sources can call the Storage APIs from inside the perimeter.  
+- Combine VPC-SC with **least-privilege IAM** (grant only the roles needed) and, if desired, **Customer-Managed Encryption Keys (CMEK)** whose keys are also restricted to the same region for stronger guarantees.
+
+**Why the other options are not sufficient**
+- **A (Encrypt data on-premises before upload):** Encryption before upload protects confidentiality but does **not** prevent the stored objects from being copied or accessed and moved out of the region (an attacker could exfiltrate the ciphertext). It does not enforce geographic residency.  
+- **C (Only assign `storage.objectViewer` to needed principals):** Least-privilege IAM helps reduce who can access objects but **does not prevent** authorized principals from copying data out of the region or from applications in other regions that are allowed to access the data. IAM alone does not enforce geographic data residency.  
+- **D (Use ACLs to limit access):** ACLs control who can read/write objects but **do not stop** API or network-level egress from occurring when an allowed principal or compromised account accesses and then transfers the data outside the region. ACLs are not a mechanism to enforce where data may be used or transferred geographically.
+
+---
+
+## Short checklist to meet the requirement
+- [x] Set Cloud Storage bucket location to `europe-west2`.  
+- [x] Enable and configure **VPC Service Controls** with a perimeter that includes the buckets and allowed projects.  
+- [x] Define **Access Context Manager** access levels (IP ranges, device posture, or identity conditions) for stricter access control.  
+- [x] Apply least-privilege **IAM** and consider **CMEK** in the same region for additional protection.
+
+**Final answer:** **B**
+
+---
+
+# 4. Google Cloud Case Study — BeyondCorp Migration for Sales Employees
+
+## Question
+
+The EHR sales employees are a remote-based workforce that travels to different locations to do their jobs. Regardless of their location, the sales employees need to access web-based sales tools located in the EHR data center. EHR is retiring their current Virtual Private Network (VPN) infrastructure, and you need to move the web-based sales tools to a BeyondCorp access model. Each sales employee has a Google Workspace account and uses that account for single sign-on (SSO). What should you do?
+
+A. Create an Identity-Aware Proxy (IAP) connector that points to the sales tool application.  
+B. Create a Google group for the sales tool application, and upgrade that group to a security group.  
+C. Deploy an external HTTP(S) load balancer and create a custom Cloud Armor policy for the sales tool application.  
+D. For every sales employee who needs access to the sales tool application, give their Google Workspace user account the predefined AppEngine Viewer role.  
+
+---
+
+## ✅ **Correct Answer: A**  
+**Create an Identity-Aware Proxy (IAP) connector that points to the sales tool application.**
+
+---
+
+## Explanation
+
+### Why A is correct
+- **BeyondCorp** is Google’s zero-trust model that replaces network-based VPN access with identity- and context-based access controls.  
+- **Identity-Aware Proxy (IAP)** enforces access to web apps based on the user’s Google identity (Google Workspace SSO) and context (device, IP, access level) without requiring a VPN.  
+- An **IAP connector** (or IAP tunnel for on-prem/back-end apps) allows you to protect on-premises web apps or apps not directly exposed to the internet by terminating authentication/authorization at Google’s edge and proxying authorized requests to the internal application. This aligns exactly with the requirement to remove VPN and use BeyondCorp while keeping the application reachable only via secure, identity-checked access.
+- IAP integrates directly with Google Workspace SSO and allows you to grant access using IAM (for example by assigning the `roles/iap.httpsResourceAccessor` role to a Google Group containing the sales employees), making administration straightforward and auditable.
+
+### Why the other options are not suitable
+- **B — Create/upgrade a Google group:** A Google group is useful for managing identities, but **by itself** it doesn’t enforce zero-trust access to the application. Groups are part of the solution (used to assign IAP/IAM roles), not the enforcement mechanism.
+- **C — External HTTP(S) load balancer + Cloud Armor:** This provides secure, scalable edge termination and DDoS/WAF protections but **does not provide identity-aware access controls** (BeyondCorp). You’d still need IAP or another identity gate to replace VPN.
+- **D — Grant AppEngine Viewer role to users:** `AppEngine Viewer` is an IAM role for GCP resource visibility and is unrelated to application-level access or web SSO. It is not an appropriate or secure way to grant end-user access to an on-prem web application and violates least-privilege principles.
+
+---
+
+## Implementation notes (practical steps)
+1. Register the sales application with IAP (choose the appropriate IAP type for your backend: App Engine / Compute Engine / Cloud Run / IAP for TCP forwarding or use the IAP connector/tunnel for on-prem apps).  
+2. Configure OAuth client credentials for IAP so users authenticate via Google Workspace SSO.  
+3. Create a Google Group containing all sales employees (convenient for lifecycle management) and grant that group the `roles/iap.httpsResourceAccessor` (or equivalent IAP role) on the IAP-protected resource.  
+4. Optionally add context-aware access rules (Access Context Manager) to enforce device posture, IP range, or other conditions as part of the BeyondCorp model.  
+5. Monitor and audit access with Cloud Audit Logs and IAP logs.
+
+**Final answer:** **A**
