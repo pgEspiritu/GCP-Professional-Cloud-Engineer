@@ -271,3 +271,60 @@ This provides a **compliant, cost-effective, and automated** solution for genera
 
 ## ✅ Final Answer
 **C. Archive audit logs in BigQuery, and generate reports using Google Data Studio.**
+
+---
+
+# 6. Google Cloud Case Study — Operating Mountkirk Games Platform Securely and Efficiently
+
+## Question
+
+Mountkirk Games wants you to make sure their new gaming platform is being operated according to Google best practices. You want to verify that Google-recommended security best practices are being met while also providing the operations teams with the metrics they need. What should you do? (Choose two)
+
+A. Ensure that you aren’t running privileged containers.  
+B. Ensure that you are using obfuscated Tags on workloads.  
+C. Ensure that you are using the native logging mechanisms.  
+D. Ensure that workloads are not using securityContext to run as a group.  
+E. Ensure that each cluster is running GKE metering so each team can be charged for their usage.  
+
+---
+
+## ✅ **Correct Answers: A and C**
+
+---
+
+## Explanation
+
+### **A. Ensure that you aren’t running privileged containers.**
+- Running containers in **privileged mode** grants them unrestricted access to the host system, which violates **Google Cloud security best practices**.
+- Google recommends **principle of least privilege** — containers should have only the permissions they need.  
+- Disabling privileged mode helps prevent **container escape attacks** and reduces the potential blast radius in case of compromise.  
+- Security scanning tools like **GKE Security Posture dashboard**, **Binary Authorization**, and **Policy Controller** (OPA/Gatekeeper) can enforce this policy.
+
+### **C. Ensure that you are using the native logging mechanisms.**
+- Using **Google Cloud’s native logging mechanisms** (such as **Cloud Logging** and **Cloud Monitoring**, previously Stackdriver) ensures:
+  - Comprehensive **visibility into application and cluster activity**.
+  - **Integration** with Google’s monitoring, alerting, and auditing systems.
+  - **Centralized metrics** collection for operations teams to track performance, health, and cost trends.
+- This is a Google-recommended best practice for **observability and compliance**.
+
+---
+
+## ❌ Why the other options are not correct
+
+### **B. Ensure that you are using obfuscated Tags on workloads.**
+- Google Cloud does **not recommend obfuscating workload tags**.  
+- Labels and tags should be meaningful and descriptive (e.g., team, environment, app) for **billing, troubleshooting, and monitoring** purposes.
+
+### **D. Ensure that workloads are not using securityContext to run as a group.**
+- The `securityContext` field is not inherently insecure; it allows configuring security options like user/group IDs, privilege levels, or capabilities.  
+- Running as a group (`runAsGroup`) is **not a risk by itself**; in fact, properly setting user/group IDs is part of a secure configuration.
+
+### **E. Ensure that each cluster is running GKE metering so each team can be charged for their usage.**
+- **GKE usage metering** helps with cost allocation, not with security or operational best practices.
+- While it’s good for cost tracking, it does not address **security validation** or **operations metrics** requirements mentioned in the question.
+
+---
+
+## ✅ Final Answers
+**A. Ensure that you aren’t running privileged containers.**  
+**C. Ensure that you are using the native logging mechanisms.**
