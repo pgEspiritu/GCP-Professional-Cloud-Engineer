@@ -93,3 +93,102 @@ gcloud compute firewall-rules create allow-http \
 
 ---
 
+### ⚖️ Task 3: Configure HTTP Load Balancer
+
+1. Create a health check:
+```bash
+gcloud compute health-checks create http http-basic-check \
+  --port 80
+```
+
+2. Create a backend service:
+```bash
+gcloud compute backend-services create web-backend \
+  --protocol HTTP \
+  --port-name http \
+  --health-checks http-basic-check \
+  --global
+```
+
+3. Add instance group:
+```bash
+gcloud compute instance-groups unmanaged create web-group --zone=ZONE
+gcloud compute instance-groups unmanaged add-instances web-group \
+  --instances=web-1,web-2 \
+  --zone=ZONE
+gcloud compute backend-services add-backend web-backend \
+  --instance-group web-group \
+  --instance-group-zone=ZONE \
+  --global
+```
+
+4. Create a URL map:
+```bash
+gcloud compute url-maps create web-map \
+  --default-service web-backend
+```
+
+5. Create a target HTTP proxy:
+```bash
+gcloud compute target-http-proxies create http-lb-proxy \
+  --url-map web-map
+```
+
+6. Create a forwarding rule:
+```bash
+gcloud compute forwarding-rules create http-forwarding-rule \
+  --global \
+  --target-http-proxy=http-lb-proxy \
+  --ports=80
+```
+
+> ✅ Task Check: Load Balancer created successfully.
+
+---
+
+### 🛡️ Task 4: Configure Cloud Armor Policy
+
+1. Create a policy:
+```bash
+gcloud compute security-policies create web-policy \
+  --description "Block unwanted traffic"
+```
+
+2. Add a rule to deny traffic from a specific IP (example):
+```bash
+gcloud compute security-policies rules create 1000 \
+  --security-policy web-policy \
+  --expression "inIpRange(origin.ip, '192.0.2.0/24')" \
+  --action deny-403 \
+  --description "Block subnet 192.0.2.0/24"
+```
+
+3. Attach policy to backend:
+```bash
+gcloud compute backend-services update web-backend \
+  --security-policy web-policy \
+  --global
+```
+
+> ✅ Task Check: Cloud Armor applied successfully.
+
+---
+
+### 🔍 Task 5: Test Load Balancer
+
+1. Get the external IP:
+```bash
+gcloud compute forwarding-rules list
+```
+
+2. Visit http://EXTERNAL_IP in a browser — it should display one of the server names.
+
+3. Refresh to see load balancing between instances.
+
+---
+
+## Task Completed
+- ✅ Created web server
+- ✅ Configured a global HTTP Load Balancer
+- ✅ Added a Cloud Armor policy
+- ✅ Tested your deployment
