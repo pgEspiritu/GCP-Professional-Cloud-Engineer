@@ -1,11 +1,5 @@
 # 🖥️ Compute Engine: Qwik Start – Windows
 
-**Experiment • 40 minutes • 1 Credit • Introductory**  
-**Lab ID:** GSP093  
-🧠 *This lab may include AI-assisted guidance.*
-
----
-
 ## 🌐 Overview
 
 Google Compute Engine lets you create and run Windows virtual machines (VMs) on Google Cloud infrastructure.  
@@ -64,6 +58,9 @@ Output:
 project = "PROJECT_ID"
 ```
 
+![Lab 2 - Compute Engine: Qwik Start – Windows.1](images/Lab-2.1.png)
+![Lab 2 - Compute Engine: Qwik Start – Windows.2](images/Lab-2.2.png)
+
 ---
 
 ## 🏗️ Create a Windows VM Instance
@@ -76,12 +73,20 @@ project = "PROJECT_ID"
 | **Zone**   | `<ZONE>`   |
 | **Series** | E2         |
 
+![Lab 2 - Compute Engine: Qwik Start – Windows.3](images/Lab-2.3.png)
+![Lab 2 - Compute Engine: Qwik Start – Windows.4](images/Lab-2.4.png)
+
 3. Under Boot disk → Change:
   - Operating system: Windows Server
   - Version: Windows Server 2022 Datacenter
   - Click Select
+
+![Lab 2 - Compute Engine: Qwik Start – Windows.5](images/Lab-2.5.png)
+
 4. Click Create to launch the instance.
 > ✅ Check progress: “Create a virtual machine instance.”
+
+![Lab 2 - Compute Engine: Qwik Start – Windows.6](images/Lab-2.6.png)
 
 ---
 
@@ -117,6 +122,8 @@ Would you like to set or reset the password for [admin] (Y/n)? → Y
 - 💾 Record the generated password for later login.
 > ✅ Check progress: “RDP into the Windows Server.”
 
+![Lab 2 - Compute Engine: Qwik Start – Windows.7](images/Lab-2.7.png)
+
 ---
 
 ## 🪟 Connect via Remote Desktop (RDP)
@@ -140,12 +147,16 @@ Install any free RDP client (e.g., CoRD) → connect to External IP
 
 > Once connected, you’ll see the Windows desktop 🎉
 
+![Lab 2 - Compute Engine: Qwik Start – Windows.8](images/Lab-2.8.png)
+
 ---
 
 ## 📋 Copy and Paste Tips (RDP Client)
 - To paste: CTRL + V (not CMD + V)
 - In PowerShell, click the window before pasting.
 - In PuTTY, paste with Right-click.
+
+![Lab 2 - Compute Engine: Qwik Start – Windows.9](images/Lab-2.9.png)
 
 ---
 
