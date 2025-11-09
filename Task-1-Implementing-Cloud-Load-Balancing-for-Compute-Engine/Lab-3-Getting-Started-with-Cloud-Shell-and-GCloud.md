@@ -1,11 +1,5 @@
 # ☁️ Getting Started with Cloud Shell and gcloud
 
-**Experiment • 45 minutes • 1 Credit • Introductory**  
-**Lab ID:** GSP002  
-🧠 *This lab may include AI-assisted guidance.*
-
----
-
 ## 🌐 Overview
 
 Cloud Shell provides command-line access to Google Cloud resources.  
