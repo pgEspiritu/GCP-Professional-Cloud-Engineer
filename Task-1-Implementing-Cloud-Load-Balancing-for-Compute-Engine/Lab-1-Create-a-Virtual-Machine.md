@@ -74,6 +74,9 @@ Output:
 project = "PROJECT_ID"
 ```
 
+![Lab 1 - Create a Virtual Machine.1](images/Lab-1.1.png)
+![Lab 1 - Create a Virtual Machine.2](images/Lab-1.2.png)
+
 ---
 
 ## Understanding Regions and Zones
@@ -110,10 +113,17 @@ export ZONE=Zone
 
 > Note: In Cloud Shell, you need to set these for each new session.
 
+![Lab 1 - Create a Virtual Machine.3](images/Lab-1.3.png)
+
+---
+
 ### Task 1: Create a New Instance from the Cloud Console
 1. In the Cloud console, open
    Navigation menu (☰) → Compute Engine → VM Instances.
 2. Click Create Instance.
+
+![Lab 1 - Create a Virtual Machine.4](images/Lab-1.4.png)
+
 3. Configure machine settings:
 
 | Field        | Value      | Notes              |
@@ -124,6 +134,10 @@ export ZONE=Zone
 | Series       | E2         |                    |
 | Machine type | e2-medium  | 2 vCPUs, 4GB RAM   |
 
+![Lab 1 - Create a Virtual Machine.5](images/Lab-1.5.png)
+![Lab 1 - Create a Virtual Machine.6](images/Lab-1.6.png)
+![Lab 1 - Create a Virtual Machine.7](images/Lab-1.7.png)
+
 4. Configure OS and Storage:
   - Click Change
   - OS: Debian
@@ -131,8 +145,12 @@ export ZONE=Zone
   - Boot disk type: Balanced persistent disk
   - Size: 10 GB
 
+![Lab 1 - Create a Virtual Machine.8](images/Lab-1.8.png)
+
 5. Configure Networking:
   - Under Firewall, select Allow HTTP traffic
+
+![Lab 1 - Create a Virtual Machine.9](images/Lab-1.9.png)
 
 6. Click Create to launch the VM.
 > Wait about a minute until the instance gcelab appears in the list.
@@ -140,6 +158,9 @@ export ZONE=Zone
 7. Connect via SSH:
   - Click SSH next to `gcelab`
 This opens an SSH client directly in your browser.
+
+![Lab 1 - Create a Virtual Machine.10](images/Lab-1.10.png)
+![Lab 1 - Create a Virtual Machine.11](images/Lab-1.11.png)
 
 ---
 
@@ -155,6 +176,8 @@ Expected output:
 Reading package lists... Done
 ```
 
+![Lab 1 - Create a Virtual Machine.12](images/Lab-1.12.png)
+
 2. Install NGINX:
 ```bash
 sudo apt-get install -y nginx
@@ -164,6 +187,8 @@ Expected output:
 ```ini
 The following NEW packages will be installed: ...
 ```
+
+![Lab 1 - Create a Virtual Machine.13](images/Lab-1.13.png)
 
 3. Confirm NGINX is running:
 ```bash
@@ -176,10 +201,15 @@ root      2330  ... nginx: master process ...
 www-data  2331  ... nginx: worker process
 ```
 
+![Lab 1 - Create a Virtual Machine.14](images/Lab-1.14.png)
+
+
 4. In the Cloud console, click the External IP of your instance or open
    http://EXTERNAL_IP/ in a browser.
    > Use the assigned external IP
    > You should see “Welcome to nginx!”
+
+![Lab 1 - Create a Virtual Machine.15](images/Lab-1.15.png)
 
 --- 
 
@@ -200,6 +230,8 @@ EXTERNAL_IP: 34.136.51.150
 STATUS: RUNNING
 ```
 
+![Lab 1 - Create a Virtual Machine.16](images/Lab-1.16.png)
+
 Defaults:
 - OS: Debian GNU/Linux 12 (bookworm)
 - Machine type: e2-medium
@@ -211,6 +243,8 @@ gcloud compute instances create --help
 ```
 - Press CTRL+C to exit.
 
+![Lab 1 - Create a Virtual Machine.17](images/Lab-1.17.png)
+
 Set default zone and region (optional):
 ```bash
 gcloud config set compute/zone ...
@@ -221,11 +255,15 @@ In the Cloud console, go to
 Navigation menu → Compute Engine → VM instances
 or refresh the VM page. Both instances (gcelab, gcelab2) should appear.
 
+![Lab 1 - Create a Virtual Machine.18](images/Lab-1.18.png)
+
 Connect via SSH:
 ```bash
 gcloud compute ssh gcelab2 --zone=$ZONE
 ```
 Enter Y to continue and press Enter through the passphrase prompts.
+
+![Lab 1 - Create a Virtual Machine.19](images/Lab-1.19.png)
 
 Disconnect:
 ```bash
