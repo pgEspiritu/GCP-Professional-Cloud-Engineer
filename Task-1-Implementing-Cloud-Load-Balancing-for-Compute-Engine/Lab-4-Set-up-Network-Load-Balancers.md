@@ -1,4 +1,4 @@
-# Set Up Network Load Balancers
+# 4. Set Up Network Load Balancers
 
 ## Overview
 In this lab, you will set up a **passthrough Network Load Balancer (NLB)** using Compute Engine VMs.  
@@ -21,6 +21,9 @@ gcloud auth list
 gcloud config list project
 ```
 
+![Lab 4 - Set Up Network Load Balancers.1](images/Lab-4.1.png)
+![Lab 4 - Set Up Network Load Balancers.2](images/Lab-4.2.png)
+
 ---
 
 ### Task 1. Set Default Region and Zone
@@ -28,6 +31,8 @@ gcloud config list project
 gcloud config set compute/region REGION
 gcloud config set compute/zone ZONE
 ```
+
+![Lab 4 - Set Up Network Load Balancers.3](images/Lab-4.3.png)
 
 ---
 
@@ -46,6 +51,8 @@ a. www1
     echo "<h3>Web Server: www1</h3>" > /var/www/html/index.html'
   ```
 
+![Lab 4 - Set Up Network Load Balancers.4](images/Lab-4.4.png)
+
 b. www2
   ```bash
   gcloud compute instances create www2 \
@@ -57,6 +64,8 @@ b. www2
     service apache2 restart
     echo "<h3>Web Server: www2</h3>" > /var/www/html/index.html'
   ```
+
+![Lab 4 - Set Up Network Load Balancers.5](images/Lab-4.5.png)
 
 c. ww3
   ```bash
@@ -70,17 +79,24 @@ c. ww3
     echo "<h3>Web Server: www3</h3>" > /var/www/html/index.html'
   ```
 
+![Lab 4 - Set Up Network Load Balancers.6](images/Lab-4.6.png)
+
 Allow HTTP traffic
 ```bash
 gcloud compute firewall-rules create www-firewall-network-lb \
   --target-tags network-lb-tag --allow tcp:80
 ```
 
+![Lab 4 - Set Up Network Load Balancers.7](images/Lab-4.7.png)
+
 Verify instances
 ```bash
 gcloud compute instances list
 curl http://[EXTERNAL_IP]
 ```
+
+![Lab 4 - Set Up Network Load Balancers.8](images/Lab-4.8.png)
+![Lab 4 - Set Up Network Load Balancers.9](images/Lab-4.9.png)
 
 ---
 
@@ -120,6 +136,8 @@ gcloud compute forwarding-rules create www-rule \
   --target-pool www-pool
 ```
 
+![Lab 4 - Set Up Network Load Balancers.10](images/Lab-4.10.png)
+
 ---
 
 ### Task 5. Test Load Balancer
@@ -141,6 +159,9 @@ while true; do curl -m1 $IPADDRESS; done
 ```
 - The responses alternate among `www1`, `www2`, and `www3`.
 - Press Ctrl + C to stop.
+
+![Lab 4 - Set Up Network Load Balancers.11](images/Lab-4.11.png)
+![Lab 4 - Set Up Network Load Balancers.12](images/Lab-4.12.png)
 
 ---
 
