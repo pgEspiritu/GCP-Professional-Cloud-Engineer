@@ -1,194 +1,206 @@
-# 🌐 Set Up Application Load Balancers
+# 🧪 Set Up Application Load Balancers
 
-## 🧭 Overview  
-In this lab, you create an HTTP Load Balancer and configure Cloud Armor security policies to protect your web application.  
+## 🌐 Overview
 
-You'll:  
-- Deploy multiple web servers on Compute Engine  
-- Configure a global HTTP Load Balancer  
-- Add a Cloud Armor policy  
-- Test your setup  
+In this hands-on lab, you will learn how to set up a **Layer 7 (L7) Application Load Balancer** on Compute Engine virtual machines (VMs).  
+L7 load balancers can understand HTTP(S) protocols, allowing them to make routing decisions based on parameters like URLs, headers, cookies, and request content — improving application performance and responsiveness.
+
+This lab demonstrates:
+
+- 🌍 Application Load Balancer setup  
 
 ---
 
-## ⚙️ Setup and Requirements  
+## 🎯 Objectives
 
-### 🧑‍💻 Before You Begin  
-- Use an **Incognito** or **Private** window.  
-- Use the **student credentials** provided by the lab — not your personal Google account.  
-- Once started, the lab timer cannot be paused.  
+By the end of this lab, you will be able to:
 
-### 🚀 Start the Lab  
+1. ⚙️ Configure the default region and zone for your resources.  
+2. ⚖️ Create an Application Load Balancer.  
+3. 🧩 Test traffic to your instances.
+
+---
+
+## 🧰 Setup and Requirements
+
+### 📝 Before You Click “Start Lab”
+
+- Labs are **timed** and **cannot be paused**.  
+- You’ll get **temporary credentials** to access Google Cloud resources in a **real environment**.
+
+You will need:
+- 🌐 A standard web browser (Google Chrome recommended).  
+- 🕶️ Use **Incognito/Private mode** to avoid conflicts with your personal account.  
+- ⏳ Enough time to complete the lab in one session.  
+- ⚠️ Use **only** the provided student account — **do not** use your own Google Cloud account to avoid charges.
+
+---
+
+## 🚀 How to Start Your Lab and Sign in to Google Cloud Console
+
 1. Click **Start Lab**.  
-2. Copy the provided **Username** and **Password**.  
-3. Click **Open Google Cloud Console** → open in **Incognito window** if using Chrome.  
-4. Sign in using the credentials provided.  
-5. Accept terms, skip recovery options, and do **not** enable 2FA or trials.  
+   - If prompted for payment, choose your method.  
+   - The **Lab Details** pane will show:
+     - Open Google Cloud console button  
+     - Time remaining  
+     - Temporary credentials  
+     - Other required info  
+
+2. Click **Open Google Cloud console** (or right-click → *Open Link in Incognito Window*).  
+3. If you see **Choose an account**, click **Use Another Account**.  
+4. Copy the **Username** and **Password** from the Lab Details pane.  
+5. Sign in using those credentials.  
+
+⚠️ Do **not** use your own credentials. Avoid setting recovery options or 2FA. Skip free trial signup.
+
+After login, the **Google Cloud Console** opens.  
+Use the **Navigation menu** or **Search bar** to access services.
 
 ---
 
-## 💻 Activate Cloud Shell  
-1. Click **Activate Cloud Shell** at the top of the console.  
-2. Click **Continue** and **Authorize**.  
-3. Confirm the project ID is set:  
-```bash
+## 💻 Activate Cloud Shell
+
+Cloud Shell is a VM preloaded with developer tools, offering:
+- 5GB persistent home directory  
+- Command-line access to Google Cloud  
+
+### Steps:
+
+1. Click **Activate Cloud Shell** ▶️ (top-right corner).  
+2. Continue through prompts and **Authorize** access.  
+3. Once connected, your project will auto-set to your **Project_ID**.
+
+Example output:
+```text
 Your Cloud Platform project in this session is set to "PROJECT_ID"
 ```
 
-4. (Optional) Verify authentication and project:
+You can list the active account:
 ```bash
 gcloud auth list
+```
+
+Output:
+```vbnet
+ACTIVE: *
+ACCOUNT: "ACCOUNT"
+```
+
+To check or set your project:
+```bash
 gcloud config list project
 ```
 
 ---
 
-### 🏗️ Task 1: Create Web Server Instances
+### 🧩 Task 1: Set the Default Region and Zone
 
-1. In Cloud Shell, create startup script:
+1. Set default region:
 ```bash
-cat << EOF > startup.sh
-#!/bin/bash
-apt-get update
-apt-get install -y apache2
-systemctl start apache2
-echo "<h1>Web Server: $(hostname)</h1>" | tee /var/www/html/index.html
-EOF
+gcloud config set compute/region REGION
 ```
 
-2. Create 2 VM instances in the same region:
+2. Set default zone:
 ```bash
-gcloud compute instances create web-1 \
-  --zone=ZONE \
-  --tags=webserver \
-  --metadata-from-file startup-script=startup.sh
-
-gcloud compute instances create web-2 \
-  --zone=ZONE \
-  --tags=webserver \
-  --metadata-from-file startup-script=startup.sh
+gcloud config set compute/zone ZONE
 ```
 
-3. Confirm instances are running:
+---
+
+### 🖥️ Task 2: Create Multiple Web Server Instances
+
+1. You’ll create three VM instances with Apache and allow HTTP traffic.
+
+- Create VM: www1
+```bash
+gcloud compute instances create www1 \
+  --zone=ZONE \
+  --tags=network-lb-tag \
+  --machine-type=e2-small \
+  --image-family=debian-11 \
+  --image-project=debian-cloud \
+  --metadata=startup-script='#!/bin/bash
+    apt-get update
+    apt-get install apache2 -y
+    service apache2 restart
+    echo "<h3>Web Server: www1</h3>" | tee /var/www/html/index.html'
+```
+
+- Create VM: www2
+```bash
+gcloud compute instances create www2 \
+  --zone=ZONE \
+  --tags=network-lb-tag \
+  --machine-type=e2-small \
+  --image-family=debian-11 \
+  --image-project=debian-cloud \
+  --metadata=startup-script='#!/bin/bash
+    apt-get update
+    apt-get install apache2 -y
+    service apache2 restart
+    echo "<h3>Web Server: www2</h3>" | tee /var/www/html/index.html'
+```
+
+- Create VM: www3
+```bash
+gcloud compute instances create www3 \
+  --zone=ZONE \
+  --tags=network-lb-tag \
+  --machine-type=e2-small \
+  --image-family=debian-11 \
+  --image-project=debian-cloud \
+  --metadata=startup-script='#!/bin/bash
+    apt-get update
+    apt-get install apache2 -y
+    service apache2 restart
+    echo "<h3>Web Server: www3</h3>" | tee /var/www/html/index.html'
+```
+
+2. Create Firewall Rule
+```bash
+gcloud compute firewall-rules create www-firewall-network-lb \
+  --target-tags network-lb-tag --allow tcp:80
+```
+
+3. Verify Instances
 ```bash
 gcloud compute instances list
 ```
 
+4. Test Each Instance
+```bash
+curl http://[EXTERNAL_IP_ADDRESS]
+```
+
 ---
 
-### 🧱 Task 2: Create a Firewall Rule
+### ⚖️ Task 3: Create an Application Load Balancer
 
-1. Allow traffic to the web servers:
+Google’s Global Front End (GFE) handles Application Load Balancing using Google’s network backbone.
+
+1. Create Load Balancer Template
 ```bash
-gcloud compute firewall-rules create allow-http \
-  --direction=INGRESS \
-  --priority=1000 \
+gcloud compute instance-templates create lb-backend-template \
+  --region=REGION \
   --network=default \
-  --action=ALLOW \
-  --rules=tcp:80 \
-  --source-ranges=0.0.0.0/0 \
-  --target-tags=webserver
+  --subnet=default \
+  --tags=allow-health-check \
+  --machine-type=e2-medium \
+  --image-family=debian-11 \
+  --image-project=debian-cloud \
+  --metadata=startup-script='#!/bin/bash
+    apt-get update
+    apt-get install apache2 -y
+    a2ensite default-ssl
+    a2enmod ssl
+    vm_hostname="$(curl -H "Metadata-Flavor:Google" \
+    http://169.254.169.254/computeMetadata/v1/instance/name)"
+    echo "Page served from: $vm_hostname" | tee /var/www/html/index.html
+    systemctl restart apache2'
 ```
-> ✅ Task Check: Firewall rule successfully created.
 
----
-
-### ⚖️ Task 3: Configure HTTP Load Balancer
-
-1. Create a health check:
+2. Create Managed Instance Group (MIG)
 ```bash
-gcloud compute health-checks create http http-basic-check \
-  --port 80
+gcloud compute instance-groups managed create lb-backend-group \
+  --template=lb-backend-template --size=2 --zone=ZONE
 ```
-
-2. Create a backend service:
-```bash
-gcloud compute backend-services create web-backend \
-  --protocol HTTP \
-  --port-name http \
-  --health-checks http-basic-check \
-  --global
-```
-
-3. Add instance group:
-```bash
-gcloud compute instance-groups unmanaged create web-group --zone=ZONE
-gcloud compute instance-groups unmanaged add-instances web-group \
-  --instances=web-1,web-2 \
-  --zone=ZONE
-gcloud compute backend-services add-backend web-backend \
-  --instance-group web-group \
-  --instance-group-zone=ZONE \
-  --global
-```
-
-4. Create a URL map:
-```bash
-gcloud compute url-maps create web-map \
-  --default-service web-backend
-```
-
-5. Create a target HTTP proxy:
-```bash
-gcloud compute target-http-proxies create http-lb-proxy \
-  --url-map web-map
-```
-
-6. Create a forwarding rule:
-```bash
-gcloud compute forwarding-rules create http-forwarding-rule \
-  --global \
-  --target-http-proxy=http-lb-proxy \
-  --ports=80
-```
-
-> ✅ Task Check: Load Balancer created successfully.
-
----
-
-### 🛡️ Task 4: Configure Cloud Armor Policy
-
-1. Create a policy:
-```bash
-gcloud compute security-policies create web-policy \
-  --description "Block unwanted traffic"
-```
-
-2. Add a rule to deny traffic from a specific IP (example):
-```bash
-gcloud compute security-policies rules create 1000 \
-  --security-policy web-policy \
-  --expression "inIpRange(origin.ip, '192.0.2.0/24')" \
-  --action deny-403 \
-  --description "Block subnet 192.0.2.0/24"
-```
-
-3. Attach policy to backend:
-```bash
-gcloud compute backend-services update web-backend \
-  --security-policy web-policy \
-  --global
-```
-
-> ✅ Task Check: Cloud Armor applied successfully.
-
----
-
-### 🔍 Task 5: Test Load Balancer
-
-1. Get the external IP:
-```bash
-gcloud compute forwarding-rules list
-```
-
-2. Visit http://EXTERNAL_IP in a browser — it should display one of the server names.
-
-3. Refresh to see load balancing between instances.
-
----
-
-## Task Completed
-- ✅ Created web server
-- ✅ Configured a global HTTP Load Balancer
-- ✅ Added a Cloud Armor policy
-- ✅ Tested your deployment
