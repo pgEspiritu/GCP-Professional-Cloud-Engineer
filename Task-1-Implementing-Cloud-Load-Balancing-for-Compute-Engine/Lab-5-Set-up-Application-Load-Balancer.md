@@ -204,3 +204,96 @@ gcloud compute instance-templates create lb-backend-template \
 gcloud compute instance-groups managed create lb-backend-group \
   --template=lb-backend-template --size=2 --zone=ZONE
 ```
+
+3. Create Health Check Firewall Rule
+```bash
+gcloud compute firewall-rules create fw-allow-health-check \
+  --network=default \
+  --action=allow \
+  --direction=ingress \
+  --source-ranges=130.211.0.0/22,35.191.0.0/16 \
+  --target-tags=allow-health-check \
+  --rules=tcp:80
+```
+
+4. Reserve Global Static IP
+```bash
+gcloud compute addresses create lb-ipv4-1 \
+  --ip-version=IPV4 \
+  --global
+```
+
+5. View the IP:
+```bash
+gcloud compute addresses describe lb-ipv4-1 \
+  --format="get(address)" \
+  --global
+```
+
+6. Create Health Check
+```bash
+gcloud compute health-checks create http http-basic-check \
+  --port 80
+```
+
+7. Create Backend Service
+```bash
+gcloud compute backend-services create web-backend-service \
+  --protocol=HTTP \
+  --port-name=http \
+  --health-checks=http-basic-check \
+  --global
+```
+
+8. Add Instance Group as Backend
+```bash
+gcloud compute backend-services add-backend web-backend-service \
+  --instance-group=lb-backend-group \
+  --instance-group-zone=ZONE \
+  --global
+```
+
+9. Create URL Map
+```bash
+gcloud compute url-maps create web-map-http \
+  --default-service web-backend-service
+```
+
+10. Create Target HTTP Proxy
+```bash
+gcloud compute target-http-proxies create http-lb-proxy \
+  --url-map web-map-http
+```
+
+11. Create Global Forwarding Rule
+```bash
+gcloud compute forwarding-rules create http-content-rule \
+  --address=lb-ipv4-1 \
+  --global \
+  --target-http-proxy=http-lb-proxy \
+  --ports=80
+```
+
+---
+
+### 🌍 Task 4: Test Traffic Sent to Your Instances
+- In the console search bar, type Load balancing → select it.
+- Click the load balancer named web-map-http.
+- In Backend, ensure all VMs show Healthy status.
+- Open your browser and visit:
+  ```bash
+  http://[LOAD_BALANCER_IP]/
+  ```
+  - (Replace [LOAD_BALANCER_IP] with your reserved IP.)
+> 🕒 Wait 3–5 minutes if not immediately available.
+
+---
+
+### Task Completed
+
+Successfully built a Google Cloud Application Load Balancer, using:
+- 🧱 Instance Templates
+- 🧩 Managed Instance Groups
+- 🌐 Global Load Balancer Configuration
+
+
