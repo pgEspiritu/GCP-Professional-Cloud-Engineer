@@ -115,3 +115,8 @@ This ensures consistent and efficient policy management.
 
 ## 🧩 Summary Diagram (Conceptual)
 
+🏛️ Organization Node
+└── 🗂️ Folders (optional)
+└── 🗂️ Subfolders (optional)
+└── 📦 Projects
+└── 🧱 Resources
