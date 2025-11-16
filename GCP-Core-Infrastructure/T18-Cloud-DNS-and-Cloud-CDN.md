@@ -38,7 +38,3 @@ These caches store content **closer to end users**, improving performance throug
 ## 🤝 CDN Interconnect Partner Program
 If you're already using another CDN provider, there's good news:  
 Most major CDNs are part of **Google Cloud’s CDN Interconnect program**, allowing you to continue using them seamlessly.
-
----
-
-If you want this combined with other modules, summarized, or exported as `.md` or `.pdf`, just let me know!
