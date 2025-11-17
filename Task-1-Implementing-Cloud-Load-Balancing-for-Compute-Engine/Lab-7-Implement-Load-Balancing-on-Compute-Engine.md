@@ -26,6 +26,11 @@ Before starting:
 
 You’ll create 3 VM instances, configure firewall rules, set up a **Network Load Balancer**, and finally deploy an **HTTP Load Balancer** to distribute traffic between instances.
 
+Set Region and Zone First
+
+![Lab 7 - Challenge Lab.1](images/Lab-7.1.png)
+![Lab 7 - Challenge Lab.2](images/Lab-7.2.png)
+
 ---
 
 ## 🚀 Task 1. Create Multiple Web Server Instances
@@ -93,6 +98,17 @@ service apache2 restart
 echo "<h3>Web Server: web3</h3>" | tee /var/www/html/index.html'
 ```
 
+### Web 1
+![Lab 7 - Challenge Lab.3](images/Lab-7.3.png)
+
+### Web 2
+![Lab 7 - Challenge Lab.4](images/Lab-7.4.png)
+
+### Web 3
+![Lab 7 - Challenge Lab.5](images/Lab-7.5.png)
+
+---
+
 🔥 Allow HTTP Traffic
 
 ```bash
@@ -100,6 +116,9 @@ gcloud compute firewall-rules create www-firewall-network-lb \
   --target-tags=network-lb-Expected output:ag \
   --allow=tcp:80
 ```
+
+![Lab 7 - Challenge Lab.6](images/Lab-7.6.png)
+
 
 ✅ Verification
 
@@ -115,6 +134,9 @@ web2   us-central1-f   e2-small      10.128.0.3   34.136.xxx.xxx  RUNNING
 web3   us-central1-f   e2-small      10.128.0.4   34.136.xxx.xxx  RUNNING
 ```
 
+![Lab 7 - Challenge Lab.7](images/Lab-7.7.png)
+![Lab 7 - Challenge Lab.8](images/Lab-7.8.png)
+
 Check Apache server response:
 ```bash
 curl http://[EXTERNAL_IP_OF_web1]
@@ -129,6 +151,8 @@ Output:
 <h3>Web Server: web3</h3>
 ```
 
+![Lab 7 - Challenge Lab.9](images/Lab-7.9.png)
+
 ---
 
 ### 🌉 Task 2. Configure the Load Balancing Service (Network Load Balancer)
@@ -138,9 +162,11 @@ Create a Network Load Balancer to distribute traffic among the three instances.
 
 1️⃣ Create an HTTP Health Check named basic-check
 ```bash
-gcloud compute http-health-checks create basic-check \
+gcloud compute http-health-checks create tcp basic-check \
   --port 80
 ```
+
+![Lab 7 - Challenge Lab.10.1](images/Lab-7.10.1.png)
 
 - This creates a global HTTP health check that target pools can use.
 - The health check will verify that Apache is responding on port 80.
