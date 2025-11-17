@@ -1,8 +1,4 @@
 # ☁️ Cloud Storage: Qwik Start – CLI/SDK  
-**Lab • 30 minutes ⏱️ • 1 Credit 💳 • Introductory 📘**  
-GSP074
-
----
 
 ## 📝 Overview
 Cloud Storage allows world-wide storage and retrieval of any amount of data at any time. You can use Cloud Storage for a range of scenarios including:
