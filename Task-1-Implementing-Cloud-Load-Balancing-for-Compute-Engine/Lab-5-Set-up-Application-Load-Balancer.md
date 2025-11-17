@@ -91,6 +91,9 @@ To check or set your project:
 gcloud config list project
 ```
 
+![Lab 5 - Set Up Application Load Balancers.1](images/Lab-5.1.png)
+![Lab 5 - Set Up Application Load Balancers.2](images/Lab-5.2.png)
+
 ---
 
 ### 🧩 Task 1: Set the Default Region and Zone
@@ -104,6 +107,8 @@ gcloud config set compute/region REGION
 ```bash
 gcloud config set compute/zone ZONE
 ```
+
+![Lab 5 - Set Up Application Load Balancers.3](images/Lab-5.3.png)
 
 ---
 
@@ -126,6 +131,8 @@ gcloud compute instances create www1 \
     echo "<h3>Web Server: www1</h3>" | tee /var/www/html/index.html'
 ```
 
+![Lab 5 - Set Up Application Load Balancers.4](images/Lab-5.4.png)
+
 - Create VM: www2
 ```bash
 gcloud compute instances create www2 \
@@ -140,6 +147,8 @@ gcloud compute instances create www2 \
     service apache2 restart
     echo "<h3>Web Server: www2</h3>" | tee /var/www/html/index.html'
 ```
+
+![Lab 5 - Set Up Application Load Balancers.5](images/Lab-5.5.png)
 
 - Create VM: www3
 ```bash
@@ -156,21 +165,29 @@ gcloud compute instances create www3 \
     echo "<h3>Web Server: www3</h3>" | tee /var/www/html/index.html'
 ```
 
+![Lab 5 - Set Up Application Load Balancers.6](images/Lab-5.6.png)
+
 2. Create Firewall Rule
 ```bash
 gcloud compute firewall-rules create www-firewall-network-lb \
   --target-tags network-lb-tag --allow tcp:80
 ```
 
+![Lab 5 - Set Up Application Load Balancers.7](images/Lab-5.7.png)
+
 3. Verify Instances
 ```bash
 gcloud compute instances list
 ```
 
+![Lab 5 - Set Up Application Load Balancers.8](images/Lab-5.8.png)
+
 4. Test Each Instance
 ```bash
 curl http://[EXTERNAL_IP_ADDRESS]
 ```
+
+![Lab 5 - Set Up Application Load Balancers.9](images/Lab-5.9.png)
 
 ---
 
@@ -199,11 +216,15 @@ gcloud compute instance-templates create lb-backend-template \
     systemctl restart apache2'
 ```
 
+![Lab 5 - Set Up Application Load Balancers.10](images/Lab-5.10.png)
+
 2. Create Managed Instance Group (MIG)
 ```bash
 gcloud compute instance-groups managed create lb-backend-group \
   --template=lb-backend-template --size=2 --zone=ZONE
 ```
+
+![Lab 5 - Set Up Application Load Balancers.11](images/Lab-5.11.png)
 
 3. Create Health Check Firewall Rule
 ```bash
@@ -215,6 +236,8 @@ gcloud compute firewall-rules create fw-allow-health-check \
   --target-tags=allow-health-check \
   --rules=tcp:80
 ```
+
+![Lab 5 - Set Up Application Load Balancers.12](images/Lab-5.12.png)
 
 4. Reserve Global Static IP
 ```bash
@@ -230,6 +253,8 @@ gcloud compute addresses describe lb-ipv4-1 \
   --global
 ```
 
+![Lab 5 - Set Up Application Load Balancers.13](images/Lab-5.13.png)
+
 6. Create Health Check
 ```bash
 gcloud compute health-checks create http http-basic-check \
@@ -244,6 +269,8 @@ gcloud compute backend-services create web-backend-service \
   --health-checks=http-basic-check \
   --global
 ```
+
+![Lab 5 - Set Up Application Load Balancers.14](images/Lab-5.14.png)
 
 8. Add Instance Group as Backend
 ```bash
@@ -274,6 +301,9 @@ gcloud compute forwarding-rules create http-content-rule \
   --ports=80
 ```
 
+![Lab 5 - Set Up Application Load Balancers.15](images/Lab-5.15.png)
+![Lab 5 - Set Up Application Load Balancers.16](images/Lab-5.16.png)
+
 ---
 
 ### 🌍 Task 4: Test Traffic Sent to Your Instances
@@ -286,6 +316,9 @@ gcloud compute forwarding-rules create http-content-rule \
   ```
   - (Replace [LOAD_BALANCER_IP] with your reserved IP.)
 > 🕒 Wait 3–5 minutes if not immediately available.
+
+
+![Lab 5 - Set Up Application Load Balancers.17](images/Lab-5.17.png)
 
 ---
 
