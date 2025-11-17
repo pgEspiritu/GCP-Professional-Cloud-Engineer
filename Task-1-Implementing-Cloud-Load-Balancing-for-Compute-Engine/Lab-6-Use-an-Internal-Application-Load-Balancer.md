@@ -1,14 +1,5 @@
 # 🧪 Use an Internal Application Load Balancer
 
-**Experiment Lab**  
-⏱️ Duration: *45 minutes*  
-💰 Credits: *1 Credit*  
-📈 Level: *Introductory*  
-ℹ️ This lab may incorporate AI tools to support your learning.  
-**GSP041 — Google Cloud Self-Paced Labs**
-
----
-
 ## 🌐 Overview
 
 The **Internal Application Load Balancer** is essential for building robust, secure, and easily manageable internal applications that power your business operations.  
@@ -111,6 +102,9 @@ List your project:
 gcloud config list project
 ```
 
+![Lab 6 - Use an Internal Application Load Balancer.1](images/Lab-6.1.png)
+![Lab 6 - Use an Internal Application Load Balancer.2](images/Lab-6.2.png)
+
 ---
 
 ### 🌍 Set the Region and Zone
@@ -120,6 +114,8 @@ Set your region and zone for this lab:
 gcloud config set compute/region REGION
 gcloud config set compute/zone ZONE
 ```
+
+![Lab 6 - Use an Internal Application Load Balancer.3](images/Lab-6.3.png)
 
 ---
 
@@ -133,6 +129,9 @@ sudo apt-get install -y virtualenv
 python3 -m venv venv
 source venv/bin/activate
 ```
+
+![Lab 6 - Use an Internal Application Load Balancer.4](images/Lab-6.4.png)
+![Lab 6 - Use an Internal Application Load Balancer.5](images/Lab-6.5.png)
 
 ---
 
@@ -149,6 +148,10 @@ Then:
 - ✅ Ensure Gemini Code Assist: Enable is checked.
 - Confirm the correct Project ID is selected in the Cloud Code status bar.
 
+![Lab 6 - Use an Internal Application Load Balancer.6](images/Lab-6.6.png)
+![Lab 6 - Use an Internal Application Load Balancer.7](images/Lab-6.7.png)
+![Lab 6 - Use an Internal Application Load Balancer.8](images/Lab-6.8.png)
+
 ---
 
 ### ⚙️ Task 2: Create a Backend Managed Instance Group
@@ -160,6 +163,8 @@ Create the script file:
 ```bash
 touch ~/backend.sh
 ```
+
+![Lab 6 - Use an Internal Application Load Balancer.9](images/Lab-6.9.png)
 
 2. Open the Editor, select `backend.sh`, and paste:
 ```bash
@@ -181,8 +186,12 @@ EOF
 nohup python3 /usr/local/sbin/serveprimes.py >/dev/null 2>&1 &
 ```
 
+![Lab 6 - Use an Internal Application Load Balancer.10](images/Lab-6.10.png)
+
 3. Save the file.
 You can use Gemini Code Assist to explain or document the script if desired.
+
+![Lab 6 - Use an Internal Application Load Balancer.11](images/Lab-6.11.png)
 
 5. Create the Instance Template
 ```bash
@@ -197,12 +206,18 @@ gcloud compute firewall-rules create http --network default \
 --allow=tcp:80 --source-ranges IP --target-tags backend
 ```
 
+![Lab 6 - Use an Internal Application Load Balancer.12](images/Lab-6.12.png)
+
 6. Create the Managed Instance Group
 ```bash
 gcloud compute instance-groups managed create backend \
 --size 3 --template primecalc --zone ZONE
 ```
 > Check in Compute Engine → VM Instances to confirm the 3 backends.
+
+![Lab 6 - Use an Internal Application Load Balancer.13](images/Lab-6.13.png)
+
+![Lab 6 - Use an Internal Application Load Balancer.14](images/Lab-6.14.png)
 
 ---
 
@@ -211,6 +226,8 @@ An Internal Load Balancer consists of:
 - Forwarding Rule — the private IP address entry point.
 - Backend Service — distributes traffic to VMs.
 - Health Check — monitors VM health.
+
+![Lab 6 - Use an Internal Application Load Balancer.15](images/Lab-6.15.png)
 
 1. Create Health Check
 ```bash
@@ -241,6 +258,8 @@ gcloud compute forwarding-rules create prime-lb \
 ```
 > ✅ Your internal prime number calculation service is now ready!
 
+![Lab 6 - Use an Internal Application Load Balancer.16](images/Lab-6.16.png)
+
 ---
 
 ### 🧪 Task 4: Test the Load Balancer
@@ -250,10 +269,14 @@ gcloud compute instances create testinstance \
 --machine-type=e2-standard-2 --zone ZONE
 ```
 
+![Lab 6 - Use an Internal Application Load Balancer.17](images/Lab-6.17.png)
+
 2. SSH into it:
 ```bash
 gcloud compute ssh testinstance --zone ZONE
 ```
+
+![Lab 6 - Use an Internal Application Load Balancer.18](images/Lab-6.18.png)
 
 3. Run:
 ```bash
@@ -268,6 +291,8 @@ True
 False
 True
 ```
+
+![Lab 6 - Use an Internal Application Load Balancer.19](images/Lab-6.19.png)
 
 5. Exit and delete the test instance:
 ```bash
@@ -320,6 +345,8 @@ nohup python3 /usr/local/sbin/getprimes.py >/dev/null 2>&1 &
 
 3. Save and close.
 
+![Lab 6 - Use an Internal Application Load Balancer.20](images/Lab-6.20.png)
+
 4. Create Frontend Instance
 ```bash
 gcloud compute instances create frontend --zone=ZONE \
@@ -333,16 +360,24 @@ gcloud compute firewall-rules create http2 --network default \
 --allow=tcp:80 --source-ranges 0.0.0.0/0 --target-tags frontend
 ```
 
+![Lab 6 - Use an Internal Application Load Balancer.21](images/Lab-6.21.png)
+
 Go to Compute Engine → VM Instances, copy the External IP of `frontend`, and open:
 ```cpp
 http://[FRONTEND_EXTERNAL_IP]/
 ```
 > ✅ You’ll see a colorful matrix showing prime numbers in green.
 
+![Lab 6 - Use an Internal Application Load Balancer.22](images/Lab-6.22.png)
+
+![Lab 6 - Use an Internal Application Load Balancer.23](images/Lab-6.23.png)
+
 Try visiting:
 ```cpp
 http://[FRONTEND_EXTERNAL_IP]/10000
 ```
+
+![Lab 6 - Use an Internal Application Load Balancer.24](images/Lab-6.24.png)
 
 ---
 
