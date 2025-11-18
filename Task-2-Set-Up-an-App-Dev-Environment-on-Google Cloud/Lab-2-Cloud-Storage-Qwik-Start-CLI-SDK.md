@@ -67,6 +67,8 @@ Use the **Navigation menu** or **Search bar** to access services.
 Your Cloud Platform project in this session is set to "PROJECT_ID"
 ```
 
+![Lab 2.1](images/Lab-2.1.png)
+
 ---
 
 ### Optional useful commands
@@ -82,6 +84,9 @@ List active project:
 gcloud config list project
 ```
 
+![Lab 2.2](images/Lab-2.2.png)
+![Lab 2.3](images/Lab-2.3.png)
+
 ---
 
 ### Set the region:
@@ -89,6 +94,7 @@ gcloud config list project
 gcloud config set compute/region "REGION"
 ```
 
+![Lab 2.4](images/Lab-2.4.png)
 
 ---
 
@@ -107,20 +113,14 @@ gcloud config set compute/region "REGION"
 gcloud storage buckets create gs://<YOUR-BUCKET-NAME>
 ```
 
+![Lab 2.5](images/Lab-2.5.png)
+
 If the name is taken, you will see:
 ```nginx
 ServiceException: 409 Bucket <name> already exists.
 ```
 
 Choose a new name.
-
-### ✔️ Test Completed Task
-Click **Check my progress**.
-
-### ❓ Test Your Understanding
-**Each bucket has a default storage class that you can specify during creation.**  
-- True  
-- False  
 
 ---
 
@@ -143,6 +143,8 @@ Remove local copy:
 rm ada.jpg
 ```
 
+![Lab 2.6](images/Lab-2.6.png)
+
 ---
 
 # 🧪 Task 3: Download an Object from Your Bucket
@@ -150,11 +152,12 @@ rm ada.jpg
 gcloud storage cp -r gs://YOUR-BUCKET-NAME/ada.jpg .
 ```
 
-
 Expected output:
 ```nginx
 Operation completed over 1 objects/360.1 KiB.
 ```
+
+![Lab 2.7](images/Lab-2.7.png)
 
 ---
 
@@ -163,12 +166,12 @@ Operation completed over 1 objects/360.1 KiB.
 gcloud storage cp gs://YOUR-BUCKET-NAME/ada.jpg gs://YOUR-BUCKET-NAME/image-folder/
 ```
 
-
 Expected output:
 ```nginx
 Operation completed over 1 objects/360.1 KiB
 ```
 
+![Lab 2.8](images/Lab-2.8.png)
 
 ### ✔️ Test Completed Task
 Copy an object into a folder.
@@ -180,13 +183,13 @@ Copy an object into a folder.
 ```bash
 gcloud storage ls gs://YOUR-BUCKET-NAME
 ```
-
-
 Example output:
 ```nginx
 gs://YOUR-BUCKET-NAME/ada.jpg
 gs://YOUR-BUCKET-NAME/image-folder/
 ```
+
+![Lab 2.9](images/Lab-2.9.png)
 
 ---
 
@@ -195,11 +198,12 @@ gs://YOUR-BUCKET-NAME/image-folder/
 gcloud storage ls -l gs://YOUR-BUCKET-NAME/ada.jpg
 ```
 
-
 Example:
 ```nginx
 TOTAL: 1 objects, 360.1 KiB
 ```
+
+![Lab 2.10](images/Lab-2.10.png)
 
 ---
 
@@ -210,27 +214,17 @@ Give read access to everyone:
 gsutil acl ch -u AllUsers:R gs://YOUR-BUCKET-NAME/ada.jpg
 ```
 
-
 Expected:
 ```nginx
 Updated ACL on gs://YOUR-BUCKET-NAME/ada.jpg
 ```
 
-
-### ✔️ Test Completed Task
-Confirm your progress.
-
 ### Verify:
 Open **Cloud Storage → your bucket → ada.jpg → Copy URL**
 
-This is **Ada Lovelace**, widely considered the first computer programmer.
+![Lab 2.11](images/Lab-2.11.png)
 
----
-
-### ❓ Test Your Understanding
-**An ACL (access control list) defines who has access to your buckets and objects.**  
-- True  
-- False  
+![Lab 2.12](images/Lab-2.12.png)
 
 ---
 
@@ -241,14 +235,11 @@ Remove public read permission:
 gsutil acl ch -d AllUsers gs://YOUR-BUCKET-NAME/ada.jpg
 ```
 
+![Lab 2.13](images/Lab-2.13.png)
 
 Check in console → Refresh → Public icon removed.
 
-### ❓ Test Your Understanding
-To stop publicly sharing an object, remove the permission entry that has:  
-- By updating storage class  
-- By removing project owner  
-- **allUsers** ✔️
+![Lab 2.14](images/Lab-2.14.png)
 
 ---
 
@@ -259,11 +250,12 @@ Delete the image:
 gcloud storage rm gs://YOUR-BUCKET-NAME/ada.jpg
 ```
 
-
 Expected:
 ```nginx
 Removing gs://YOUR-BUCKET-NAME/ada.jpg...
 ```
+
+![Lab 2.15](images/Lab-2.15.png)
 
 ---
 
