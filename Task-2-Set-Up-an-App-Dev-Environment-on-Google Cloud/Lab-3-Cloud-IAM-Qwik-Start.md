@@ -42,6 +42,8 @@ These identities have different IAM roles and therefore different permissions.
 4. Enter password → Next  
 5. Accept Terms → Agree and Continue  
 
+![Lab 3.1](images/Lab-3.1.png)
+
 ---
 
 # 🔑 Sign in to Cloud Console as Username 2
@@ -53,6 +55,8 @@ These identities have different IAM roles and therefore different permissions.
 5. Accept Terms → Agree and Continue  
 
 You should now have **two Cloud Console tabs** open — one for each user.
+
+![Lab 3.2](images/Lab-3.2.png)
 
 ---
 
@@ -76,10 +80,15 @@ To reset:
 
 1. Go to **Navigation menu → IAM & Admin → IAM**  
 2. Click **+ GRANT ACCESS**  
+
+![Lab 3.3](images/Lab-3.3.png)
+
 3. Under **Select a role → Basic**, observe the three primitive roles:
    - 👁️ Viewer  
    - 🛠️ Editor  
    - 👑 Owner  
+
+![Lab 3.4](images/Lab-3.4.png)
 
 Primitive roles apply **project-wide** and affect all resources unless otherwise limited.
 
@@ -106,6 +115,8 @@ Switch to **Username 2** tab:
    - Username 1 → Owner  
    - Username 2 → Viewer  
 
+![Lab 3.5](images/Lab-3.5.png)
+
 The **+ GRANT ACCESS** button is grayed out. Attempting to click it shows:
 
 > “You need permissions for this action. Required: resourcemanager.projects.setIamPolicy”
@@ -123,11 +134,24 @@ Return to **Username 1** tab.
 ## Create a Bucket
 1. Go to **Navigation menu → Cloud Storage → Buckets**  
 2. Click **+ CREATE**  
+
+![Lab 3.6](images/Lab-3.6.png)
+
 3. Configure:
    - **Name:** globally unique name  
+
+![Lab 3.7](images/Lab-3.7.png)
+
    - **Location Type:** Multi-Region  
-4. Click **CREATE**  
-5. If prompted → **Confirm** public access blocking
+
+![Lab 3.8](images/Lab-3.8.png)
+
+5. Click **CREATE**  
+6. If prompted → **Confirm** public access blocking
+
+![Lab 3.9](images/Lab-3.9.png)
+
+---
 
 ## Upload a Sample File
 1. On Bucket Details page → click **UPLOAD FILES**  
@@ -136,13 +160,17 @@ Return to **Username 1** tab.
 4. Rename → `sample.txt`  
 5. Click **RENAME**  
 
-✔️ Click **Check my progress**
+![Lab 3.10](images/Lab-3.10.png)
+
+---
 
 ## Verify Viewer Access
 Switch to **Username 2**:
 
 - Go to **Cloud Storage → Buckets**  
 - Confirm Username 2 **can see** the bucket (Viewer role = read-only access)
+
+![Lab 3.11](images/Lab-3.11.png)
 
 ---
 
@@ -152,11 +180,19 @@ Switch to **Username 2**:
 
 1. Go to **IAM & Admin → IAM**  
 2. Locate Username 2 → Click the **pencil icon**  
+
+![Lab 3.12](images/Lab-3.12.png)
+
 3. Click the **trash can** next to the Viewer role  
+
+![Lab 3.13](images/Lab-3.13.png)
+
 4. Click **SAVE**  
 
 Username 2 disappears from the list.  
 (Accepts may take up to **80 seconds** to propagate.)
+
+![Lab 3.14](images/Lab-3.14.png)
 
 ### Verify Revocation
 Switch to **Username 2**:
@@ -166,7 +202,7 @@ Switch to **Username 2**:
 
 Wait 1–2 minutes if needed, then refresh.
 
-✔️ Click **Check my progress**
+![Lab 3.15](images/Lab-3.15.png)
 
 ---
 
@@ -181,6 +217,8 @@ Wait 1–2 minutes if needed, then refresh.
 5. Select role:  
    - **Cloud Storage → Storage Object Viewer**  
 6. Click **SAVE**
+
+![Lab 3.16](images/Lab-3.16.png)
 
 ---
 
@@ -206,16 +244,13 @@ Expected output:
 gs://[YOUR_BUCKET_NAME]/sample.txt
 ```
 
+![Lab 3.17](images/Lab-3.17.png)
 
 If you see `AccessDeniedException`, wait a moment and try again.
 
-✔️ Click **Check my progress**
-
 ---
 
-# 🎉 Congratulations!
-
-You successfully:
+## Task Completed
 
 - Assigned and removed IAM roles 🔐  
 - Tested Project-level and Resource-level IAM behavior 🧪  
