@@ -60,8 +60,11 @@ Buckets are the basic containers that hold your data in Cloud Storage.
 
 1. In the Cloud Console, navigate to  
    **Navigation menu → Cloud Storage → Buckets**  
-2. Click **+ Create**  
-3. Enter your bucket details:  
+2. Click **+ Create**
+
+![Lab 1.1](images/Lab-1.1.png)
+
+4. Enter your bucket details:  
    - **Name your bucket:** Use a unique name (Project ID is allowed).  
    - Bucket naming rules:  
      - Only lowercase letters, numbers, dashes (-), underscores (_), dots (.)  
@@ -69,25 +72,28 @@ Buckets are the basic containers that hold your data in Cloud Storage.
      - 3–63 characters (up to 222 with dots)  
      - Cannot look like an IP address  
      - Cannot contain “goog”, “google”, or close misspellings  
-     - Avoid underscores for DNS compatibility  
-4. Choose:  
+     - Avoid underscores for DNS compatibility
+
+![Lab 1.2](images/Lab-1.2.png)
+
+5. Choose:  
    - **Location type:** Region  
-   - **Location:** (value provided at lab start)  
-   - **Default storage class:** Standard  
+   - **Location:** (value provided at lab start)
+
+![Lab 1.3](images/Lab-1.3.png)
+ 
+   - **Default storage class:** Standard
+
+![Lab 1.4](images/Lab-1.4.png)
+     
    - **Access control:** Uniform  
-   - Uncheck **Enforce public access prevention**  
-5. Leave other fields as default → **Create**
+   - Uncheck **Enforce public access prevention**
+
+![Lab 1.5](images/Lab-1.5.png)
+
+6. Leave other fields as default → **Create**
 
 If prompted about public access, uncheck the setting and confirm.
-
-### ✅ Test Completed Task
-Click **Check my progress** to verify.
-
-### ❓ Test Your Understanding
-
-**Every bucket must have a unique name across the entire Cloud Storage namespace.**  
-- True  
-- False  
 
 ---
 
@@ -95,20 +101,20 @@ Click **Check my progress** to verify.
 
 1. Right-click the kitten image above and download it as **kitten.png**.  
 2. Go to your bucket in the Cloud Console.  
+
+![Lab 1.6](images/Lab-1.6.png)
+
 3. In **Objects**, click **Upload → Upload Files**.  
+
+![Lab 1.7](images/Lab-1.7.png)
+
 4. Select the downloaded file.  
 5. Ensure it is named **kitten.png**.  
    - If not, click the **three-dot menu → Rename** → kitten.png  
+
+![Lab 1.8](images/Lab-1.8.png)
+
 6. After upload, the object appears with details like size and type.
-
-### ✅ Test Completed Task
-Click **Check my progress** to verify.
-
-### ❓ Test Your Understanding
-
-**Object names must be unique only within a given bucket.**  
-- True  
-- False  
 
 ---
 
@@ -117,18 +123,24 @@ Click **Check my progress** to verify.
 1. Click the **Permissions** tab.  
 2. Ensure view is set to **Principals**.  
 3. Click **Grant Access**.  
+
+![Lab 1.9](images/Lab-1.9.png)
+
 4. In **New principals**: enter `allUsers`.  
 5. In **Select a role**: choose  
    **Cloud Storage → Storage Object Viewer**  
 6. Click **Save**.  
-7. In the warning popup, click **Allow public access**.
 
-### ✅ Test Completed Task
-Click **Check my progress** to verify.
+![Lab 1.10](images/Lab-1.10.png)
+
+7. In the warning popup, click **Allow public access**.
 
 ### To verify:
 1. Open the **Objects** tab.  
 2. Public access should show **Public to Internet**.  
+
+![Lab 1.11](images/Lab-1.11.png)
+
 3. Click **Copy URL** next to kitten.png.  
 4. Open the URL in a new browser tab.
 
@@ -137,6 +149,7 @@ The URL format:
 https://storage.googleapis.com/YOUR_BUCKET_NAME/kitten.png
 ```
 
+![Lab 1.12](images/Lab-1.12.png)
 
 ---
 
@@ -144,9 +157,20 @@ https://storage.googleapis.com/YOUR_BUCKET_NAME/kitten.png
 
 1. In **Objects**, click **Create folder**.  
 2. Name it **folder1** → Create.  
+
+![Lab 1.13](images/Lab-1.13.png)
+
 3. Click **folder1** → **Create folder** → name it **folder2** → Create.  
+
+![Lab 1.14](images/Lab-1.14.png)
+
 4. Go to **folder2 → Upload → Upload Files**.  
+
+![Lab 1.15](images/Lab-1.15.png)
+
 5. Upload the screenshot you downloaded.  
+
+![Lab 1.16](images/Lab-1.16.png)
 
 ---
 
@@ -155,8 +179,13 @@ https://storage.googleapis.com/YOUR_BUCKET_NAME/kitten.png
 1. Click the arrow beside **Bucket details** to return to bucket list.  
 2. Select the bucket.  
 3. Click **Delete**.  
+
+![Lab 1.17](images/Lab-1.17.png)
+
 4. Type **DELETE** to confirm.  
 5. Click **Delete** to permanently delete the folder and all contents.
+
+![Lab 1.18](images/Lab-1.18.png)
 
 ---
 
