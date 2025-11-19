@@ -1,9 +1,4 @@
 # 🌥️ Cloud Monitoring: Qwik Start  
-**Experiment • Lab • ⏱️ 50 minutes • 💳 1 Credit • 📘 Introductory**  
-GSP089  
-Google Cloud self-paced labs logo
-
----
 
 ## 📘 Overview
 Cloud Monitoring provides visibility into the performance, uptime, and overall health of cloud-powered applications. It collects metrics, events, and metadata from Google Cloud, AWS, hosted uptime probes, application instrumentation, and many common components including Cassandra, Nginx, Apache, Elasticsearch, and more.
