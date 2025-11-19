@@ -1,9 +1,4 @@
 # 🚀 Cloud Run Functions: Qwik Start – Console  
-**experiment • Lab • ⏱️ 20 minutes • 💳 1 Credit • 📘 Introductory**  
-GSP081  
-Google Cloud self-paced labs logo  
-
----
 
 ## 📘 Overview  
 A **Cloud Run function** is a piece of code that runs in response to an event, such as an HTTP request, a message from a messaging service, or a file upload. Cloud events are things that happen in your cloud environment—like changes to a database, new files in storage, or creation of a VM instance.
@@ -69,6 +64,9 @@ Use the **Navigation Menu** or **Search bar** to open services.
 
 1. In the console, open **Navigation Menu → Cloud Run**.  
 2. Click **WRITE A FUNCTION**.  
+
+![Lab 5.1](images/Lab-5.1.png)
+
 3. Enter the following values:
 
 | Field | Value |
@@ -84,6 +82,12 @@ Use the **Navigation Menu** or **Search bar** to open services.
 
 You will deploy the function in the next section.
 
+
+![Lab 5.2](images/Lab-5.2.png)
+![Lab 5.3](images/Lab-5.3.png)
+![Lab 5.4](images/Lab-5.4.png)
+![Lab 5.5](images/Lab-5.5.png)
+
 ---
 
 # 🚀 Task 2: Deploy the Function  
@@ -92,28 +96,36 @@ In the **Create function** dialog:
 
 - Under **Source code (Inline editor)**, keep the default `helloHttp` function in `index.js`.  
 - Click **SAVE AND REDEPLOY**.
+  
+![Lab 5.6](images/Lab-5.6.png)
 
 Deployment indicators:  
 - ⏳ Spinner = deploying  
 - ✅ Green check = deployed  
-
-### ✔️ Test completed task  
-Click **Check my progress** to validate the task.
 
 ---
 
 # 🧪 Task 3: Test the Function  
 
 1. On the function details dashboard, click **TEST**.  
+
+![Lab 5.7](images/Lab-5.7.png)
+
 2. In the Triggering event field, enter:
 
 ```text
 "message":"Hello World!"
 ```
 
+![Lab 5.8](images/Lab-5.8.png)
 
 3. Copy the CLI test command provided and run it in **Cloud Shell**.  
+
+![Lab 5.9](images/Lab-5.9.png)
+
 4. You will see: **"Hello World!"** as the output.
+
+![Lab 5.10](images/Lab-5.10.png)
 
 ---
 
@@ -123,6 +135,8 @@ Click **Check my progress** to validate the task.
 2. The Results panel displays log history.
 
 Your application is now deployed, tested, and monitored.
+
+![Lab 5.11](images/Lab-5.11.png)
 
 ---
 
