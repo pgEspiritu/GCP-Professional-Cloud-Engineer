@@ -50,6 +50,9 @@ To access products, use the **Navigation menu** or **Search bar**.
 Cloud Shell gives command-line access to Google Cloud with 5GB persistent storage.
 
 1. Click **Activate Cloud Shell**  
+
+![Lab 4.1](images/Lab-4.1.png)
+
 2. Continue through prompts  
 3. Authorize Cloud Shell  
 
@@ -62,6 +65,8 @@ Check project:
 ```bash
 gcloud config list project
 ```
+
+![Lab 4.2](images/Lab-4.2.png)
 
 ---
 
@@ -76,11 +81,16 @@ gcloud config set compute/region "REGION"
 export REGION=$(gcloud config get compute/region)
 ```
 
+![Lab 4.3](images/Lab-4.3.png)
+
 ---
 
 ## 🏗️ Task 1: Create a Compute Engine Instance
 
 1. Navigation menu → Compute Engine > VM Instances → Create Instance
+
+![Lab 4.4](images/Lab-4.4.png)
+
 2. Fill in:
 
 | Field   | Value       |
@@ -91,21 +101,34 @@ export REGION=$(gcloud config get compute/region)
 | Series  | E2          |
 | Machine | e2-medium   |
 
+![Lab 4.5](images/Lab-4.5.png)
+![Lab 4.6](images/Lab-4.6.png)
+![Lab 4.7](images/Lab-4.7.png)
+
   Boot Disk
   - Debian GNU/Linux 12 (bookworm)
+
+![Lab 4.8](images/Lab-4.8.png)
   
   Firewall
   - Allow HTTP traffic
 
+![Lab 4.9](images/Lab-4.9.png)
+
 Click Create.
 
 Wait for instance to launch (green check).
+
+![Lab 4.10](images/Lab-4.10.png)
 
 ---
 
 ## 🔧 Task 2: Add Apache2 HTTP Server
 
 1. Click SSH next to lamp-1-vm
+
+![Lab 4.11](images/Lab-4.11.png)
+
 2. Run:
 ```bash
 sudo apt-get update
@@ -122,7 +145,15 @@ Restart:
 sudo service apache2 restart
 ```
 
+![Lab 4.12](images/Lab-4.12.png)
+![Lab 4.13](images/Lab-4.13.png)
+
+
 3. Return to VM page → click External IP to view Apache default page.
+
+![Lab 4.14](images/Lab-4.14.png)
+![Lab 4.15](images/Lab-4.15.png)
+
 4. If External IP is hidden, enable it from Column Display Options.
 
 ---
@@ -130,6 +161,9 @@ sudo service apache2 restart
 📊 Create a Monitoring Metrics Scope
 
 1. Navigation menu → View All Products → Observability → Monitoring
+
+![Lab 4.16](images/Lab-4.16.png)
+
 2. Monitoring Overview loads → Metrics scope ready.
 
 ---
@@ -155,11 +189,18 @@ Update packages
 sudo apt-get update
 ```
 
+![Lab 4.17](images/Lab-4.17.png)
+![Lab 4.18](images/Lab-4.18.png)
+![Lab 4.19](images/Lab-4.19.png)
+
 ---
 
 ## 🟢 Task 3: Create an Uptime Check
 
 1. Navigation menu → Uptime checks → Create Uptime Check
+
+![Lab 4.20](images/Lab-4.20.png)
+
 2. Configure:
 
 | Field         | Value     |
@@ -169,9 +210,18 @@ sudo apt-get update
 | Instance      | lamp-1-vm |
 | Frequency     | 1 minute  |
 
+![Lab 4.21](images/Lab-4.21.png)
+![Lab 4.22](images/Lab-4.22.png)
+
 3. Continue → accept defaults
 4. Title: Lamp Uptime Check
+
+![Lab 4.23](images/Lab-4.23.png)
+
 5. Click Test → Look for green check
+
+![Lab 4.24](images/Lab-4.24.png)
+
 6. Click Create
 
 ---
@@ -179,20 +229,35 @@ sudo apt-get update
 ## 🚨 Task 4: Create an Alerting Policy
 
 1. Navigation menu → Alerting → +Create Policy
+
+![Lab 4.25](images/Lab-4.25.png)
+
 2. Select metric → Uncheck Active
 3. Search Network traffic
 4. Choose:
    - VM instance → Interface → Network traffic (agent.googleapis.com/interface/traffic)
+
+![Lab 4.26](images/Lab-4.26.png)
+
 5. Threshold:
   - Above threshold
   - 500
   - Retest window: 1 min
 
+![Lab 4.27](images/Lab-4.27.png)
+
 Configure Notification Channel
 
   1. Notification Channels → Manage Notification Channels
+
+![Lab 4.28](images/Lab-4.28.png)
+
   2. Scroll → ADD NEW (Email)
   3. Enter email + display name → Save
+
+![Lab 4.29](images/Lab-4.29.png)
+![Lab 4.30](images/Lab-4.30.png)
+
   4. Go back → Refresh → select your channel
 
 Finalize
@@ -201,11 +266,16 @@ Finalize
 - Alert name: Inbound Traffic Alert
 - Click Create Policy
 
+![Lab 4.31](images/Lab-4.31.png)
+
 ---
 
 ## 📈 Task 5: Create a Dashboard and Charts
 
 1. Navigation menu → Dashboards → Create Custom Dashboard
+
+![Lab 4.32](images/Lab-4.32.png)
+
 2. Name: Cloud Monitoring LAMP Qwik Start Dashboard
 
 Chart 1: CPU Load
@@ -214,13 +284,20 @@ Chart 1: CPU Load
 - Metric: CPU load (1m)
 - Uncheck Active
 
+![Lab 4.33](images/Lab-4.33.png)
+![Lab 4.34](images/Lab-4.34.png)
+
 Chart 2: Received Packets
 - Add Widget → Line
 - Title: Received Packets
 - Metric: Received packets
 - Uncheck Active
 
+![Lab 4.35](images/Lab-4.35.png)
+
 Refresh tab to view graphs.
+
+![Lab 4.36](images/Lab-4.36.png)
 
 ---
 
@@ -231,7 +308,14 @@ Refresh tab to view graphs.
 Observe VM lifecycle logs
   1. Open Compute Engine in a new window
   2. Stop the VM → watch logs
+
+![Lab 4.37](images/Lab-4.37.png)
+
   3. Start the VM → watch logs update
+
+![Lab 4.38](images/Lab-4.38.png)
+![Lab 4.39](images/Lab-4.39.png)
+![Lab 4.40](images/Lab-4.40.png)
 
 ---
 
@@ -243,6 +327,8 @@ Observe VM lifecycle logs
    - Check incidents
    - Check your email for alerts
 ⚠️ Remove email notification after lab to stop further emails.
+
+![Lab 4.41](images/Lab-4.41.png)
 
 ---
 
