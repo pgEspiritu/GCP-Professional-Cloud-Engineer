@@ -73,6 +73,9 @@ Install virtualenv:
 sudo apt-get install -y virtualenv
 ```
 
+![Lab 9.1](images/Lab-9.1.png)
+![Lab 9.2](images/Lab-9.2.png)
+
 Create environment:
 ```bash
 python3 -m venv venv
@@ -82,6 +85,8 @@ Activate it:
 ```bash
 source venv/bin/activate
 ```
+
+![Lab 9.3](images/Lab-9.3.png)
 
 ---
 
@@ -102,6 +107,9 @@ Go to snippets:
 cd python-pubsub/samples/snippets
 ```
 
+![Lab 9.4](images/Lab-9.4.png)
+![Lab 9.5](images/Lab-9.5.png)
+
 ---
 
 ## 🧪 Task 3 — Pub/Sub Basics 📬
@@ -118,10 +126,15 @@ Confirm Project ID:
 echo $GOOGLE_CLOUD_PROJECT
 ```
 
+![Lab 9.6](images/Lab-9.6.png)
+
 View publisher script:
 ```bash
 cat publisher.py
 ```
+
+![Lab 9.7](images/Lab-9.7.png)
+![Lab 9.8](images/Lab-9.8.png)
 
 Help:
 ```
@@ -142,8 +155,12 @@ List topics:
 python publisher.py $GOOGLE_CLOUD_PROJECT list
 ```
 
+![Lab 9.9](images/Lab-9.9.png)
+
 🔎 You can view topics in:
 Navigation menu → Pub/Sub → Topics
+
+![Lab 9.10](images/Lab-9.10.png)
 
 ---
 
@@ -154,10 +171,14 @@ Create subscription:
 python subscriber.py $GOOGLE_CLOUD_PROJECT create MyTopic MySub
 ```
 
+![Lab 9.11](images/Lab-9.11.png)
+
 List subscriptions:
 ```bash
 python subscriber.py $GOOGLE_CLOUD_PROJECT list-in-project
 ```
+
+![Lab 9.12](images/Lab-9.12.png)
 
 Check subscription in Google Cloud Console:
 Navigation menu → Pub/Sub → Subscriptions
@@ -166,6 +187,8 @@ Help:
 ```bash
 python subscriber.py -h
 ```
+
+![Lab 9.13](images/Lab-9.13.png)
 
 ---
 
@@ -182,6 +205,9 @@ gcloud pubsub topics publish MyTopic --message "Publisher's name is <YOUR NAME>"
 gcloud pubsub topics publish MyTopic --message "Publisher likes to eat <FOOD>"
 gcloud pubsub topics publish MyTopic --message "Publisher thinks Pub/Sub is awesome"
 ```
+
+
+![Lab 9.14](images/Lab-9.14.png)
 
 ---
 
@@ -202,6 +228,8 @@ Received message: data: 'Publisher likes to eat cheese'
 ```
 
 Press Ctrl + C to stop.
+
+![Lab 9.15](images/Lab-9.15.png)
 
 ---
 
