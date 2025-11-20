@@ -91,6 +91,8 @@ You will see something like:
 Your Cloud Platform project in this session is set to "PROJECT_ID"
 ```
 
+![Lab 6.1](images/Lab-6.1.png)
+
 Optional commands:
 
 ### List active account  
@@ -103,6 +105,8 @@ gcloud auth list
 ```bash
 gcloud config list project
 ```
+
+![Lab 6.2](images/Lab-6.2.png)
 
 ---
 
@@ -125,6 +129,8 @@ mkdir gcf_hello_world && cd $_
 nano index.js
 ```
 
+![Lab 6.3](images/Lab-6.3.png)
+
 Paste:
 
 ```js
@@ -144,12 +150,16 @@ functions.cloudEvent('helloPubSub', cloudEvent => {
 });
 ```
 
+![Lab 6.4](images/Lab-6.4.png)
+
 Save + exit nano:
 - CTRL + X
 - Y
 - ENTER
 
 ### 📝 Step 4: Create package.json
+
+![Lab 6.5](images/Lab-6.5.png)
 
 Paste:
 ```json
@@ -167,6 +177,10 @@ Paste:
 }
 ```
 
+![Lab 6.6](images/Lab-6.6.png)
+
+---
+
 ### 📦 Step 5: Install dependencies
 
 ```nginx
@@ -178,6 +192,8 @@ Expected output contains:
 added 140 packages...
 found 0 vulnerabilities
 ```
+
+![Lab 6.7](images/Lab-6.7.png)
 
 ---
 
@@ -198,6 +214,10 @@ gcloud functions deploy nodejs-pubsub-function \
 ```
 ⚠️ If asked about serviceAccountTokenCreator → choose n
 
+![Lab 6.8](images/Lab-6.8.png)
+![Lab 6.9](images/Lab-6.9.png)
+![Lab 6.10](images/Lab-6.10.png)
+
 ### 🔍 Verify deployment:
 ```sh
 gcloud functions describe nodejs-pubsub-function \
@@ -208,6 +228,9 @@ Look for:
 ```makefile
 State: ACTIVE
 ```
+
+![Lab 6.11](images/Lab-6.11.png)
+![Lab 6.12](images/Lab-6.12.png)
 
 ---
 
@@ -223,6 +246,8 @@ Example output:
 messageIds:
 - '11927162971409664'
 ```
+
+![Lab 6.13](images/Lab-6.13.png)
 
 ---
 
@@ -240,6 +265,8 @@ NAME: nodejs-pubsub-function
 EXECUTION_ID: h4v6akxf4sxt
 LOG: Hello, Cloud Function Gen2!
 ```
+
+![Lab 6.14](images/Lab-6.14.png)
 
 ---
 
