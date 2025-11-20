@@ -113,6 +113,9 @@ name: projects/.../topics/Test1
 ---
 name: projects/.../topics/Test2
 
+![Lab 8.1](images/Lab-8.1.png)
+![Lab 8.2](images/Lab-8.2.png)
+
 ---
 
 🧹 Delete Test Topics
@@ -129,6 +132,9 @@ gcloud pubsub topics list
 Expected:
 ---
 name: projects/.../topics/myTopic
+
+![Lab 8.3](images/Lab-8.3.png)
+![Lab 8.4](images/Lab-8.4.png)
 
 ---
 
@@ -157,6 +163,8 @@ projects/.../subscriptions/Test1
 projects/.../subscriptions/mySubscription
 ```
 
+![Lab 8.5](images/Lab-8.5.png)
+
 🧹 Delete Subscriptions Test1 & Test2
 ```bash
 gcloud pubsub subscriptions delete Test1
@@ -172,6 +180,8 @@ Expected:
 ```bash
 projects/.../subscriptions/mySubscription
 ```
+
+![Lab 8.6](images/Lab-8.6.png)
 
 ---
 
@@ -197,11 +207,15 @@ gcloud pubsub subscriptions pull mySubscription --auto-ack
 - Pull without flags returns only one message
 - Once pulled, a message cannot be pulled again
 
+![Lab 8.7](images/Lab-8.7.png)
+
 Run the pull command multiple times to retrieve remaining messages.
 A final empty pull shows:
 ```nginx
 Listed 0 items.
 ```
+
+![Lab 8.8](images/Lab-8.8.png)
 
 ---
 
@@ -222,6 +236,9 @@ gcloud pubsub subscriptions pull mySubscription --limit=3
 Expected: A table showing three messages.
 
 You now understand how to use flags such as `--limit` and 1--auto-ack.
+
+![Lab 8.9](images/Lab-8.9.png)
+![Lab 8.10](images/Lab-8.10.png)
 
 ---
 
