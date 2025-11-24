@@ -1,14 +1,5 @@
 # Terraform Fundamentals ☁️🛠️
 
-**Lab Type:** Hands-on Lab  
-**Duration:** 35 minutes ⏱️  
-**Credit:** 1 💰  
-**Level:** Introductory  
-
-> This lab may incorporate AI tools to support your learning.  
-
----
-
 ## Introduction 📝
 
 In this lab, you use **Terraform** and **Gemini Code Assist**—an AI-powered collaborator in Google Cloud—to provision a virtual machine (VM) instance.
