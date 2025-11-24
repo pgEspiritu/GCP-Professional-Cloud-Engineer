@@ -85,6 +85,9 @@ Main commands:
   ...
 ```
 
+![Lab 1.1](images/Lab-1.1.png)
+![Lab 1.2](images/Lab-1.2.png)
+
 ---
 
 ### Task 2: Build the Infrastructure 🏗️
@@ -97,11 +100,16 @@ gcloud services enable cloudaicompanion.googleapis.com
 2. Go to Settings → Gemini Code Assist → Enable
 3. Authorize the plugin and select your Project ID
 
+![Lab 1.3](images/Lab-1.3.png)
+![Lab 1.4](images/Lab-1.4.png)
+![Lab 1.5](images/Lab-1.5.png)
 
 Create a Terraform Configuration File
 ```bash
 touch instance.tf
 ```
+
+![Lab 1.6](images/Lab-1.6.png)
 
 Open instance.tf in the editor and use Gemini Code Assist to generate the VM configuration:
 ```yaml
@@ -113,6 +121,9 @@ Open instance.tf in the editor and use Gemini Code Assist to generate the VM con
 * Boot Disk: Debian 12
 * Network: Default network
 ```
+
+![Lab 1.7](images/Lab-1.7.png)
+![Lab 1.8](images/Lab-1.8.png)
 
 Accept the generated code. Example:
 ```hcl
@@ -132,15 +143,22 @@ resource "google_compute_instance" "default" {
 }
 ```
 
+![Lab 1.11](images/Lab-1.11.png)
+
 Initialize Terraform
 ```bash
 terraform init
 ```
 
+![Lab 1.12](images/Lab-1.12.png)
+
 Create an Execution Plan
 ```bash
 terraform plan
 ```
+
+![Lab 1.13](images/Lab-1.13.png)
+![Lab 1.14](images/Lab-1.14.png)
 
 Apply the Configuration
 ```bash
@@ -148,6 +166,8 @@ terraform apply
 ```
 Type yes to confirm. Terraform will provision your VM.
 
+![Lab 1.15](images/Lab-1.15.png)
+![Lab 1.16](images/Lab-1.16.png)
 
 Inspect State 📝
 Terraform stores metadata in `terraform.tfstate`.
@@ -164,6 +184,9 @@ resource "google_compute_instance" "default" {
   ...
 }
 ```
+
+![Lab 1.17](images/Lab-1.17.png)
+![Lab 1.18](images/Lab-1.18.png)
 
 Cleanup 🧹
 To remove all created resources:
