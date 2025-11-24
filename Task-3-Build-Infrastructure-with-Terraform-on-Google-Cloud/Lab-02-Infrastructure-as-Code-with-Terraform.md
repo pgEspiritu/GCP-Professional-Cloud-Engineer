@@ -613,3 +613,37 @@ Terraform found nothing to do
 ```
 
 - No ip_address.txt file will be created because provisioners only run when the resource is first created.
+
+### 🔧 Force Re-Provisioning
+
+Use terraform taint to mark the instance for recreation:
+```bash
+terraform taint google_compute_instance.vm_instance
+```
+- A tainted resource will be destroyed and recreated on the next apply.
+
+Apply again:
+```bash
+terraform apply
+```
+- The ip_address.txt file will now be created with the VM’s IP address.
+
+### ⚠️ Failed Provisioners and Tainted Resources
+
+- If a resource fails a provisioning step, Terraform marks it as tainted.
+- Tainted resources still exist but are considered unsafe.
+- On the next plan, Terraform removes tainted resources and recreates them, re-running the provisioners.
+
+### 🧹 Destroy Provisioners
+
+- Provisioners can also run during destroy operations for cleanup or data extraction.
+- Built-in cleanup mechanisms (like init scripts) are recommended when possible.
+- For details on destroy provisioners, refer to the Terraform provisioners documentation
+
+---
+
+## 🎉 Task Completed
+
+- 🏗️ **Build, change, and destroy infrastructure** using Terraform.  
+- 🔗 **Create resource dependencies** and manage implicit and explicit relationships.  
+- ⚙️ **Provision infrastructure** using Terraform configuration files and provisioners.  
