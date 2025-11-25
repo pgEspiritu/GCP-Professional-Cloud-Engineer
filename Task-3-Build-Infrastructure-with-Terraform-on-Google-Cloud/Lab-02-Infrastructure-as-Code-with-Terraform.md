@@ -145,6 +145,8 @@ touch main.tf
 Click the Open Editor button on the toolbar of Cloud Shell.
 > Tip: You can switch between Cloud Shell and the editor using the Open Editor and Open Terminal icons, or open the editor in a separate tab with Open in new window.
 
+![Lab 2.1](images/Lab-2.1.png)
+
 ### 2️⃣ Add Terraform Configuration
 
 In the editor, add the following content to main.tf:
@@ -170,6 +172,8 @@ resource "google_compute_network" "vpc_network" {
 ```
 
 > Note: For Terraform 0.12, remove the terraform {} block.
+
+![Lab 2.2](images/Lab-2.2.png)
 
 ### 🔹 Terraform Block
 
@@ -197,6 +201,8 @@ terraform init
 ```
 This initializes local settings and downloads the required provider.
 
+![Lab 2.3](images/Lab-2.3.png)
+
 ### 🚀 Create Resources
 
 Apply your configuration by running:
@@ -211,6 +217,9 @@ If the plan looks correct, approve it by typing:
 yes
 ```
 
+![Lab 2.4](images/Lab-2.4.png)
+![Lab 2.5](images/Lab-2.5.png)
+
 Terraform will then create the resource. Example output:
 ```yaml
 google_compute_network.vpc_network: Creating...
@@ -223,11 +232,16 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 ### 🔍 Verify Resources
 - In the Google Cloud Console, navigate to VPC network. You should see terraform-network provisioned.
+
+![Lab 2.6](images/Lab-2.6.png)
+
 - In Cloud Shell, inspect the current state:
 ```bash
 terraform show
 ```
 > These values can be used later to configure other resources or outputs.
+
+![Lab 2.7](images/Lab-2.7.png)
 
 ---
 
@@ -242,12 +256,6 @@ In this task, you'll **modify your configuration** and see how Terraform handles
 ---
 
 ### ➕ Add Resources
-
-You can add new resources by updating your Terraform configuration and running:
-
-```bash
-terraform apply
-```
 
 In the editor, add a compute instance resource to `main.tf`:
 ```hcl
@@ -275,6 +283,8 @@ Notes:
 - Your compute instance uses Debian and connects to the VPC network created earlier.
 - The `access_config` block (even empty) ensures the instance is internet-accessible.
 
+![Lab 2.8](images/Lab-2.8.png)
+
 ### ⚡ Apply the Changes
 
 Run:
@@ -290,6 +300,8 @@ yes
 - Terraform will create the google_compute_instance resource in Google Cloud.
 - The `~` prefix in Terraform output means the resource is updated in-place.
 
+![Lab 2.9](images/Lab-2.9.png)
+![Lab 2.10](images/Lab-2.10.png)
 
 ### 🧑‍💻 Enable Gemini Code Assist in Cloud Shell IDE
 
@@ -300,11 +312,17 @@ Gemini Code Assist provides AI-powered guidance directly in your Cloud Shell edi
 gcloud services enable cloudaicompanion.googleapis.com
 ```
 
+![Lab 2.11](images/Lab-2.11.png)
+
 2. Click Open Editor in Cloud Shell.
 3. Go to Settings → Gemini Code Assist → Enable.
+
+![Lab 2.12](images/Lab-2.12.png)
+
 4. Click Cloud Code - No Project in the status bar and authorize the plugin.
 5. Make sure your Google Cloud Project (Project ID) displays in the Cloud Code status bar.
 
+  ![Lab 2.13](images/Lab-2.13.png)
 
 ### ✨ Modify Resources Using Gemini Code Assist
 
@@ -327,6 +345,8 @@ resource "google_compute_instance" "vm_instance" {
 }
 ```
 
+![Lab 2.14](images/Lab-2.14.png)
+
 ### ⚡ Apply the Updated Configuration
 
 Run:
@@ -335,6 +355,9 @@ terraform apply
 ```
 - Approve the plan with `yes`.
 - Terraform updates the instance in-place and adds the tags.
+
+![Lab 2.15](images/Lab-2.15.png)
+![Lab 2.16](images/Lab-2.16.png)
 
 ## Make Destructive Changes & Destroy Infrastructure
 
@@ -368,6 +391,9 @@ boot_disk {
 }
 ```
 
+![Lab 2.17](images/Lab-2.17.png)
+
+
 ### ⚡ Apply the Destructive Change
 
 Run:
@@ -378,6 +404,11 @@ terraform apply
 - The `-/+` prefix indicates Terraform will destroy and recreate the resource instead of updating it in-place.
 - The `~` prefix shows attributes that can be updated in-place.
 - Terraform handles the replacement automatically and clearly shows what will be destroyed and recreated.
+
+![Lab 2.18](images/Lab-2.18.png)
+![Lab 2.19](images/Lab-2.19.png)
+![Lab 2.20](images/Lab-2.20.png)
+![Lab 2.21](images/Lab-2.21.png)
 
 > After approval, Terraform will first destroy the existing instance, then create a new one with the updated disk image.
 You can inspect the new state with
@@ -403,6 +434,11 @@ yes
 - Terraform automatically handles dependency graphs and parallel operations where safe.
 > Destroying infrastructure is rare in production but useful for development, testing, or staging environments.
 
+![Lab 2.22](images/Lab-2.22.png)
+![Lab 2.23](images/Lab-2.23.png)
+![Lab 2.24](images/Lab-2.24.png)
+![Lab 2.25](images/Lab-2.25.png)
+
 ---
 
 ## 🔗 Task 3: Create Resource Dependencies
@@ -423,6 +459,9 @@ terraform apply
 ```
 - Respond with yes to confirm the plan.
 
+![Lab 2.26](images/Lab-2.26.png)
+![Lab 2.27](images/Lab-2.27.png)
+
 ### ➕ Assign a Static IP Address
 
 Add the following resource to main.tf to allocate a reserved static IP:
@@ -431,6 +470,9 @@ resource "google_compute_address" "vm_static_ip" {
   name = "terraform-static-ip"
 }
 ```
+
+![Lab 2.28](images/Lab-2.28.png)
+
 - This is similar to adding a VM instance, but creates a google_compute_address resource.
 - The resource allocates a reserved IP address in your project.
 
@@ -454,6 +496,9 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 ```
 > Note: The plan command only shows potential changes; it does not apply them.
 
+![Lab 2.29](images/Lab-2.29.png)
+![Lab 2.30](images/Lab-2.30.png)
+
 ### 🖧 Update VM Network Interface
 
 Update the `network_interface` block in your VM instance to attach the static IP:
@@ -469,6 +514,8 @@ network_interface {
 - Terraform now knows that vm_static_ip must be created before vm_instance.
 - Properties of the static IP are saved in the Terraform state.
 
+![Lab 2.31](images/Lab-2.31.png)
+
 ### 💾 Save and Apply the Plan
 
 1. Save the plan to ensure reproducibility:
@@ -476,14 +523,17 @@ network_interface {
 terraform plan -out static_ip
 ```
 
+![Lab 2.32](images/Lab-2.32.png)
+![Lab 2.33](images/Lab-2.33.png)
+
 2. Apply the saved plan:
 ```bash
 terraform apply "static_ip"
 ```
-
 - Terraform first creates the static IP, then updates the VM instance.
 - This interpolation expression allows Terraform to infer dependencies automatically.
 
+![Lab 2.34](images/Lab-2.34.png)
 
 ---
 
@@ -541,8 +591,10 @@ resource "google_compute_instance" "another_instance" {
   }
 }
 ```
-
 > ⚠️ Note: Storage bucket names must be globally unique. Replace <UNIQUE-BUCKET-NAME> with a unique name (e.g., your name + date).
+
+![Lab 2.35](images/Lab-2.35.png)
+
 
 ### 🗂️ Organizing Resources
 - The order of resource definitions in a .tf file does not affect how Terraform applies changes.
@@ -554,6 +606,9 @@ resource "google_compute_instance" "another_instance" {
 ```bash
 terraform plan
 ```
+
+![Lab 2.36](images/Lab-2.36.png)
+![Lab 2.37](images/Lab-2.37.png)
 
 2. Apply the changes:
 ```bash
@@ -600,6 +655,8 @@ resource "google_compute_instance" "vm_instance" {
 - Multiple provisioners can be added for multiple provisioning steps.
 - Uses string interpolation to access the first network interface and access_config ([0]).
 
+![Lab 2.38](images/Lab-2.38.png)
+
 ### ⚡ Apply the Provisioner
 
 Run:
@@ -611,8 +668,9 @@ terraform apply
 ```pgsql
 Terraform found nothing to do
 ```
-
 - No ip_address.txt file will be created because provisioners only run when the resource is first created.
+
+![Lab 2.39](images/Lab-2.39.png)
 
 ### 🔧 Force Re-Provisioning
 
@@ -622,11 +680,16 @@ terraform taint google_compute_instance.vm_instance
 ```
 - A tainted resource will be destroyed and recreated on the next apply.
 
+![Lab 2.40](images/Lab-2.40.png)
+
 Apply again:
 ```bash
 terraform apply
 ```
 - The ip_address.txt file will now be created with the VM’s IP address.
+
+![Lab 2.41](images/Lab-2.41.png)
+![Lab 2.42](images/Lab-2.42.png)
 
 ### ⚠️ Failed Provisioners and Tainted Resources
 
