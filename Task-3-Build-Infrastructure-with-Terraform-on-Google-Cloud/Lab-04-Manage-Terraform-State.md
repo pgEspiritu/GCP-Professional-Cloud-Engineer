@@ -1,11 +1,4 @@
-# 📘 Manage Terraform State (GSP752)
-
-experiment • Lab  
-⏱️ 1 hour • 💰 5 Credits • 📊 Intermediate  
-ℹ️ This lab may incorporate AI tools.  
-Developed with Hashicorp. Your information may be shared with the lab sponsor if you opted in.
-
----
+# 📘 Manage Terraform State 
 
 ## 🧭 Overview
 
@@ -518,6 +511,8 @@ Terraform normally manages infrastructure **end-to-end**:
 2. **Review** the Terraform plan to ensure it matches expectations.  
 3. **Apply** the configuration — Terraform creates infrastructure *and* the Terraform state.
 
+![Lab-4-image-1](images/Lab-4-image-1.png)
+
 After creation, you can:
 
 - Update the configuration  
@@ -547,6 +542,8 @@ However, importing is a **multi-step process** because the import command **does
 4. Review the Terraform plan to ensure the config matches the state.  
 5. Apply the configuration to update the Terraform state.
 
+![Lab-4-image-2](images/Lab-4-image-2.png)
+
 ---
 
 ⚠️ **Warning:**  
@@ -560,10 +557,328 @@ before using `terraform import` in real projects.
 
 ---
 
-# 🐳 Create a Docker Container
+## 🐳 Create a Docker Container
 
 Run this command to create a container named **hashicorp-learn** using the latest NGINX image:
 
 ```bash
 docker run --name hashicorp-learn --detach --publish 8080:80 nginx:latest
 ```
+
+Verify the container is running:
+```bash
+docker ps
+```
+
+Click **Web Preview** → Preview on port **8080** to view the NGINX default page.
+
+Now you have a running Docker image and container to import.
+
+## 📥 Import the Container into Terraform
+
+Clone the example repository:
+```bash
+git clone https://github.com/hashicorp/learn-terraform-import.git
+```
+
+Enter the directory:
+```bash
+cd learn-terraform-import
+```
+This folder contains:
+   - main.tf → Docker provider config
+   - docker.tf → Configuration for managing your container
+Initialize Terraform:
+```bash
+terraform init
+```
+
+If you get
+Error: Failed to query available provider packages
+
+run: `terraform init -upgrade`
+
+## 🔧 Update the Docker Provider
+
+Open main.tf and comment out/delete the `host` argument:
+```hcl
+provider "docker" {
+  # host = "npipe:////.//pipe//docker_engine"
+}
+```
+(This is a workaround for an initialization issue.)
+
+## 📝 Add an Empty Resource to docker.tf
+
+In docker.tf, add:
+```h
+resource "docker_container" "web" {}
+```
+
+## 🔍 Get the Container ID
+
+List running containers:
+```bash
+docker ps
+```
+
+Get the full container ID:
+```bash
+docker inspect -f {{.ID}} hashicorp-learn
+```
+
+## 📦 Import the Docker Container Into Terraform
+
+Run:
+```bash
+terraform import docker_container.web $(docker inspect -f {{.ID}} hashicorp-learn)
+```
+
+Terraform import requires:
+- Terraform resource address:
+`docker_container.web`
+- Real container ID:
+`the SHA256 ID from Docker`
+
+## 🔎 Verify the Import
+```bash
+terraform show
+```
+
+You should now see the container’s attributes stored in Terraform state.
+
+➡️ Note: Terraform import does not generate configuration.
+You must write the corresponding resource configuration manually.
+
+---
+
+## 🛠️ Create the Terraform Configuration
+
+Before you can manage the Docker container with Terraform, you need to create the Terraform configuration.
+
+---
+
+### 🔹 Step 1: Run Terraform Plan
+
+```bash
+terraform plan
+```
+> ⚠️ Note: Terraform will show errors for missing required arguments (image and name). It cannot generate a plan for a resource missing required attributes.
+
+### 🔹 Step 2: Update Configuration to Match Imported State
+
+There are two approaches:
+1. Accept the current state as-is
+   - Fast, but may create a verbose configuration including unnecessary attributes.
+2. Select required attributes only
+   - More manageable configuration, but requires knowing which attributes are needed.
+For this lab, we will use the current state.
+
+### 🔹 Step 3: Copy Terraform State to `docker.tf`
+```bash
+terraform show -no-color > docker.tf
+```
+> ⚠️ Note: This replaces the entire contents of `docker.tf.` For existing resources, you may need to edit and merge manually.
+Inspect `docker.tf` — it now contains all attributes from the state.
+
+### 🔹 Step 4: Run Terraform Plan Again
+```bash
+terraform plan
+```
+Terraform may display:
+   - Warnings about deprecated arguments (e.g., links)
+   - Read-only arguments (ip_address, network_data, gateway, ip_prefix_length, id)
+These read-only arguments are stored in state but cannot be set via configuration. Optional arguments with default values are also included.
+
+### 🔹 Step 5: Remove Optional Attributes
+Keep only required attributes: `image`, `name`, and `ports`.
+Your configuration should look like this:
+```hcl
+resource "docker_container" "web" {
+    image = "sha256:87a94228f133e2da99cb16d653cd1373c5b4e8689956386c1c12b60a20421a02"
+    name  = "hashicorp-learn"
+    ports {
+        external = 8080
+        internal = 80
+        ip       = "0.0.0.0"
+        protocol = "tcp"
+    }
+}
+```
+> 📚 Consult the Docker provider documentation for each argument and how to handle plan warnings/errors.
+
+### 🔹 Step 6: Verify the Plan
+```bash
+terraform plan
+```
+
+The plan should now execute successfully. Terraform will indicate updates to attributes such as:
+- attach
+- logs
+- must_run
+- start
+These attributes are default values assigned by the Docker provider and will not affect the running container.
+
+### 🔹 Step 7: Apply the Configuration
+```bash
+terraform apply
+```
+Enter `yes` at the prompt to confirm.
+
+Now, your configuration, Terraform state, and Docker container are fully in sync. You can manage the container using Terraform as usual.
+
+---
+
+## Create a Docker Image Resource
+
+Some resources can be managed by Terraform **without using `terraform import`**, such as Docker images, which are identified by a unique ID or tag.
+
+### 🔹 Step 1: Retrieve the Image Tag
+
+The `docker_container.web` resource uses the SHA256 image ID. To get the human-readable tag:
+
+```bash
+docker image inspect <IMAGE-ID> -f {{.RepoTags}}
+```
+Replace `<IMAGE-ID>` with the ID from `docker.tf`.
+
+### 🔹 Step 2: Add the Image Resource
+
+Add this to your `docker.tf` file:
+```hcl
+resource "docker_image" "nginx" {
+  name = "nginx:latest"
+}
+```
+> ⚠️ Note: Do not replace the image in `docker_container.web` yet. Terraform will destroy and recreate the container if the image ID does not match the state.
+
+### 🔹 Step 3: Create the Image in Terraform State
+```bash
+terraform apply
+```
+Enter `yes` to confirm.
+Terraform now has a resource for the image in its state.
+
+### 🔹 Step 4: Reference the Image in the Container
+
+Use Gemini Code Assist to update the container resource:
+
+Prompt:
+```pgsql
+Update the image argument in the docker_container resource named web within the docker.tf file. Set its value to docker_image.nginx.image_id.
+```
+
+After accepting the changes, `docker.tf` should look like:
+```hcl
+resource "docker_container" "web" {
+    image = docker_image.nginx.image_id
+    name  = "hashicorp-learn"
+    ports {
+        external = 8080
+        internal = 80
+        ip       = "0.0.0.0"
+        protocol = "tcp"
+    }
+}
+```
+
+### 🔹 Step 5: Apply Changes
+```bash
+terraform apply
+```
+Enter `yes`.
+Since `docker_image.nginx` matches the original image ID, no changes occur.
+> ⚠️ If the image ID has changed since the container was created, Terraform will destroy and recreate it.
+
+### ⚙️ Manage the Container
+
+Change the container’s external port from 8080 → 8081:
+```hcl
+resource "docker_container" "web" {
+  name  = "hashicorp-learn"
+  image = docker_image.nginx.image_id
+
+  ports {
+    external = 8081
+    internal = 80
+    ip       = "0.0.0.0"
+    protocol = "tcp"
+  }
+}
+```
+
+Apply the change:
+```bash
+terraform apply
+```
+Enter `yes.`
+Terraform destroys and recreates the container with the new port.
+
+Verify the new container:
+```bash
+docker ps
+```
+Notice the container ID has changed.
+
+### 🗑️ Destroy the Infrastructure
+
+Destroy both the container and the image:
+```bash
+terraform destroy
+```
+Enter yes.
+
+Verify removal:
+```bash
+docker ps --filter "name=hashicorp-learn"
+```
+
+> ⚠️ Note: Terraform manages the full lifecycle. Because the image was part of the configuration, it is also removed. If another container used the same image, destroy would fail.
+
+---
+
+# ⚠️ Limitations and Considerations for Terraform Import
+
+When importing resources into Terraform, keep the following in mind:
+
+---
+
+## 🔹 Terraform Import Limitations
+
+- Terraform only knows the **current state** as reported by the provider. It does **not** know:
+  - Whether the infrastructure is working correctly  
+  - The original intent behind the infrastructure  
+  - Any manual changes made outside Terraform (e.g., Docker container filesystem changes)
+
+- Importing involves **manual steps**, which can be error-prone if the importer lacks context.
+
+- Importing directly manipulates the Terraform **state file**.  
+  - ⚠️ Always **backup** `terraform.tfstate` before importing.
+
+- Terraform import does **not automatically detect relationships** between resources.
+
+- Default attributes that do not need to be set are **not automatically detected**.
+
+- **Not all providers and resources** support Terraform import.
+
+- Importing does **not guarantee the resource can be safely destroyed or recreated**.  
+  - Imported resources may depend on other unmanaged infrastructure or configurations.
+
+---
+
+## 🔹 Best Practices
+
+- Follow **Infrastructure as Code (IaC)** principles, like immutable infrastructure, to avoid issues.
+- Resources created manually are unlikely to follow IaC best practices.
+- Consider using tools such as **Terraformer** to automate manual steps, though these are **not officially supported by HashiCorp**.
+
+---
+
+# 🎉 Task Completed
+- Manage **Terraform backends and state** using Gemini Code Assist  
+- Create **local** and **Cloud Storage backends** for your state file  
+- **Refresh Terraform state** and import existing configuration  
+- Edit configuration to **fully manage a Docker container** with Terraform
+
+
+
