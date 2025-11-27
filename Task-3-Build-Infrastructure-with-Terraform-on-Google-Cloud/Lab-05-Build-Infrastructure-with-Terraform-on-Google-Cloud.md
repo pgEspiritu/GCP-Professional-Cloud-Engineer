@@ -86,6 +86,14 @@ modules/
 ├── outputs.tf
 └── variables.tf
 
+```bash
+mkdir -p modules/instances
+mkdir -p modules/storage
+
+touch main.tf variables.tf
+touch modules/instances/instances.tf modules/instances/outputs.tf modules/instances/variables.tf
+touch modules/storage/storage.tf modules/storage/outputs.tf modules/storage/variables.tf
+```
 
 ### 📝 Step 2: Define Variables in All `variables.tf` Files
 In the **root** `variables.tf` and in each module’s `variables.tf` (`instances` and `storage`), add the following variables:
