@@ -301,9 +301,8 @@ Use the terraform import command to import each resource into your module.
 
 Example format:
 ```bash
-terraform import 'module.instances.google_compute_instance.tf-instance-1' <instance-id-1>
-
-terraform import 'module.instances.google_compute_instance.tf-instance-2' <instance-id-2>
+terraform import 'module.instances.google_compute_instance.tf-instance-1' 3570170105927396556
+terraform import 'module.instances.google_compute_instance.tf-instance-2' 5913330428118658252
 ```
 Replace <instance-id-X> with each VM’s Instance ID from the console.
 
