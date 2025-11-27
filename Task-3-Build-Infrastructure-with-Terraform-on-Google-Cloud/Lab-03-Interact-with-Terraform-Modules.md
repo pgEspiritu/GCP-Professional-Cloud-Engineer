@@ -195,6 +195,8 @@ git checkout tags/v6.0.1 -b v6.0.1
 
 This ensures that you're using the correct version number.
 
+![Lab 3.1](images/Lab-3.1.png)
+
 ---
 
 On the Cloud Shell toolbar, click Open Editor.
@@ -203,6 +205,8 @@ In the Editor, navigate to:
 ```bash
 terraform-google-network/examples/simple_project
 ```
+
+![Lab 3.2](images/Lab-3.2.png)
 
 and open the main.tf file. Your main.tf configuration should look like this:
 ```hcl
@@ -244,6 +248,7 @@ This configuration includes one important block:
 
 `module "test-vpc-module"` defines a Virtual Private Cloud (VPC), which provides networking services for the rest of your infrastructure. ☁️
 
+![Lab 3.3](images/Lab-3.3.png)
 
 ### **🔧 Set values for module input variables**
 
@@ -272,13 +277,22 @@ gcloud services enable cloudaicompanion.googleapis.com
 Click Open Editor on the Cloud Shell toolbar.
 > 📝 Note: You can switch between Cloud Shell and the Editor by clicking Open Editor or Open Terminal.
 
+![Lab 3.4](images/Lab-3.4.png)
+
 In the left pane, click the **`Settings`** icon and search for Gemini Code Assist.
 Ensure the checkbox for **`Gemini Code Assist: Enable is selected`**.
+
+![Lab 3.5](images/Lab-3.5.png)
+
 Click **`Cloud Code – No Project`** in the status bar.
+
+![Lab 3.6](images/Lab-3.6.png)
 
 Authorize the plugin.
 If no project is selected, click **Select a Google Cloud Project** and choose your **Project ID.**
 Verify that your project displays in the Cloud Code status bar.
+
+![Lab 3.7](images/Lab-3.7.png)
 
 ---
 
@@ -287,6 +301,8 @@ Verify that your project displays in the Cloud Code status bar.
 Using input variables with modules works the same as in any Terraform configuration.
 To help you be more productive, Gemini Code Assist will help you edit your Terraform code.
 Navigate to `variables.tf` and click the Gemini Code Assist: Smart Actions icon.
+
+![Lab 3.8](images/Lab-3.8.png)
 
 Paste this prompt:
 ```pgsql
@@ -301,6 +317,8 @@ variable "project_id" {
   default     = "PROJECT_ID"
 }
 ```
+
+![Lab 3.9](images/Lab-3.9.png)
 
 Now define the `network_name` variable.
 
@@ -319,6 +337,8 @@ variable "network_name" {
 }
 ```
 
+![Lab 3.10](images/Lab-3.10.png)
+
 ---
 
 Navigate back to `main.tf`.
@@ -331,6 +351,9 @@ Paste this prompt:
 ```bash
 Update the "test-vpc-module" module within the main.tf configuration file. Modify the network name from "my-custom-mode-network" to var.network_name and change the subnet region from us-west1 to REGION.
 ```
+
+![Lab 3.11](images/Lab-3.11.png)
+![Lab 3.12](images/Lab-3.12.png)
 
 Your updated module should look like this:
 ```hcl
@@ -456,6 +479,8 @@ output "route_names" {
 }
 ```
 
+![Lab 3.13](images/Lab-3.13.png)
+
 ### **🚀 Provision Infrastructure**
 
 Navigate to your example project directory:
@@ -467,6 +492,9 @@ Initialize Terraform:
 ```bash
 terraform init
 ```
+
+![Lab 3.14](images/Lab-3.14.png)
+![Lab 3.15](images/Lab-3.15.png)
 
 Apply your configuration:
 ```bash
@@ -504,6 +532,10 @@ subnets_names = [
 ...
 ```
 
+![Lab 3.16](images/Lab-3.16.png)
+![Lab 3.17](images/Lab-3.17.png)
+![Lab 3.18](images/Lab-3.18.png)
+
 ### **🧠 Understanding How Modules Work**
 
 When using a module for the first time, you must run:
@@ -524,6 +556,9 @@ terraform destroy
 ```
 Respond yes to confirm.
 
+![Lab 3.19](images/Lab-3.19.png)
+![Lab 3.20](images/Lab-3.20.png)
+
 Remove the module folder:
 ```bash
 cd ~
@@ -531,6 +566,8 @@ rm -rd terraform-google-network -f
 ```
 
 ✨ After this, click Check my progress in your lab environment.
+
+![Lab 3.21](images/Lab-3.21.png)
 
 ---
 
@@ -661,6 +698,9 @@ limitations under the License.
 EOF
 ```
 
+![Lab 3.22](images/Lab-3.22.png)
+![Lab 3.23](images/Lab-3.23.png)
+
 Your module directory now looks like:
 ```cpp
 main.tf
@@ -724,7 +764,11 @@ resource "google_storage_bucket" "bucket" {
 }
 ```
 
-📥 Define Module Inputs (variables.tf)
+![Lab 3.24](images/Lab-3.24.png)
+
+---
+
+### 📥 Define Module Inputs (variables.tf)
 
 Add all module variables:
 ```hcl
@@ -809,7 +853,9 @@ variable "lifecycle_rules" {
 }
 ```
 
-📤 Define Module Output (outputs.tf)
+![Lab 3.25](images/Lab-3.25.png)
+
+### 📤 Define Module Output (outputs.tf)
 ```hcl
 output "bucket" {
   description = "The created storage bucket"
@@ -817,7 +863,9 @@ output "bucket" {
 }
 ```
 
-📦 Reference the Module in Root main.tf
+![Lab 3.26](images/Lab-3.26.png)
+
+### 📦 Reference the Module in Root main.tf
 
 Return to your `root directory` and edit `main.tf`:
 ```h
@@ -840,11 +888,15 @@ module "gcs-static-website-bucket" {
 }
 ```
 
+![Lab 3.27](images/Lab-3.27.png)
+
 📤 Create Root Module Output
 ```bash
 cd ~
 touch outputs.tf
 ```
+
+![Lab 3.28](images/Lab-3.28.png)
 
 Add:
 ```hcl
@@ -854,10 +906,14 @@ output "bucket-name" {
 }
 ```
 
+![Lab 3.29](images/Lab-3.29.png)
+
 🧮 Create Root Module Variables
 ```bash
 touch variables.tf
 ```
+
+![Lab 3.30](images/Lab-3.30.png)
 
 Add:
 ```hcl
@@ -874,6 +930,8 @@ variable "name" {
 }
 ```
 > ⚠️ Reminder: Storage bucket names must be globally unique. Use a combination of your name + date to avoid conflicts.
+
+![Lab 3.31](images/Lab-3.31.png)
 
 ---
 
@@ -906,6 +964,8 @@ https://storage.cloud.google.com/YOUR-BUCKET-NAME/index.html
 You should see:
 > "Nothing to see here."
 
+![Lab 3.35](images/Lab-3.35.png)
+
 🧹 Clean Up the Website and Infrastructure
 
 Destroy all Terraform-managed resources:
@@ -913,6 +973,8 @@ Destroy all Terraform-managed resources:
 terraform destroy
 ```
 Type yes when prompted.
+
+![Lab 3.36](images/Lab-3.36.png)
 
 ### 🎉 Task Completed
 - 🧱 Explored Terraform module fundamentals
