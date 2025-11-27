@@ -177,9 +177,20 @@ In the **Google Cloud Console**, navigate to:
 
 You will see two pre-created VM instances:
 
-- `tf-instance-1`
-- `tf-instance-2`
+## 🖥️ **tf-instance-1**
+- **Name:** tf-instance-1  
+- **Instance ID:** 3570170105927396556  
+- **Boot Disk Source Image:** debian-11-bullseye-v20251111  
+- **Machine Type:** e2-micro (2 vCPUs, 1 GB Memory)  
 
+---
+
+## 🖥️ **tf-instance-2**
+- **Name:** tf-instance-2  
+- **Instance ID:** 5913330428118658252  
+- **Boot Disk Source Image:** debian-11-bullseye-v20251111  
+- **Machine Type:** e2-micro (2 vCPUs, 1 GB Memory)
+  
 > 💡 **Tip:** Click each instance to view details such as:
 > - Instance ID  
 > - Boot disk image  
