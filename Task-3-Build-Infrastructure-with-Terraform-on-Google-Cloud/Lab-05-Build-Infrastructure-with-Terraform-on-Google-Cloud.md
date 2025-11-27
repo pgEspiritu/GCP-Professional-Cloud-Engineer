@@ -331,11 +331,21 @@ resource "google_storage_bucket" "backend_bucket" {
   uniform_bucket_level_access = true
 }
 ```
-
 💡 Note:
 You may optionally add output values to outputs.tf if desired.
 
-### 🔗 Step 2: Add the Storage Module to main.tf
+### 📝 Step 2: Add `bucket_name` Variable to Storage Module
+
+Create or update **modules/storage/variables.tf** with:
+
+```hcl
+variable "bucket_name" {
+  description = "Name of the GCS bucket used for remote backend"
+  type        = string
+}
+```
+
+### 🔗 Step 3: Add the Storage Module to main.tf
 
 Add a module block referencing the storage module:
 ```h
@@ -356,7 +366,7 @@ terraform init
 terraform apply
 ```
 
-### 🏗️ Step 3: Configure the Remote Backend
+### 🏗️ Step 4: Configure the Remote Backend
 
 In your main.tf, add the Terraform backend block and configure it to use the storage bucket you just created.
 Be sure to use the required prefix terraform/state:
@@ -379,7 +389,7 @@ terraform {
 ```
 > Replace <your-bucket-name> with the bucket name created by your module.
 
-### 🔄 Step 4: Re-Initialize Terraform to Migrate State
+### 🔄 Step 5: Re-Initialize Terraform to Migrate State
 
 Run:
 ```bash
