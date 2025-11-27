@@ -214,36 +214,86 @@ module "instances" {
 
 initialize
 ```bash
-Terraform init
+terraform init
 ```
 
 ---
 
-### 🏗️ Step 3: Write Resource Configurations in instances.tf
+### 🏗️ Step 3: Write Resource Configurations in `instances.tf`
 
-Inside modules/instances/instances.tf, define minimal resource configurations matching the existing instances.
+Inside `modules/instances/instances.tf`, define **minimal** resource configurations for the two existing instances.
 
-Name both resources exactly:
-- tf-instance-1
-- tf-instance-2
+These configurations match the real VM details you provided:
 
-For lab purposes, only include these additional required arguments:
-- machine_type
-- boot_disk
-- network_interface
-- metadata_startup_script
-- allow_stopping_for_update
+- **tf-instance-1**
+  - Instance ID: `3570170105927396556`
+  - Boot Image: `debian-11-bullseye-v20251111`
+  - Machine type: `e2-micro`
 
-Use the following required configuration for the last two:
-```h
-metadata_startup_script = <<-EOT
+- **tf-instance-2**
+  - Instance ID: `5913330428118658252`
+  - Boot Image: `debian-11-bullseye-v20251111`
+  - Machine type: `e2-micro`
+
+⚠️ **Important:**  
+We keep the configuration **minimal** so Terraform can import the VMs **without recreating them**.
+
+---
+
+#### ✅ `modules/instances/instances.tf`
+
+```hcl
+resource "google_compute_instance" "tf-instance-1" {
+  name         = "tf-instance-1"
+  project      = var.project_id
+  zone         = var.zone
+  machine_type = "e2-micro"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-11-bullseye-v20251111"
+    }
+  }
+
+  network_interface {
+    # Using default network for now; will be updated in later tasks
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
         #!/bin/bash
     EOT
 
-allow_stopping_for_update = true
+  allow_stopping_for_update = true
+}
+
+resource "google_compute_instance" "tf-instance-2" {
+  name         = "tf-instance-2"
+  project      = var.project_id
+  zone         = var.zone
+  machine_type = "e2-micro"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-11-bullseye-v20251111"
+    }
+  }
+
+  network_interface {
+    # Using default network for now; will be updated in later tasks
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
 ```
-⚠️ Note:
-Keep the configuration minimal so Terraform can import without forcing recreation.
+
+---
+
 
 ### 🔄 Step 4: Import the Existing Instances
 
