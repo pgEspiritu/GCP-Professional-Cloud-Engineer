@@ -143,6 +143,16 @@ provider "google" {
   zone    = var.zone
 }
 ```
+
+->
+
+```bash
+provider "google" {
+  project = "qwiklabs-gcp-01-e6d7ad7fa67e"
+  region  = "us-east1"
+  zone    = "us-east1-c"
+```
+
 Verify that project, region, and zone are correctly referenced using variables.
 
 ### 🚀 Step 4: Initialize Terraform
