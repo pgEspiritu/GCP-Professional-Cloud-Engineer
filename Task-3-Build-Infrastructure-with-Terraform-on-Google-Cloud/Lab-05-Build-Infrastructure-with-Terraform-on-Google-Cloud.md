@@ -325,7 +325,7 @@ Inside the **storage module** (`modules/storage/storage.tf`), create a Cloud Sto
 
 ```hcl
 resource "google_storage_bucket" "backend_bucket" {
-  name                        = var.bucket_name
+  name                        = "tf-bucket-166193"
   location                    = "US"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -340,10 +340,12 @@ You may optionally add output values to outputs.tf if desired.
 Add a module block referencing the storage module:
 ```h
 module "storage" {
-  source      = "./modules/storage"
-  project_id  = var.project_id
-  region      = var.region
-  bucket_name = var.bucket_name
+  source     = "./modules/storage"
+  project_id = var.project_id
+  region     = var.region
+
+  # Bucket name required by the lab
+  bucket_name = "tf-bucket-166193"
 }
 ```
 
@@ -361,8 +363,17 @@ Be sure to use the required prefix terraform/state:
 ```hcl
 terraform {
   backend "gcs" {
-    bucket = "<your-bucket-name>"
+    bucket = "tf-bucket-166193"
     prefix = "terraform/state"
+  }
+
+  required_version = ">= 1.0.0"
+
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 5.0"
+    }
   }
 }
 ```
