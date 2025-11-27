@@ -205,10 +205,10 @@ In your **main.tf**, add a module block referencing the `instances` module, then
 
 ```hcl
 module "instances" {
-  source      = "./modules/instances"
-  project_id  = var.project_id
-  region      = var.region
-  zone        = var.zone
+  source     = "./modules/instances"
+  project_id = "qwiklabs-gcp-01-e6d7ad7fa67e"
+  region     = "us-east1"
+  zone       = "us-east1-c"
 }
 ```
 
