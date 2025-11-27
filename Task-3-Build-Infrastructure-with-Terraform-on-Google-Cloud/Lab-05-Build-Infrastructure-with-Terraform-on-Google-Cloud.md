@@ -212,6 +212,13 @@ module "instances" {
 }
 ```
 
+initialize
+```bash
+Terraform init
+```
+
+---
+
 ### 🏗️ Step 3: Write Resource Configurations in instances.tf
 
 Inside modules/instances/instances.tf, define minimal resource configurations matching the existing instances.
