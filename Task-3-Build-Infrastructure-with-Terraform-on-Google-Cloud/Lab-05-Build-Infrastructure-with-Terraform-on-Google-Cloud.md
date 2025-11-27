@@ -101,17 +101,17 @@ In the **root** `variables.tf` and in each module’s `variables.tf` (`instances
 ```hcl
 variable "region" {
   description = "Deployment region"
-  default     = "<your-region>"
+  default     = "us-east1"
 }
 
 variable "zone" {
   description = "Deployment zone"
-  default     = "<your-zone>"
+  default     = "us-east1-c"
 }
 
 variable "project_id" {
   description = "Google Cloud Project ID"
-  default     = "<your-project-id>"
+  default     = "qwiklabs-gcp-01-e6d7ad7fa67e"
 }
 ```
 > ⚠️ Note: Replace values with the ones provided at lab start (region, zone, and Project ID).
