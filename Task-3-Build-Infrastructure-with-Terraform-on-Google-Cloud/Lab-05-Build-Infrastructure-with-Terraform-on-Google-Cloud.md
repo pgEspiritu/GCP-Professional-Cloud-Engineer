@@ -426,6 +426,8 @@ resource "google_compute_instance" "tf-instance-2" {
 }
 ```
 
+or you may use Google Code Assist: Input this prompt - Update the instance machine types from e2-micro to e2-standard
+
 ⚠️ Note: Ensure the machine_type for both tf-instance-1 and tf-instance-2 is updated to e2-standard-2.
 
 ### ➕ Step 2: Add a Third Instance
