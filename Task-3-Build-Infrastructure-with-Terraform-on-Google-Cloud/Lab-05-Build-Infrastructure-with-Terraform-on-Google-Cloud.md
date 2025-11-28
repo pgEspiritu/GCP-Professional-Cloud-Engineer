@@ -434,21 +434,26 @@ or you may use Google Code Assist: Input this prompt - Update the instance machi
 
 Add a new instance resource in the same module:
 ```hcl
-resource "google_compute_instance" "tf-instance-3" {
-  name                       = "tf-instance-3"
-  machine_type               = "e2-standard-2"
-  # ... include minimal required arguments:
+resource "google_compute_instance" "tf-instance-160936" {
+  name         = "tf-instance-160936"
+  project      = var.project_id
+  zone         = var.zone
+  machine_type = "e2-standard-2"
+
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-11-bullseye-v20251111"
     }
   }
+
   network_interface {
-    network = "default"
+    network = "default" # Will be updated in later tasks
   }
+
   metadata_startup_script = <<-EOT
         #!/bin/bash
     EOT
+
   allow_stopping_for_update = true
 }
 ```
