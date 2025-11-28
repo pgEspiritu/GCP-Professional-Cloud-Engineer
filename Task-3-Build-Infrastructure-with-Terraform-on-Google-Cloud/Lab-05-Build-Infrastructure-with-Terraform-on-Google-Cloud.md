@@ -111,7 +111,7 @@ variable "zone" {
 
 variable "project_id" {
   description = "Google Cloud Project ID"
-  default     = "qwiklabs-gcp-01-e6d7ad7fa67e"
+  default     = "qwiklabs-gcp-00-6ede52d07630"
 }
 ```
 > ⚠️ Note: Replace values with the ones provided at lab start (region, zone, and Project ID).
@@ -148,9 +148,10 @@ provider "google" {
 
 ```bash
 provider "google" {
-  project = "qwiklabs-gcp-01-e6d7ad7fa67e"
+  project = "qwiklabs-gcp-00-6ede52d07630"
   region  = "us-east1"
   zone    = "us-east1-c"
+}
 ```
 
 Verify that project, region, and zone are correctly referenced using variables.
@@ -179,15 +180,15 @@ You will see two pre-created VM instances:
 
 ## 🖥️ **tf-instance-1**
 - **Name:** tf-instance-1  
-- **Instance ID:** 3570170105927396556  
-- **Boot Disk Source Image:** debian-11-bullseye-v20251111  
+- **Instance ID:** 7991131294052733579
+- **Boot Disk Source Image:** debian-11-bullseye-v20251111
 - **Machine Type:** e2-micro (2 vCPUs, 1 GB Memory)  
 
 ---
 
 ## 🖥️ **tf-instance-2**
 - **Name:** tf-instance-2  
-- **Instance ID:** 5913330428118658252  
+- **Instance ID:** 3414731769151574666
 - **Boot Disk Source Image:** debian-11-bullseye-v20251111  
 - **Machine Type:** e2-micro (2 vCPUs, 1 GB Memory)
   
@@ -206,7 +207,7 @@ In your **main.tf**, add a module block referencing the `instances` module, then
 ```hcl
 module "instances" {
   source     = "./modules/instances"
-  project_id = "qwiklabs-gcp-01-e6d7ad7fa67e"
+  project_id = "qwiklabs-gcp-00-6ede52d07630"
   region     = "us-east1"
   zone       = "us-east1-c"
 }
@@ -226,12 +227,12 @@ Inside `modules/instances/instances.tf`, define **minimal** resource configurati
 These configurations match the real VM details you provided:
 
 - **tf-instance-1**
-  - Instance ID: `3570170105927396556`
+  - Instance ID: `7991131294052733579`
   - Boot Image: `debian-11-bullseye-v20251111`
   - Machine type: `e2-micro`
 
 - **tf-instance-2**
-  - Instance ID: `5913330428118658252`
+  - Instance ID: `3414731769151574666`
   - Boot Image: `debian-11-bullseye-v20251111`
   - Machine type: `e2-micro`
 
@@ -301,8 +302,8 @@ Use the terraform import command to import each resource into your module.
 
 Example format:
 ```bash
-terraform import 'module.instances.google_compute_instance.tf-instance-1' 3570170105927396556
-terraform import 'module.instances.google_compute_instance.tf-instance-2' 5913330428118658252
+terraform import 'module.instances.google_compute_instance.tf-instance-1' 7991131294052733579
+terraform import 'module.instances.google_compute_instance.tf-instance-2' 3414731769151574666
 ```
 Replace <instance-id-X> with each VM’s Instance ID from the console.
 
@@ -325,7 +326,7 @@ Inside the **storage module** (`modules/storage/storage.tf`), create a Cloud Sto
 
 ```hcl
 resource "google_storage_bucket" "backend_bucket" {
-  name                        = "tf-bucket-166193"
+  name                        = "tf-bucket-566908"
   location                    = "US"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -355,7 +356,7 @@ module "storage" {
   region     = var.region
 
   # Bucket name required by the lab
-  bucket_name = "tf-bucket-166193"
+  bucket_name = "tf-bucket-566908"
 }
 ```
 
@@ -373,7 +374,7 @@ Be sure to use the required prefix terraform/state:
 ```hcl
 terraform {
   backend "gcs" {
-    bucket = "tf-bucket-166193"
+    bucket = "tf-bucket-566908"
     prefix = "terraform/state"
   }
 
@@ -426,7 +427,7 @@ resource "google_compute_instance" "tf-instance-2" {
 }
 ```
 
-or you may use Google Code Assist: Input this prompt - Update the instance machine types from e2-micro to e2-standard
+or you may use Google Code Assist: Input this prompt - Update the instance machine types for both instances from e2-micro to e2-standard-2
 
 ⚠️ Note: Ensure the machine_type for both tf-instance-1 and tf-instance-2 is updated to e2-standard-2.
 
@@ -434,8 +435,8 @@ or you may use Google Code Assist: Input this prompt - Update the instance machi
 
 Add a new instance resource in the same module:
 ```hcl
-resource "google_compute_instance" "tf-instance-160936" {
-  name         = "tf-instance-160936"
+resource "google_compute_instance" "tf-instance-511043" {
+  name         = "tf-instance-511043"
   project      = var.project_id
   zone         = var.zone
   machine_type = "e2-standard-2"
@@ -476,20 +477,26 @@ Navigate to the **instances module** (`modules/instances/instances.tf`) and **de
 
 ```hcl
 # Remove this entire block
-resource "google_compute_instance" "tf-instance-3" {
-  name                       = "tf-instance-3"
-  machine_type               = "e2-standard-2"
+resource "google_compute_instance" "tf-instance-511043" {
+  name         = "tf-instance-511043"
+  project      = var.project_id
+  zone         = var.zone
+  machine_type = "e2-standard-2"
+
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-11-bullseye-v20251111"
     }
   }
+
   network_interface {
-    network = "default"
+    network = "default" # Will be updated in later tasks
   }
+
   metadata_startup_script = <<-EOT
         #!/bin/bash
     EOT
+
   allow_stopping_for_update = true
 }
 ```
@@ -520,19 +527,19 @@ module "vpc" {
   version = "10.0.0"
 
   project_id   = var.project_id
-  network_name = "tf-vpc-967252"
+  network_name = "tf-vpc-963827"
   routing_mode = "GLOBAL"
 
   subnets = [
     {
       subnet_name   = "subnet-01"
       subnet_ip     = "10.10.10.0/24"
-      subnet_region = var.region
+      subnet_region = "us-east1"
     },
     {
       subnet_name   = "subnet-02"
       subnet_ip     = "10.10.20.0/24"
-      subnet_region = var.region
+      subnet_region = "us-east1"
     }
   ]
 }
@@ -550,73 +557,132 @@ terraform apply
 ```
 Terraform will create the VPC and the two subnets.
 
-### 🏗️ Step 3: Connect Instances to Subnets
 
-Navigate to modules/instances/instances.tf and update the network_interface blocks for each instance:
+### 🔄 Step 3: Update modules/instances/variables.tf
+
+```bash
+variable "network_name" {
+  description = "The VPC network name"
+  type        = string
+}
+
+variable "subnet_1_name" {
+  description = "Subnet-01 name"
+  type        = string
+}
+
+variable "subnet_2_name" {
+  description = "Subnet-02 name"
+  type        = string
+}
+```
+
+### 🔄 Step 4: Update main.tf to pass the VPC info to the instances module
+
+```bash
+module "instances" {
+  source     = "./modules/instances"
+  project_id = var.project_id
+  region     = var.region
+  zone       = var.zone
+
+  network_name = module.vpc.network_name
+  subnet_1_name = values(module.vpc.subnets)[0].name
+  subnet_2_name = values(module.vpc.subnets)[1].name
+}
+```
+> Note: Depending on the network module version, the output for subnets may be .name or .subnet_name. Use terraform output module.vpc.subnets to confirm.
+
+### 🏗️ Step 5: Update Instances to Use the New Subnets
+
+In modules/instances/instances.tf, update the network configuration for each VM:
 
 ```
 resource "google_compute_instance" "tf-instance-1" {
   name         = "tf-instance-1"
+  project      = var.project_id
+  zone         = var.zone
   machine_type = "e2-standard-2"
 
-  network_interface {
-    network    = module.vpc.vpc_self_link
-    subnetwork = module.vpc.subnets[0].self_link  # subnet-01
+  boot_disk {
+    initialize_params {
+      image = "debian-11-bullseye-v20251111"
+    }
   }
 
-  # ... other arguments
+  network_interface {
+    network    = var.network_name
+    subnetwork = var.subnet_1_name
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
 }
 
 resource "google_compute_instance" "tf-instance-2" {
   name         = "tf-instance-2"
+  project      = var.project_id
+  zone         = var.zone
   machine_type = "e2-standard-2"
 
-  network_interface {
-    network    = module.vpc.vpc_self_link
-    subnetwork = module.vpc.subnets[1].self_link  # subnet-02
+  boot_disk {
+    initialize_params {
+      image = "debian-11-bullseye-v20251111"
+    }
   }
 
-  # ... other arguments
+  network_interface {
+    network    = var.network_name
+    subnetwork = var.subnet_2_name
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
 }
 ```
 
 💡 Tip:
 Ensure that network points to the VPC created by the module and subnetwork matches the corresponding subnet for each instance.
 
-✅ Step 4: Apply the Changes
+### ✅ Step 4: Apply the Changes
 
 After updating the instances, run:
 
+```bash
+terraform init
 terraform apply
-
-
-This will connect tf-instance-1 to subnet-01 and tf-instance-2 to subnet-02.
+```
+This will attach each instance to the correct subnet in the new VPC.
 
 ---
 
 ## 🧩 Task 7: Configure a Firewall
 
-### 🔥 Step 1: Create a Firewall Rule
-In your **main.tf**, create a firewall rule resource named `tf-firewall`:
+### 🔥 Step 1: Add Firewall Rule in main.tf
+Add a google_compute_firewall resource block to your main.tf to allow ingress traffic on TCP port 80:
 
 ```hcl
 resource "google_compute_firewall" "tf-firewall" {
   name    = "tf-firewall"
-  network = module.vpc.vpc_self_link   # Reference your VPC module
+  network = module.vpc.network_name
 
   allow {
     protocol = "tcp"
     ports    = ["80"]
   }
 
-  source_ranges = ["0.0.0.0/0"]        # Allow ingress from all IPs
-  direction     = "INGRESS"
+  source_ranges = ["0.0.0.0/0"]
 }
 ```
-
-💡 Tip:
-You can verify the network argument by inspecting the Terraform state or using the VPC self_link:
-projects/<PROJECT_ID>/global/networks/<VPC Name>
+> ⚠️ Note:
+> The network argument can be the name of the VPC (module.vpc.network_name) or the full self_link (module.vpc.network_self_link) depending on your module output.
+> This firewall allows HTTP traffic from any IP to your VMs in the VPC.
 
 ### 🔄 Step 2: Initialize and Apply Terraform
 
@@ -627,3 +693,13 @@ terraform apply
 ```
 Terraform will provision the firewall rule to allow HTTP (TCP port 80) traffic to your VPC.
 
+---
+
+## 🎉 Task Completed
+
+- Importing two pre-existing VMs into Terraform.
+- Creating a Cloud Storage bucket to configure a remote backend.
+- Adding a new VM instance and practicing updates within your modules.
+- Leveraging a Terraform Registry module to create a VPC with two subnets.
+- Connecting your instances to the new VPC subnets.
+- Creating a firewall rule to allow communication between the instances.
