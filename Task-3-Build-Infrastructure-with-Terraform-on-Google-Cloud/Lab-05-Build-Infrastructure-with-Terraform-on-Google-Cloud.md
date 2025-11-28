@@ -506,9 +506,12 @@ Terraform will detect that tf-instance-3 has been removed and destroy the third 
 
 ---
 
-## 🧩 Task 6: Use a Module from the Registry
+### 🌐 Task 6: Use a Module from the Terraform Registry
 
-### 🌐 Step 1: Add the Network Module from the Terraform Registry
+---
+
+### 🏗️ Step 1: Add the Network Module from the Terraform Registry
+
 In the **Terraform Registry**, locate the **Network Module** and add it to your `main.tf` with the following configuration:
 
 ```hcl
@@ -516,9 +519,9 @@ module "vpc" {
   source  = "terraform-google-modules/network/google"
   version = "10.0.0"
 
-  project_id     = var.project_id
-  name           = "vpc-name"        # Replace with your desired VPC name
-  routing_mode   = "GLOBAL"
+  project_id   = var.project_id
+  name         = "tf-vpc-967252"   # VPC name for this lab
+  routing_mode = "GLOBAL"
 
   subnets = [
     {
@@ -533,6 +536,7 @@ module "vpc" {
     }
   ]
 }
+```
 
 ⚠️ Note:
 Do not include secondary ranges or additional routes, as they are not required for this lab.
@@ -548,28 +552,33 @@ Terraform will create the VPC and the two subnets.
 
 ### 🏗️ Step 3: Connect Instances to Subnets
 
-Navigate to the instances module (modules/instances/instances.tf) and update each instance resource:
+Navigate to modules/instances/instances.tf and update the network_interface blocks for each instance:
 
+```
 resource "google_compute_instance" "tf-instance-1" {
-  name                       = "tf-instance-1"
-  machine_type               = "e2-standard-2"
+  name         = "tf-instance-1"
+  machine_type = "e2-standard-2"
+
   network_interface {
     network    = module.vpc.vpc_self_link
     subnetwork = module.vpc.subnets[0].self_link  # subnet-01
   }
+
   # ... other arguments
 }
 
 resource "google_compute_instance" "tf-instance-2" {
-  name                       = "tf-instance-2"
-  machine_type               = "e2-standard-2"
+  name         = "tf-instance-2"
+  machine_type = "e2-standard-2"
+
   network_interface {
     network    = module.vpc.vpc_self_link
     subnetwork = module.vpc.subnets[1].self_link  # subnet-02
   }
+
   # ... other arguments
 }
-
+```
 
 💡 Tip:
 Ensure that network points to the VPC created by the module and subnetwork matches the corresponding subnet for each instance.
