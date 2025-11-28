@@ -520,7 +520,7 @@ module "vpc" {
   version = "10.0.0"
 
   project_id   = var.project_id
-  name         = "tf-vpc-967252"   # VPC name for this lab
+  network_name = "tf-vpc-967252"   # Correct argument for module v10.0.0
   routing_mode = "GLOBAL"
 
   subnets = [
