@@ -95,6 +95,14 @@ touch modules/instances/instances.tf modules/instances/outputs.tf modules/instan
 touch modules/storage/storage.tf modules/storage/outputs.tf modules/storage/variables.tf
 ```
 
+![Lab 5.1](images/Lab-5.1.png)
+
+Verify:
+
+![Lab 5.2](images/Lab-5.2.png)
+![Lab 5.3](images/Lab-5.3.png)
+![Lab 5.4](images/Lab-5.4.png)
+
 ### 📝 Step 2: Define Variables in All `variables.tf` Files
 In the **root** `variables.tf` and in each module’s `variables.tf` (`instances` and `storage`), add the following variables:
 
@@ -116,6 +124,19 @@ variable "project_id" {
 ```
 > ⚠️ Note: Replace values with the ones provided at lab start (region, zone, and Project ID).
 Use these variables everywhere appropriate in module and root resource configurations.
+
+
+In the root variable.tf
+
+![Lab 5.5](images/Lab-5.5.png)
+
+In the instance variable.tf
+
+![Lab 5.6](images/Lab-5.6.png)
+
+In the storage variable.tf
+
+![Lab 5.7](images/Lab-5.7.png)
 
 
 ### 🏗️ Step 3: Add Terraform Block and Google Provider in `main.tf`
@@ -154,6 +175,8 @@ provider "google" {
 }
 ```
 
+![Lab 5.8](images/Lab-5.8.png)
+
 Verify that project, region, and zone are correctly referenced using variables.
 
 ### 🚀 Step 4: Initialize Terraform
@@ -166,6 +189,8 @@ This will:
 - Download the Google provider
 - Prepare Terraform’s working directory
 - Validate that your folder structure is set up correctly
+
+![Lab 5.9](images/Lab-5.9.png)
 
 ---
 
@@ -199,6 +224,8 @@ You will see two pre-created VM instances:
 >  
 > These values are required when writing the Terraform resource configuration for import.
 
+![Lab 5.10](images/Lab-5.10.png)
+
 ---
 
 ### 📦 Step 2: Add the Instances Module to `main.tf`
@@ -213,10 +240,14 @@ module "instances" {
 }
 ```
 
+![Lab 5.11](images/Lab-5.11.png)
+
 initialize
 ```bash
 terraform init
 ```
+
+![Lab 5.12](images/Lab-5.12.png)
 
 ---
 
@@ -293,6 +324,9 @@ resource "google_compute_instance" "tf-instance-2" {
 }
 ```
 
+![Lab 5.13](images/Lab-5.13.png)
+![Lab 5.14](images/Lab-5.14.png)
+
 ---
 
 
@@ -307,6 +341,9 @@ terraform import 'module.instances.google_compute_instance.tf-instance-2' 341473
 ```
 Replace <instance-id-X> with each VM’s Instance ID from the console.
 
+![Lab 5.15](images/Lab-5.15.png)
+![Lab 5.16](images/Lab-5.16.png)
+
 ### 🚀 Step 5: Apply the Changes
 
 Run:
@@ -316,6 +353,9 @@ terraform apply
 
 Since the instance configurations were not fully defined, Terraform will update the instances in place.
 This behavior is acceptable for the lab, but in production you should fully define all instance arguments before importing.
+
+![Lab 5.17](images/Lab-5.17.png)
+![Lab 5.18](images/Lab-5.18.png)
 
 ---
 
@@ -335,6 +375,9 @@ resource "google_storage_bucket" "backend_bucket" {
 💡 Note:
 You may optionally add output values to outputs.tf if desired.
 
+![Lab 5.19](images/Lab-5.19.png)
+
+
 ### 📝 Step 2: Add `bucket_name` Variable to Storage Module
 
 Create or update **modules/storage/variables.tf** with:
@@ -345,6 +388,8 @@ variable "bucket_name" {
   type        = string
 }
 ```
+
+![Lab 5.20](images/Lab-5.20.png)
 
 ### 🔗 Step 3: Add the Storage Module to main.tf
 
@@ -360,12 +405,18 @@ module "storage" {
 }
 ```
 
+![Lab 5.21](images/Lab-5.21.png)
+
 Initialize and apply changes to create the bucket:
 
 ```bash
 terraform init
 terraform apply
 ```
+
+![Lab 5.22](images/Lab-5.22.png)
+![Lab 5.23](images/Lab-5.23.png)
+![Lab 5.24](images/Lab-5.24.png)
 
 ### 🏗️ Step 4: Configure the Remote Backend
 
@@ -390,6 +441,8 @@ terraform {
 ```
 > Replace <your-bucket-name> with the bucket name created by your module.
 
+![Lab 5.25](images/Lab-5.25.png)
+
 ### 🔄 Step 5: Re-Initialize Terraform to Migrate State
 
 Run:
@@ -407,6 +460,8 @@ yes
 ```
 
 Terraform will then migrate your local state to the remote Cloud Storage backend.
+
+![Lab 5.26](images/Lab-5.26.png)
 
 ---
 
@@ -430,6 +485,9 @@ resource "google_compute_instance" "tf-instance-2" {
 or you may use Google Code Assist: Input this prompt - Update the instance machine types for both instances from e2-micro to e2-standard-2
 
 ⚠️ Note: Ensure the machine_type for both tf-instance-1 and tf-instance-2 is updated to e2-standard-2.
+
+![Lab 5.27](images/Lab-5.27.png)
+![Lab 5.28](images/Lab-5.28.png)
 
 ### ➕ Step 2: Add a Third Instance
 
@@ -459,6 +517,8 @@ resource "google_compute_instance" "tf-instance-511043" {
 }
 ```
 
+![Lab 5.29](images/Lab-5.29.png)
+
 ### 🔄 Step 3: Apply the Changes
 
 Initialize Terraform and apply the updated configuration:
@@ -467,6 +527,10 @@ terraform init
 terraform apply
 ```
 ⚠️ Note: Optionally, you can add output values for these resources in outputs.tf within the module.
+
+![Lab 5.30](images/Lab-5.30.png)
+![Lab 5.31](images/Lab-5.31.png)
+![Lab 5.32](images/Lab-5.32.png)
 
 ---
 
@@ -511,11 +575,13 @@ terraform apply
 
 Terraform will detect that tf-instance-3 has been removed and destroy the third instance from your Google Cloud project.
 
+![Lab 5.33](images/Lab-5.33.png)
+![Lab 5.34](images/Lab-5.34.png)
+![Lab 5.35](images/Lab-5.35.png)
+
 ---
 
-### 🌐 Task 6: Use a Module from the Terraform Registry
-
----
+## 🌐 Task 6: Use a Module from the Terraform Registry
 
 ### 🏗️ Step 1: Add the Network Module from the Terraform Registry
 
@@ -548,6 +614,8 @@ module "vpc" {
 ⚠️ Note:
 Do not include secondary ranges or additional routes, as they are not required for this lab.
 
+![Lab 5.36](images/Lab-5.36.png)
+
 ### 🔄 Step 2: Initialize and Apply Terraform
 
 Run the following commands to initialize the new module and create the networks:
@@ -557,6 +625,9 @@ terraform apply
 ```
 Terraform will create the VPC and the two subnets.
 
+![Lab 5.37](images/Lab-5.37.png)
+![Lab 5.38](images/Lab-5.38.png)
+![Lab 5.39](images/Lab-5.39.png)
 
 ### 🔄 Step 3: Update modules/instances/variables.tf
 
@@ -577,6 +648,8 @@ variable "subnet_2_name" {
 }
 ```
 
+![Lab 5.40](images/Lab-5.40.png)
+
 ### 🔄 Step 4: Update main.tf to pass the VPC info to the instances module
 
 ```bash
@@ -592,6 +665,8 @@ module "instances" {
 }
 ```
 > Note: Depending on the network module version, the output for subnets may be .name or .subnet_name. Use terraform output module.vpc.subnets to confirm.
+
+![Lab 5.41](images/Lab-5.41.png)
 
 ### 🏗️ Step 5: Update Instances to Use the New Subnets
 
@@ -650,6 +725,9 @@ resource "google_compute_instance" "tf-instance-2" {
 💡 Tip:
 Ensure that network points to the VPC created by the module and subnetwork matches the corresponding subnet for each instance.
 
+![Lab 5.42](images/Lab-5.42.png)
+![Lab 5.43](images/Lab-5.43.png)
+
 ### ✅ Step 4: Apply the Changes
 
 After updating the instances, run:
@@ -659,6 +737,11 @@ terraform init
 terraform apply
 ```
 This will attach each instance to the correct subnet in the new VPC.
+
+![Lab 5.44](images/Lab-5.44.png)
+
+![Lab 5.45](images/Lab-5.45.png)
+![Lab 5.46](images/Lab-5.46.png)
 
 ---
 
@@ -684,6 +767,8 @@ resource "google_compute_firewall" "tf-firewall" {
 > The network argument can be the name of the VPC (module.vpc.network_name) or the full self_link (module.vpc.network_self_link) depending on your module output.
 > This firewall allows HTTP traffic from any IP to your VMs in the VPC.
 
+![Lab 5.47](images/Lab-5.47.png)
+
 ### 🔄 Step 2: Initialize and Apply Terraform
 
 Run the following commands to create the firewall rule:
@@ -692,6 +777,11 @@ terraform init
 terraform apply
 ```
 Terraform will provision the firewall rule to allow HTTP (TCP port 80) traffic to your VPC.
+
+![Lab 5.48](images/Lab-5.48.png)
+
+![Lab 5.49](images/Lab-5.49.png)
+![Lab 5.50](images/Lab-5.50.png)
 
 ---
 
