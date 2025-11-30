@@ -1,0 +1,22 @@
+# Load Balancer Logs
+
+- Google Cloud load balancers (Application, Network, Proxy — internal & external) support Cloud Logging and Cloud Monitoring.
+- Logs capture all requests sent to your load balancer and are useful for **debugging**, **traffic analysis**, and **exporting** to Cloud Storage, BigQuery, or Pub/Sub.
+- **Network Load Balancers** support **per-connection logging** to show how each connection is routed to backends.
+- **External Application Load Balancers with backend buckets** have logging automatically enabled (cannot be disabled).
+- Logging can be **enabled per backend service**; older backends may require manual activation.
+
+## Key Log Fields
+- **LogEntry**: contains general metadata (severity, timestamp, project ID).
+- **HttpRequest**: includes method, URL, IP, latency, user agent (protocol field not populated).
+- **resource**: identifies the monitored resource.
+- **jsonPayload.statusDetails**: explains **why** the load balancer returned a specific HTTP status.
+
+## Important Behaviors
+- **Load balancer–generated redirects (302)** are *not* logged.
+- **Backend-generated redirects** *are* logged.
+
+## Troubleshooting
+- Check `statusDetails` to identify the cause:
+  - `response_sent_by_backend` → error originated from backend.
+  - `failed_to_pick_backend` → load balancer had no healthy backend to handle the request.
