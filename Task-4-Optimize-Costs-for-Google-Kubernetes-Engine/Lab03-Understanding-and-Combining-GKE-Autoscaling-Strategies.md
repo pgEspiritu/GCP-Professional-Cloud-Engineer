@@ -536,11 +536,316 @@ For most production workloads:
 
 ---
 
-In the next sections, you will explore additional ways to optimize your resource usage using:
+# 🧩 Task 5 — Cluster Autoscaler (GKE)
 
-- **Cluster Autoscaler (CA)**
-- **Node Auto Provisioning (NAP)**
+The Cluster Autoscaler (CA) automatically adds or removes nodes from your GKE node pool depending on cluster demand.
+- ✔ High demand → more nodes
+- ✔ Low demand → fewer nodes → lower cost
 
-Stay tuned! 🚀
+## ⚙️ 1. Enable Autoscaling on the Cluster
+```bash
+gcloud beta container clusters update scaling-demo \
+  --enable-autoscaling --min-nodes 1 --max-nodes 5
+```
+This may take several minutes.
+
+## 🧮 2. Choose an Autoscaling Profile
+
+Profiles influence how aggressively the autoscaler removes nodes
+| Profile                  | Description                                                                   |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| **Balanced** (default)   | Keeps some spare capacity.                                                    |
+| **Optimize-utilization** | Aggressively removes nodes to increase utilization. Best for batch workloads. |
+
+Switch to aggressive scaling:
+```bash
+gcloud beta container clusters update scaling-demo \
+  --autoscaling-profile optimize-utilization
+```
+
+## 🖥️ 3. Observe Current Node Utilization
+
+In GCP Console:
+➡️ Kubernetes Engine → Clusters → scaling-demo → Nodes tab
+
+Typical values example (your values may differ):
+- CPU Requested: 1555m
+- CPU Allocatable: 2820m
+- Available CPU: ~1265m
+
+This means the cluster can run on 2 nodes, but is currently using 3 nodes.
+
+Why no scale-down yet?
+👉 kube-system pods are spread across nodes and cannot be freely rescheduled.
+
+## 🛡️ 4. Allow Rescheduling via Pod Disruption Budgets (PDBs)
+
+PDBs tell Kubernetes how many pods can be temporarily disrupted.
+
+Apply PDBs for key system pods:
+```bash
+kubectl create poddisruptionbudget kube-dns-pdb --namespace=kube-system --selector k8s-app=kube-dns --max-unavailable 1
+kubectl create poddisruptionbudget prometheus-pdb --namespace=kube-system --selector k8s-app=prometheus-to-sd --max-unavailable 1
+kubectl create poddisruptionbudget kube-proxy-pdb --namespace=kube-system --selector component=kube-proxy --max-unavailable 1
+kubectl create poddisruptionbudget metrics-agent-pdb --namespace=kube-system --selector k8s-app=gke-metrics-agent --max-unavailable 1
+kubectl create poddisruptionbudget metrics-server-pdb --namespace=kube-system --selector k8s-app=metrics-server --max-unavailable 1
+kubectl create poddisruptionbudget fluentd-pdb --namespace=kube-system --selector k8s-app=fluentd-gke --max-unavailable 1
+kubectl create poddisruptionbudget backend-pdb --namespace=kube-system --selector k8s-app=glbc --max-unavailable 1
+kubectl create poddisruptionbudget kube-dns-autoscaler-pdb --namespace=kube-system --selector k8s-app=kube-dns-autoscaler --max-unavailable 1
+kubectl create poddisruptionbudget stackdriver-pdb --namespace=kube-system --selector app=stackdriver-metadata-agent --max-unavailable 1
+kubectl create poddisruptionbudget event-pdb --namespace=kube-system --selector k8s-app=event-exporter --max-unavailable 1
+```
+These make it safe for CA to reschedule and remove nodes.
+
+## 🟢 5. Wait for Cluster to Scale Down
+
+Within 1–2 minutes, your cluster should drop from 3 → 2 nodes.
+Check repeatedly:
+```bash
+kubectl get nodes
+```
+Once you see 2 nodes, scaling has succeeded 🎉
+
+## 📉 6. Cost & Resource Optimization Summary
+
+By setting:
+- Vertical Pod Autoscaler (VPA) → reduces pod CPU/memory requests
+- Horizontal Pod Autoscaler (HPA) → manages replicas
+- Cluster Autoscaler (CA) → removes unnecessary nodes
+
+Your cluster:
+- ✨ Packs workloads more efficiently
+- ✨ Removes idle nodes
+- ✨ Reduces cloud compute costs
+- ✨ Still maintains high availability
+This triple-combination is the foundation of cost-optimized Kubernetes.
+
+---
+
+# 🏗️ Task 6 — Node Auto Provisioning (NAP)
+
+Node Auto Provisioning (NAP) automatically creates new node pools with machine types that best fit current workload demand.
+
+This is different from Cluster Autoscaler:
+| Feature                          | Behavior                                                         |
+| -------------------------------- | ---------------------------------------------------------------- |
+| **Cluster Autoscaler (CA)**      | Only adds/removes nodes *inside existing node pools*             |
+| **Node Auto Provisioning (NAP)** | Creates brand new node pools with the “right-sized” machine type |
+NAP makes the cluster smarter, not just bigger.
+
+## ⚙️ 1. Enable Node Auto Provisioning
+
+Run:
+```bash
+gcloud container clusters update scaling-demo \
+    --enable-autoprovisioning \
+    --min-cpu 1 \
+    --min-memory 2 \
+    --max-cpu 45 \
+    --max-memory 160
+```
+
+🔍 What these flags mean:
+| Flag                        | Purpose                                     |
+| --------------------------- | ------------------------------------------- |
+| `--enable-autoprovisioning` | Turns on NAP                                |
+| `--min-cpu / max-cpu`       | Total vCPU allowed across NAP-created nodes |
+| `--min-memory / max-memory` | Total RAM allowed across NAP-created nodes  |
+These limits apply cluster-wide, not per node.
+
+## 🧠 Understanding NAP Behavior
+- ✨ NAP chooses machine types automatically (e2-medium, n2-standard, c2, etc.)
+- ✨ NAP creates brand new node pools dynamically
+- ✨ NAP considers your workload resource requests (CPU, memory)
+- ✨ NAP will delete unused auto-provisioned node pools during low demand
+
+Unlike CA alone, which can only scale existing pools, NAP can scale the shape of your cluster, not just its size.
+
+## 🕒 2. Expect Delayed or No Action (For Now)
+
+GKE may not create new node pools immediately.
+
+Why?
+Because your current cluster workload probably still fits inside your 2 remaining nodes.
+
+🌱 NAP only triggers when resource requests exceed available capacity.
+In the next tasks, you will deliberately increase workload demand so you can observe:
+- Cluster Autoscaler adding nodes
+- NAP creating new node pools
+- VPA adjusting pod resource requests
+- How GKE balances everything automatically
+
+---
+
+🧪 Task 7: Test with Larger Demand
+
+So far, you've seen how HPA, VPA, and the Cluster Autoscaler help reduce costs during low demand.
+Now let’s test how they behave during high demand.
+
+## 🔥 Step 1 — Generate Heavy Load
+
+Open a new Cloud Shell tab (press the ➕ icon).
+
+Run an infinite load-generating loop:
+```bash
+kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+```
+This will continuously hammer the php-apache service.
+
+## 📈 Step 2 — Monitor HPA Under Load
+
+Return to your original Cloud Shell tab and run:
+```bash
+kubectl get hpa
+```
+
+Re-run every few seconds until the CPU target rises above 100%.
+This indicates the HPA will begin scaling up pods.
+
+## 📦 Step 3 — Watch Deployment Scaling
+
+While load is running, monitor your deployment:
+```bash
+kubectl get deployment php-apache
+```
+Or use the Nodes tab in Cloud Console to visualize scaling events.
+
+## 🚀 What Will Happen
+
+After a few minutes, you will observe:
+
+✅ 1. HPA scales up php-apache pods
+To handle the CPU pressure.
+
+✅ 2. Cluster Autoscaler provisions new nodes
+Because your node pool no longer has capacity for more pods.
+
+✅ 3. Node Auto Provisioning creates a new node pool
+NAP builds new node pools with optimized machine types.
+
+In this scenario, expect:
+
+- High-CPU, low-memory node types
+(because your load generator stresses CPU heavily)
+
+- Wait until:
+  - php-apache reaches 7 replicas, and
+  - Your Nodes tab shows additional nodes from autoscaling + NAP.
+
+## 🛑 Step 4 — Stop the Load Generator
+
+Return to the tab where the load test is running and press:
+```mathematica
+Ctrl + C
+```
+This stops the infinite loop.
+
+Your cluster will gradually scale back down:
+- HPA reduces pod replicas
+- Cluster Autoscaler removes unneeded nodes
+- NAP may also remove node pools if no longer required
+
+## 🎯 Result
+
+Your cluster successfully scaled up to meet higher demand!
+However, note:
+⏳ Scaling takes time.
+For latency-sensitive production workloads, autoscaling delay can reduce availability during sudden spikes.
+
+---
+
+# ⚡ Task 8: Optimize Larger Loads
+
+When scaling up for higher demand:
+- Horizontal Pod Autoscaler (HPA) adds new pods.
+- Vertical Pod Autoscaler (VPA) resizes pods based on your settings.
+- If there’s room on an existing node, new pods can start immediately without pulling the image.
+- If a new node is needed, Cluster Autoscaler provisions it, downloads images, and starts the pods.
+- Node Auto Provisioning (NAP) may create a new node pool, adding more setup time.
+> Tip: Smaller container images improve pod cold start times, reducing delays during autoscaling.
+
+## 🛠 Step 1 — Plan Overprovisioning
+
+Autoscaling latency can affect your app’s availability. To handle spikes efficiently, consider over-provisioning.
+
+Use this formula to determine the safety buffer:
+```formula
+Safety Buffer = 1 + traffic growth / (1 − buffer)
+```
+
+Example:
+- Buffer: 15%
+- Estimated traffic growth: 30%
+
+```mathematica
+(1−0.15)/(1+0.3)=0.65
+```
+This gives a 65% overprovisioning to maintain availability without overspending.
+
+## 🛠 Step 2 — Create Pause Pods
+
+Pause Pods are low-priority pods that reserve cluster capacity. They are removed first when higher-priority workloads need resources.
+Create a manifest: 
+```yaml
+cat << EOF > pause-pod.yaml
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: overprovisioning
+value: -1
+globalDefault: false
+description: "Priority class used by overprovisioning."
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: overprovisioning
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: overprovisioning
+  template:
+    metadata:
+      labels:
+        run: overprovisioning
+    spec:
+      priorityClassName: overprovisioning
+      containers:
+      - name: reserve-resources
+        image: k8s.gcr.io/pause
+        resources:
+          requests:
+            cpu: 1
+            memory: 4Gi
+EOF
+```
+
+Apply it to your cluster:
+```sh
+kubectl apply -f pause-pod.yaml
+```
+
+## 📊 Step 3 — Observe Effects
+1. Wait a minute.
+2. Refresh the Nodes tab in your scaling-demo cluster.
+3. Notice a new node, likely in a new node pool, created to host the pause pod.
+
+When your real application needs extra resources:
+- The pause pod will move to a different node.
+- Your application pod can be scheduled immediately on the freed-up node.
+> Best practice: No more than one pause pod per node to prevent wasted resources.
 
 
+---
+
+# In this lab, you successfully configured a Google Kubernetes Engine (GKE) cluster to automatically and efficiently scale based on demand.
+
+You applied four key autoscaling tools:
+- **Horizontal Pod Autoscaling (HPA)**: Automatically scales the number of pods in a deployment based on CPU/memory or custom metrics.
+- **Vertical Pod Autoscaling (VPA)**: Automatically adjusts the CPU and memory requests of pods to match actual usage.
+- **Cluster Autoscaler**: Adds or removes nodes in your cluster depending on pod scheduling needs.
+- **Node Auto Provisioning (NAP)**: Automatically creates new node pools optimized for your workloads’ resource requirements.
+	​
