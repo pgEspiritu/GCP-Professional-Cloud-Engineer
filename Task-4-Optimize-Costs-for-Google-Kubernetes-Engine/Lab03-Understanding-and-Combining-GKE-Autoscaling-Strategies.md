@@ -93,6 +93,7 @@ Create a three-node cluster with Vertical Pod Autoscaling enabled:
 gcloud container clusters create scaling-demo --num-nodes=3 --enable-vertical-pod-autoscaling
 ```
 
+![Lab 3.1](images/Lab-3.1.png)
 
 ---
 
@@ -140,11 +141,14 @@ spec:
 EOF
 ```
 
+![Lab 3.2](images/Lab-3.2.png)
 
 Apply the manifest:
 ```bash
 kubectl apply -f php-apache.yaml
 ```
+
+![Lab 3.3](images/Lab-3.3.png)
 
 ---
 
@@ -161,13 +165,11 @@ In Cloud Shell, run:
 kubectl get deployment
 ```
 
-
 You should see the `php-apache` deployment with **3/3 pods running**:
 ```nginx
 NAME READY UP-TO-DATE AVAILABLE AGE
 php-apache 3/3 3 3 91s
 ```
-
 
 > 📝 **Note:**  
 > If you don't see 3 available pods, wait a minute and try again.  
@@ -182,6 +184,8 @@ Run:
 kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
 ```
 
+![Lab 3.4](images/Lab-3.4.png)
+
 This command creates an HPA that maintains **1–10 replicas** of the `php-apache` pods.  
 The `--cpu-percent=50` flag sets a **target average CPU usage of 50%** across all pods.
 
@@ -194,6 +198,7 @@ Run:
 kubectl get hpa
 ```
 
+![Lab 3.5](images/Lab-3.5.png)
 
 You should see something like:
 ```ini
@@ -281,6 +286,7 @@ Inspect the container configuration:
 kubectl describe pod hello-server | sed -n "/Containers:$/,/Conditions:/p"
 ```
 
+![Lab 3.6](images/Lab-3.6.png)
 
 Check:
 
@@ -307,7 +313,6 @@ spec:
 EOF
 ```
 
-
 ### 🔧 VPA Update Policies
 
 | Mode | Behavior |
@@ -321,6 +326,7 @@ Apply the manifest:
 kubectl apply -f hello-vpa.yaml
 ```
 
+![Lab 3.7](images/Lab-3.7.png)
 
 ---
 
@@ -331,6 +337,8 @@ Wait 1 minute, then run:
 kubectl describe vpa hello-server-vpa
 ```
 
+![Lab 3.8](images/Lab-3.8.png)
+![Lab 3.9](images/Lab-3.9.png)
 
 Scroll to **Container Recommendations**.
 
@@ -357,7 +365,6 @@ sed -i 's/Off/Auto/g' hello-vpa.yaml
 kubectl apply -f hello-vpa.yaml
 ```
 
-
 ---
 
 ## 📈 Scale `hello-server` to allow pod replacements
@@ -370,17 +377,12 @@ Scale deployment:
 kubectl scale deployment hello-server --replicas=2
 ```
 
-
----
-
 ## 👀 Watch for VPA pod replacements
 
 Observe pod events:
 ```bash
 kubectl get pods -w
 ```
-
-
 Watch until you see pods entering **Terminating** or **Pending** state.
 
 Example signs:
@@ -389,6 +391,7 @@ hello-server-abc123 Terminating
 hello-server-def456 Pending
 ```
 
+![Lab 3.10](images/Lab-3.10.png)
 
 This indicates VPA is **deleting and recreating pods** with new resource sizes.
 
@@ -470,11 +473,13 @@ memory: 262144k
 
 
 This means the VPA has recreated the pods with its **target utilization** recommendations:
-
 - Lower CPU request (from **450m → 25m**)  
 - Newly calculated memory request
 
----
+![Lab 3.11](images/Lab-3.11.png)
+![Lab 3.12](images/Lab-3.12.png)
+![Lab 3.13](images/Lab-3.13.png)
+![Lab 3.14](images/Lab-3.14.png)
 
 ## ⚠️ Note on delayed VPA updates
 
@@ -482,7 +487,6 @@ If you still see **450m CPU** on either pod, manually apply the CPU request:
 ```bash
 kubectl set resources deployment hello-server --requests=cpu=25m
 ```
-
 
 Sometimes VPA in *Auto* mode:
 
@@ -559,6 +563,8 @@ gcloud beta container clusters update scaling-demo \
   --autoscaling-profile optimize-utilization
 ```
 
+![Lab 3.15](images/Lab-3.15.png)
+
 ## 🖥️ 3. Observe Current Node Utilization
 
 In GCP Console:
@@ -568,6 +574,8 @@ Typical values example (your values may differ):
 - CPU Requested: 1555m
 - CPU Allocatable: 2820m
 - Available CPU: ~1265m
+
+![Lab 3.16](images/Lab-3.16.png)
 
 This means the cluster can run on 2 nodes, but is currently using 3 nodes.
 
@@ -593,6 +601,8 @@ kubectl create poddisruptionbudget event-pdb --namespace=kube-system --selector 
 ```
 These make it safe for CA to reschedule and remove nodes.
 
+![Lab 3.18](images/Lab-3.18.png)
+
 ## 🟢 5. Wait for Cluster to Scale Down
 
 Within 1–2 minutes, your cluster should drop from 3 → 2 nodes.
@@ -601,6 +611,9 @@ Check repeatedly:
 kubectl get nodes
 ```
 Once you see 2 nodes, scaling has succeeded 🎉
+
+![Lab 3.19](images/Lab-3.19.png)
+![Lab 3.20](images/Lab-3.20.png)
 
 ## 📉 6. Cost & Resource Optimization Summary
 
@@ -640,6 +653,8 @@ gcloud container clusters update scaling-demo \
     --max-cpu 45 \
     --max-memory 160
 ```
+
+![Lab 3.21](images/Lab-3.21.png)
 
 🔍 What these flags mean:
 | Flag                        | Purpose                                     |
@@ -687,6 +702,8 @@ Run an infinite load-generating loop:
 kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
 ```
 This will continuously hammer the php-apache service.
+
+![Lab 3.22](images/Lab-3.22.png)
 
 ## 📈 Step 2 — Monitor HPA Under Load
 
@@ -823,6 +840,9 @@ Apply it to your cluster:
 ```sh
 kubectl apply -f pause-pod.yaml
 ```
+
+![Lab 3.23](images/Lab-3.23.png)
+![Lab 3.24](images/Lab-3.24.png)
 
 ## 📊 Step 3 — Observe Effects
 1. Wait a minute.
