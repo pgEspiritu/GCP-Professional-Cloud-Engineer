@@ -1,8 +1,5 @@
 # 🚀 GKE Workload Optimization — Lab Guide  
-**Experiment • 1 hour 30 minutes • Intermediate**  
-**Lab ID:** GSP769  
 
----
 
 # 📘 Overview
 
@@ -281,3 +278,367 @@ Expected output example:
 ```ini
 Only listing images in gcr.io/qwiklabs-gcp-01-343cd312530e.
 ```
+
+
+## 🚀 Step 3 — Deploy Locust (Main + Workers)
+
+Download and apply the manifest:
+```bash
+gsutil cp gs://spls/gsp769/locust_deploy_v2.yaml .
+sed 's/${GOOGLE_CLOUD_PROJECT}/'$GOOGLE_CLOUD_PROJECT'/g' locust_deploy_v2.yaml | kubectl apply -f -
+```
+
+This creates:
+- 1 Locust main pod
+- 5 Locust worker pods
+
+## 🌐 Step 4 — Access the Locust UI
+
+Get the external IP of the Locust LoadBalancer:
+```bash
+kubectl get service locust-main
+```
+If <pending>, wait a moment and rerun.
+
+Open the UI in a browser:
+```bash
+http://EXTERNAL_IP:8089
+```
+You will see the Locust dashboard.
+
+## 🏋️ Step 5 — Load Test (Baseline)
+
+In Locust UI, enter:
+- Number of users: 200
+- Spawn rate: 20
+Click Start swarming.
+
+After a few seconds you should see:
+- Status: Running with 200 users
+- Approx. 150 RPS (Requests Per Second)
+
+## 📊 Step 6 — Observe Pod Resource Usage
+
+In Cloud Console:
+1. Go to Kubernetes Engine → Workloads
+2. Click your gb-frontend pod
+3. View the CPU & Memory graphs
+> 👉 Tip: Click the three dots on the chart → Expand chart legend
+
+Expected behavior:
+- CPU: 0.04 to 0.06 cores (40–60% of request)
+- Memory: Around 80Mi, well below the 256Mi request
+This is your per-pod capacity under typical load.
+
+## ⚡ Step 7 — Test a Sudden Spike (Burst Load)
+
+In Locust, click Edit:
+- Users: 900
+- Spawn rate: 300
+Click Start swarming
+
+This generates 700 new users in 2–3 seconds.
+
+Observe the pod metrics again in the Console.
+
+Expected behavior:
+- CPU spikes to ~0.07 cores (70% of request)
+- Memory remains around 80Mi
+
+This indicates your application:
+- Is more CPU-bound than memory-bound
+- Can likely reduce memory requests
+- Would benefit from HPA based on CPU
+- Could use Cluster Autoscaler to scale nodes as demand rises
+
+---
+
+# 🩺 Task 3 — Readiness and Liveness Probes
+
+Kubernetes provides **liveness probes** and **readiness probes** to evaluate the health and availability of a containerized application.  
+These checks help Kubernetes automatically restart unhealthy containers and ensure that only fully-ready pods receive traffic.
+
+---
+
+# 🔁 Part 1 — Liveness Probe
+
+A **liveness probe** continuously checks whether a container is still functioning correctly.  
+If the probe fails, Kubernetes **restarts the container automatically**.
+
+In this example, we create a pod whose liveness probe checks for the existence of a file `/tmp/alive`.
+
+## 📄 Create the liveness probe manifest
+
+```sh
+cat << EOF > liveness-demo.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    demo: liveness-probe
+  name: liveness-demo-pod
+spec:
+  containers:
+  - name: liveness-demo-pod
+    image: quay.io/centos/centos:stream9
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/alive; sleep infinity
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/alive
+      initialDelaySeconds: 5
+      periodSeconds: 10
+EOF
+```
+
+Apply the manifest:
+```bash
+kubectl apply -f liveness-demo.yaml
+```
+
+📝 Notes
+- initialDelaySeconds — how long to wait before the first probe
+- periodSeconds — how often the probe runs
+- A startupProbe can optionally be used to avoid premature failures for slow-starting apps
+
+## 🔍 Verify liveness probe behavior
+
+Check pod events:
+```bash
+kubectl describe pod liveness-demo-pod
+```
+You will initially see only creation and startup events.
+
+❌ Trigger a liveness probe failure
+Delete the file being checked:
+```bash
+kubectl exec liveness-demo-pod -- rm /tmp/alive
+```
+
+Check events again:
+```bash
+kubectl describe pod liveness-demo-pod
+```
+
+You should now see:
+- Liveness probe failures
+- Kubernetes killing and restarting the container
+- New pull/restart events
+
+Example:
+```bash
+Warning  Unhealthy   Liveness probe failed: cat: /tmp/alive: No such file or directory
+Normal   Killing     Container failed liveness probe, will be restarted
+```
+
+🧠 Other types of liveness probes
+- HTTP probe — checks for valid HTTP responses
+- TCP probe — checks if a TCP connection can be established
+
+🟢 Part 2 — Readiness Probe
+
+A readiness probe determines whether a container is ready to receive traffic.
+If the probe fails, the pod remains running but is removed from service endpoints.
+
+In this example, the probe waits for a file /tmp/healthz before signaling readiness.
+
+## 📄 Create the readiness probe + LoadBalancer Service
+```bash
+cat << EOF > readiness-demo.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    demo: readiness-probe
+  name: readiness-demo-pod
+spec:
+  containers:
+  - name: readiness-demo-pod
+    image: nginx
+    ports:
+    - containerPort: 80
+    readinessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthz
+      initialDelaySeconds: 5
+      periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: readiness-demo-svc
+  labels:
+    demo: readiness-probe
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    demo: readiness-probe
+EOF
+```
+
+Apply:
+```bash
+kubectl apply -f readiness-demo.yaml
+```
+
+## 🌐 Test the service
+
+Retrieve the external IP:
+```bash
+kubectl get service readiness-demo-svc
+```
+Open the IP in a browser — it will fail because the readiness probe is failing.
+
+## 🔍 Check readiness probe status
+```bash
+kubectl describe pod readiness-demo-pod
+```
+
+You will see repeated failures:
+```ini
+Warning  Unhealthy  Readiness probe failed: cat: /tmp/healthz: No such file or directory
+```
+Readiness probe failures do not restart the pod.
+
+## ✔ Make the pod “Ready”
+
+Create the expected file:
+```bash
+kubectl exec readiness-demo-pod -- touch /tmp/healthz
+```
+
+Check readiness conditions:
+```bash
+kubectl describe pod readiness-demo-pod | grep ^Conditions -A 5
+```
+
+You should now see:
+```bash
+Ready   True
+ContainersReady True
+```
+Refresh the browser — you should now see the Welcome to nginx! page.
+
+## 🧠 Why readiness probes matter
+
+Readiness probes:
+- Prevent traffic from reaching unready pods
+- Ensure load balancers only send requests to healthy backends
+- Protect applications that require warm-up, cache loading, DB connections, etc.
+
+A good readiness probe example:
+- Check database connectivity
+- Check cache initialization
+- Validate important config files
+
+---
+
+# 🛡️ Task 4 — Pod Disruption Budgets (PDBs)
+
+Pod Disruption Budgets help protect your application's availability during voluntary disruptions, such as:
+- Node draining
+- Deployment updates
+- Admin actions (deleting/rolling updates)
+- Moving pods between nodes
+PDBs ensure that a minimum number of pods stay running so your app remains accessible.
+
+## ✅ Step 1: Replace Single Pod With Deployment
+
+Delete your single pod:
+```bash
+kubectl delete pod gb-frontend
+```
+
+Create deployment of 5 replicas:
+```bash
+kubectl apply -f gb_frontend_deployment.yaml
+```
+
+## 🔄 Step 2: Drain Nodes Without a PDB (App Will Go Down)
+
+Drain all nodes in the default node pool:
+```bash
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool -o=name); do
+  kubectl drain --force --ignore-daemonsets --grace-period=10 "$node";
+done
+```
+
+Check deployment status:
+```bash
+kubectl describe deployment gb-frontend | grep ^Replicas
+```
+
+Expected result without PDB:
+```ini
+5 desired | 5 updated | 5 total | 0 available | 5 unavailable
+```
+➡️ Application is DOWN because Kubernetes freely evicted all pods.
+
+## 🔧 Step 3: Uncordon Nodes
+
+Bring nodes back:
+```bash
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool -o=name); do
+  kubectl uncordon "$node";
+done
+```
+
+Confirm all pods recover:
+```bash
+kubectl describe deployment gb-frontend | grep ^Replicas
+```
+
+Expected:
+```ini
+5 desired | 5 updated | 5 total | 5 available | 0 unavailable
+```
+
+## 🛡️ Step 4: Create a Pod Disruption Budget
+
+Require minimum 4 pods available:
+```bash
+kubectl create poddisruptionbudget gb-pdb --selector run=gb-frontend --min-available 4
+```
+
+## 🔄 Step 5: Drain Nodes Again (Now PDB Protects Availability)
+```bash
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool -o=name); do
+  kubectl drain --timeout=30s --ignore-daemonsets --grace-period=10 "$node";
+done
+```
+
+You’ll see Kubernetes evict only one pod, then refuse to evict more:
+```vbnet
+error when evicting pod ... Cannot evict pod as it would violate the pod's disruption budget.
+```
+Press CTRL+C to stop the loop.
+
+Check deployment status:
+```bash
+kubectl describe deployment gb-frontend | grep ^Replicas
+```
+➡️ Because min-available is 4, Kubernetes stops evicting pods to protect availability.
+
+---
+
+# Task Completed
+
+You successfully created a container-native load balancer using Ingress, enabling more efficient and intelligent load balancing for your GKE applications.
+
+Throughout this lab you also:
+- 🔍 Ran a load test and observed baseline CPU and memory usage
+- 📈 Monitored how the application responds to traffic spikes
+- ❤️ Configured liveness and readiness probes to ensure the app behaves reliably
+- 🛡️ Implemented a Pod Disruption Budget (PDB) to protect availability during voluntary disruptions
+
+By combining these tools and techniques, you’ve improved the efficiency, resiliency, and cost-effectiveness of applications running on GKE. You now understand how to minimize unnecessary network traffic, define meaningful health indicators, and maintain high availability—even during updates or disruptions.
