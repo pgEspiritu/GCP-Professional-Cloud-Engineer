@@ -1,8 +1,4 @@
 # 📘 Understanding and Combining GKE Autoscaling Strategies  
-### 🧪 Lab • GSP768  
-⏱️ *1 hour 30 minutes* • 🎯 *Intermediate* • 💳 *5 Credits*
-
----
 
 ## 📝 Overview
 
