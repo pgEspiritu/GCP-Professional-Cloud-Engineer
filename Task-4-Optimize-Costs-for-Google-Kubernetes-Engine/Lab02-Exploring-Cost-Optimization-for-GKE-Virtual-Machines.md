@@ -1,15 +1,5 @@
 # 🏷️ Exploring Cost-Optimization for GKE Virtual Machines
 
-**Experiment | Lab**  
-⏱️ **Schedule:** 1 hour 30 minutes  
-💰 **Cost:** 5 Credits  
-📊 **Level:** Intermediate  
-ℹ️ **Note:** This lab may incorporate AI tools to support your learning.  
-**Lab ID:** GSP767  
-![Google Cloud self-paced labs logo](https://www.gstatic.com/cloud/images/products/logos/svg/google-cloud-architecture.svg)
-
----
-
 ## 📖 Overview
 
 The underlying infrastructure of a **Google Kubernetes Engine (GKE) cluster** is made up of nodes, which are individual **Compute VM instances**. This lab demonstrates how optimization of your cluster's infrastructure can help **save costs** and lead to a more **efficient architecture** for your applications.
@@ -157,7 +147,12 @@ Hello, World!
 1. Wait until your lab finishes provisioning.  
 2. In the **Cloud Console**, click the **Navigation Menu → Kubernetes Engine**.  
 3. In the **Kubernetes Clusters** window, select your **hello-demo-cluster**.  
+
+![Lab 2.1](images/Lab-2.1.png)
+
 4. Click the **Nodes** tab.  
+
+![Lab 2.2](images/Lab-2.2.png)
 
 You should now see a list of your cluster's nodes along with:
 
@@ -170,8 +165,9 @@ You should now see a list of your cluster's nodes along with:
 5. Click the first node of your cluster.  
 6. Look at the **Pods** section. You should see your **hello-server pod** in the **default namespace**.  
    - If not, select the second node instead.  
-
 > The hello-server pod requests **400m CPU**, along with other **kube-system pods** running essential services like monitoring.
+
+   ![Lab 2.3](images/Lab-2.3.png)
 
 7. Press **Back** to return to the previous **Nodes** page.  
 
@@ -222,14 +218,25 @@ Scale the Deployment
 ```bash
 kubectl scale deployment hello-server --replicas=2
 ```
+
+![Lab 2.4](images/Lab-2.4.png)
+
 > Back in the Console → Kubernetes Engine → Workloads, you may see Does not have minimum availability error due to Insufficient CPU.
+
+![Lab 2.5](images/Lab-2.5.png)
+![Lab 2.6](images/Lab-2.6.png)
 
 Increase Node Pool
 ```bash
 gcloud container clusters resize hello-demo-cluster --node-pool my-node-pool \
     --num-nodes 3 --zone "ZONE"
 ```
+
+![Lab 2.7](images/Lab-2.7.png)
+
 > Type `y` to continue. Refresh the Workloads page until hello-server status = OK.
+
+![Lab 2.8](images/Lab-2.8.png)
 
 ## 🔎 Examine Cluster Utilization
 - Navigate to Nodes tab of your cluster.
@@ -237,6 +244,8 @@ gcloud container clusters resize hello-demo-cluster --node-pool my-node-pool \
   - One node uses most memory
   - Two nodes have unused memory
 > Scaling more replicas may trigger new nodes with ~600m CPU requests.
+
+![Lab 2.9](images/Lab-2.9.png)
 
 ## ⚖️ Binpacking Problem
 - Binpacking: fitting items of various volumes into limited bins efficiently.
@@ -254,6 +263,8 @@ gcloud container node-pools create larger-pool \
   --zone="ZONE"
 ```
 
+![Lab 2.10](images/Lab-2.10.png)
+
 Migrate Pods
 1. Cordon old node pool
 ```bash
@@ -269,6 +280,9 @@ for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=my-node-pool -o
 done
 ```
 
+![Lab 2.11](images/Lab-2.11.png)
+![Lab 2.12](images/Lab-2.12.png)
+
 3. Verify pods on new node pool:
 ```bash
 kubectl get pods -o=wide
@@ -279,6 +293,8 @@ kubectl get pods -o=wide
 gcloud container node-pools delete my-node-pool --cluster hello-demo-cluster --zone "ZONE"
 ```
 > Type `y` to confirm. Deletion may take ~2 minutes.
+
+![Lab 2.13](images/Lab-2.13.png)
 
 ---
 
@@ -336,6 +352,8 @@ gcloud container clusters create regional-demo --region="REGION" --num-nodes=1
 ```
 This command will take a few minutes.
 
+![Lab 2.14](images/Lab-2.14.png)
+
 ### Create Two Pods on Separate Nodes
 Pod 1
 Create a manifest:
@@ -358,6 +376,8 @@ Create the pod:
 ```bash
 kubectl apply -f pod-1.yaml
 ```
+
+![Lab 2.15](images/Lab-2.15.png)
 
 Pod 2
 Create a manifest with Pod Anti Affinity:
@@ -391,11 +411,15 @@ kubectl apply -f pod-2.yaml
 > The Anti Affinity ensures pod-2 is not scheduled on the same node as pod-1.
 > Pod Affinity is used to ensure pods are scheduled together, Pod Anti Affinity does the opposite.
 
+![Lab 2.16](images/Lab-2.16.png)
+
 ### View pods:
 ```bash
 kubectl get pod pod-1 pod-2 --output wide
 ```
 > Both pods should be Running with internal IPs assigned.
+
+![Lab 2.17](images/Lab-2.17.png)
 
 ## 🖧 Simulate Traffic
 
@@ -410,20 +434,44 @@ ping [POD-2-IP]
 ```
 > Take note of the average latency.
 
+![Lab 2.18](images/Lab-2.18.png)
+
 ---
 
 ### 📈 Examine Flow Logs
 
 1. Enable Network Management API under VPC Network → VPC Flow Logs.
+
+![Lab 2.19](images/Lab-2.19.png)
+
 2. Add a VPC flow logs configuration for your subnet.
+
+![Lab 2.20](images/Lab-2.20.png)
+![Lab 2.21](images/Lab-2.21.png)
+![Lab 2.22](images/Lab-2.22.png)
+![Lab 2.23](images/Lab-2.23.png)
+![Lab 2.24](images/Lab-2.24.png)
+
 3. Open Cloud Logs Explorer, select vpc_flows, click Apply.
+
+![Lab 2.25](images/Lab-2.25.png)
+![Lab 2.26](images/Lab-2.26.png)
+
 > Logs show traffic sent/received by instances. If logs are missing, replace / with %2F.
+
+![Lab 2.27](images/Lab-2.27.png)
 
 Export Logs to BigQuery
 1. Click Actions → Create Sink
+
+![Lab 2.28](images/Lab-2.28.png)
+
 2. Name: FlowLogsSample
 3. Sink Service: BigQuery Dataset
 4. Dataset: Create new us_flow_logs
+
+![Lab 2.29](images/Lab-2.29.png)
+
 5. Click Create Sink
 
 Inspect dataset:
@@ -439,6 +487,10 @@ SELECT
 FROM `us_flow_logs.compute_googleapis_com_vpc_flows_xxx`
 ```
 > Observe traffic between different zones in your regional-demo cluster.
+
+![Lab 2.30](images/Lab-2.30.png)
+![Lab 2.31](images/Lab-2.31.png)
+![Lab 2.32](images/Lab-2.32.png)
 
 ## 🔄 Move a Chatty Pod to Minimize Cross-Zonal Traffic
 1. Cancel ping in pod-1 shell: Ctrl + C
@@ -458,11 +510,16 @@ kubectl delete pod pod-2
 ```bash
 kubectl create -f pod-2.yaml
 ```
+
+![Lab 2.33](images/Lab-2.33.png)
+
 6. Verify pods:
 ```bash
 kubectl get pod pod-1 pod-2 --output wide
 ````
 > Pod-1 and Pod-2 should now run on the same node.
+
+![Lab 2.34](images/Lab-2.34.png)
 
 ---
 
@@ -479,6 +536,8 @@ ping [POD-2-IP]
 ```
 > Average ping time should be faster now.
 > Check BigQuery flow logs → verify no undesired inter-zonal traffic.
+
+![Lab 2.35](images/Lab-2.35.png)
 
 ---
 
