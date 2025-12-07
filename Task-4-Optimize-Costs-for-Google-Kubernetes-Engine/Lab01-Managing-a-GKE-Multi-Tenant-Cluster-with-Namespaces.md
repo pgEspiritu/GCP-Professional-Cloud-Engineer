@@ -166,6 +166,8 @@ Change your current working directory to gke-qwiklab:
 cd ~/gke-qwiklab
 ```
 
+![Lab 1.1](images/Lab-1.1.png)
+
 ---
 
 # 🏷️ Task 2. View and create namespaces
@@ -187,7 +189,6 @@ You can get a full list of the current cluster's namespaces with:
 kubectl get namespace
 ```
 
-
 The output should be similar to:
 ```nginx
 NAME STATUS AGE
@@ -196,6 +197,8 @@ kube-node-lease Active 5m
 kube-public Active 5m
 kube-system Active 5m
 ```
+
+![Lab 1.2](images/Lab-1.2.png)
 
 - **default** — the default namespace used when no other namespace is specified  
 - **kube-node-lease** — manages the lease objects associated with the heartbeats of each of the cluster's nodes  
@@ -208,15 +211,18 @@ For a complete list of namespaced resources:
 ```bash
 kubectl api-resources --namespaced=true
 ```
-
 When they are created, namespaced resources must be associated with a namespace. This is done by including the `--namespace` flag or indicating a namespace in the yaml's metadata field.
+
+![Lab 1.3](images/Lab-1.3.png)
+![Lab 1.4](images/Lab-1.4.png)
 
 The namespace can also be specified with any `kubectl get` subcommand to display a namespace's resources. For example:
 ```bash
 kubectl get services --namespace=kube-system
 ```
-
 This will output all services in the kube-system namespace.
+
+![Lab 1.5](images/Lab-1.5.png)
 
 ---
 
@@ -243,12 +249,12 @@ As an example, run the following to deploy a pod in the team-a namespace and in 
 kubectl run app-server --image=quay.io/centos/centos:9 --namespace=team-a -- sleep infinity &&
 kubectl run app-server --image=quay.io/centos/centos:9 --namespace=team-b -- sleep infinity
 ```
+![Lab 1.6](images/Lab-1.6.png)
 
 Use:
 ```bash
 kubectl get pods -A
 ```
-
 to see there are 2 pods named **app-server**, one for each team namespace.
 
 **Output:**
@@ -274,8 +280,8 @@ team-a app-server 1/1 Running 0 33s
 team-b app-server 1/1 Running 0 33s
 ```
 
-Click **Check my progress** to verify that you've performed the above task.  
-**Create namespaces**
+![Lab 1.7](images/Lab-1.7.png)
+![Lab 1.8](images/Lab-1.8.png)
 
 ---
 
@@ -286,17 +292,23 @@ Use `kubectl describe` to see additional details for each of the newly created p
 kubectl describe pod app-server --namespace=team-a
 ```
 
+![Lab 1.9](images/Lab-1.9.png)
+![Lab 1.10](images/Lab-1.10.png)
+
 To work exclusively with resources in one namespace, you can set it once in the kubectl context instead of using the `--namespace` flag for every command:
 ```bash
 kubectl config set-context --current --namespace=team-a
 ```
+
+![Lab 1.11](images/Lab-1.11.png)
 
 After this, any subsequent commands will be run against the indicated namespace without specifying the namespace flag:
 ```bash
 kubectl describe pod app-server
 ```
 
-In the next section, you will configure role-based access control for your namespaces to help organize the cluster. 🔐
+![Lab 1.12](images/Lab-1.12.png)
+![Lab 1.13](images/Lab-1.13.png)
 
 ---
 
@@ -332,6 +344,10 @@ gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT}
 --member=serviceAccount:team-a-dev@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com
 --role=roles/container.clusterViewer
 ```
+
+![Lab 1.14](images/Lab-1.14.png)
+![Lab 1.15](images/Lab-1.15.png)
+![Lab 1.16](images/Lab-1.16.png)
 
 ---
 
@@ -383,6 +399,8 @@ kubectl create rolebinding team-a-developers
 --role=developer --user=team-a-dev@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com
 ```
 
+![Lab 1.17](images/Lab-1.17.png)
+
 ---
 
 ## 🧪 Test the rolebinding
@@ -430,6 +448,8 @@ Error from server (Forbidden): pods is forbidden: User "team-a-dev@a-gke-project
 " cannot list resource "pods" in API group "" in the namespace "team-b": requires one of ["container.pods.list"] permission(s).
 ```
 
+![Lab 1.18](images/Lab-1.18.png)
+
 Return to your first Cloud Shell tab or open a new one.
 
 Renew the cluster credentials and reset your context to the team-a namespace:
@@ -437,6 +457,8 @@ Renew the cluster credentials and reset your context to the team-a namespace:
 export ZONE=placeholder
 gcloud container clusters get-credentials multi-tenant-cluster --zone ${ZONE} --project ${GOOGLE_CLOUD_PROJECT}
 ```
+
+![Lab 1.19](images/Lab-1.19.png)
 
 ---
 
@@ -496,6 +518,8 @@ export KUBE_EDITOR="nano"
 kubectl edit quota test-quota --namespace=team-a
 ```
 
+![Lab 1.20](images/Lab-1.20.png)
+
 Update:
 ```bash
 spec:
@@ -504,6 +528,8 @@ spec:
     count/services.loadbalancers: "1"
 ```
 Save (CTRL+X, Y, ENTER).
+
+![Lab 1.21](images/Lab-1.21.png)
 
 Recheck the quota:
 ```bash
@@ -514,6 +540,8 @@ Expected:
 ```bash
 count/pods   2 / 6
 ```
+
+![Lab 1.22](images/Lab-1.22.png)
 
 ## 🔢 CPU and Memory Quotas
 
@@ -585,6 +613,8 @@ requests.cpu     100m   2
 requests.memory  128Mi  8Gi
 ```
 
+![Lab 1.23](images/Lab-1.23.png)
+
 ---
 
 # 📊 Task 5: Monitoring GKE and GKE Usage Metering
@@ -601,6 +631,9 @@ In multi-tenant GKE clusters, workloads and resource usage vary per tenant. Moni
 - On the left menu, click Dashboards
 - Select GKE
 
+
+![Lab 1.24](images/Lab-1.24.png)
+
 You will see tables summarizing:
 - CPU usage
 - Memory usage
@@ -608,12 +641,19 @@ You will see tables summarizing:
 - Namespaces
 - Workloads
 
+![Lab 1.25](images/Lab-1.25.png)
+
 3️⃣ Filter Workloads by Namespace
 - Click View All under Workloads
 - In ADD FILTER, choose:
   - Namespaces → team-a
+
+![Lab 1.26](images/Lab-1.26.png)
+
 - Click Apply
 Only workloads inside team-a will be shown.
+
+![Lab 1.27](images/Lab-1.27.png)
 
 ## 📉 Metrics Explorer
 
@@ -626,12 +666,16 @@ From the left panel, choose Metrics Explorer.
 - Choose: Container → CPU usage time
 - Click Apply
 
+![Lab 1.28](images/Lab-1.28.png)
+ 
 3️⃣ Exclude kube-system Namespace
 - Click Add filter
   - Label: namespace_name
   - Condition: !=
   - Value: kube-system
 
+![Lab 1.29](images/Lab-1.29.png)
+ 
 4️⃣ Adjust Aggregation
 - Aggregation: Sum
 - Group by: namespace_name
@@ -654,6 +698,8 @@ gcloud container clusters \
   --resource-usage-bigquery-dataset cluster_dataset
 ```
 
+![Lab 1.30](images/Lab-1.30.png)
+ 
 ## 🧷 Create the GKE Cost Breakdown Table
 
 1️⃣ Set environment variables
@@ -681,6 +727,8 @@ sed \
 > "$USAGE_METERING_QUERY"
 ```
 
+![Lab 1.31](images/Lab-1.31.png)
+ 
 4️⃣ Create the scheduled query in BigQuery
 ```bash
 bq query \
@@ -694,6 +742,8 @@ bq query \
 ```
 Authorize when prompted.
 
+![Lab 1.32](images/Lab-1.32.png)
+ 
 ## 📊 Create Data Source in Looker Studio
 
 1️⃣ Open Looker Studio
@@ -702,13 +752,20 @@ Go to: Data Sources → Create → Data Source
 2️⃣ Account Setup
 - Select country
 - Enter company name (any)
+
+![Lab 1.33](images/Lab-1.33.png)
+ 
 - Disable email preferences
 - Continue
 
+![Lab 1.34](images/Lab-1.34.png)
+ 
 3️⃣ Add BigQuery Connector
 - Click BigQuery
 - Click Authorize
 
+![Lab 1.35](images/Lab-1.35.png)
+ 
 4️⃣ Configure Data Source
 - Rename: GKE Usage
 - Select CUSTOM QUERY
@@ -719,11 +776,15 @@ SELECT * FROM `[PROJECT-ID].cluster_dataset.usage_metering_cost_breakdown`
 ```
 - Click CONNECT
 
+![Lab 1.36](images/Lab-1.36.png)
+ 
 ## 📝 Create Looker Studio Report
 1️⃣ Create a new report
 - Click CREATE REPORT
 - Click ADD TO REPORT
 
+![Lab 1.37](images/Lab-1.37.png)
+ 
 2️⃣ Configure Table
 | Setting                  | Value              |
 | ------------------------ | ------------------ |
@@ -731,6 +792,9 @@ SELECT * FROM `[PROJECT-ID].cluster_dataset.usage_metering_cost_breakdown`
 | **Dimension**            | `namespace`        |
 | **Metric**               | `cost`             |
 
+![Lab 1.38](images/Lab-1.38.png)
+![Lab 1.39](images/Lab-1.39.png)
+  
 3️⃣ Add Filters
 
 Filter 1 — Exclude unallocated namespaces
@@ -738,17 +802,26 @@ Filter 1 — Exclude unallocated namespaces
 - Field: namespace
 - Value: unallocated
 
+![Lab 1.40](images/Lab-1.40.png)
+ 
 Filter 2 — Include requests
 - Condition: Include
 - Field: type
 - Value: requests
 
+![Lab 1.41](images/Lab-1.41.png)
+![Lab 1.42](images/Lab-1.42.png)
+  
 ## 🥧 Add Visualizations
 
 1️⃣ Pie Chart (Cost per Namespace)
 - Right-click the table → Duplicate
 - Change chart type → Pie Chart
 
+![Lab 1.43](images/Lab-1.43.png)
+![Lab 1.44](images/Lab-1.44.png)
+ 
+ 
 2️⃣ Donut Chart (Cost by Resource Type)
 - Add chart → Donut
 - Settings:
@@ -757,19 +830,31 @@ Filter 2 — Include requests
   - Metric: cost
   - Apply both filters
 
+![Lab 1.45](images/Lab-1.45.png)
+![Lab 1.46](images/Lab-1.46.png)
+
 3️⃣ Namespace Filter Control
 - Add control → Drop-down list
+
+![Lab 1.47](images/Lab-1.47.png)
+ 
 - Control field: namespace
 - Filter: unallocated
+
+![Lab 1.48](images/Lab-1.48.png)
+![Lab 1.49](images/Lab-1.49.png)
 
 Group Control + Donut Chart
 - Select both
 - Right-click → Group
 
+![Lab 1.50](images/Lab-1.50.png)
+
 ## 👀 Preview and Download Report
 - Click View to preview
 - From Share → Download report to export as PDF
 
+![Lab 1.51](images/Lab-1.51.png)
 
 ---
 
