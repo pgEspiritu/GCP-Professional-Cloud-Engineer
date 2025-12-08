@@ -385,3 +385,96 @@ Expect:
 ```bash
 Image: gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1
 ```
+
+---
+
+# 🧩 Task 4 — Autoscale from Estimated Traffic
+
+A major marketing campaign is coming, and traffic will spike heavily.  
+To avoid being paged at 3 AM 😴 and to prevent over-provisioning expensive resources, you will configure:
+
+- **Horizontal Pod Autoscaling (HPA)** for your deployments  
+- **Cluster autoscaling** for your node pool  
+- **Load testing** to simulate 8,000 concurrent users  
+- **Additional autoscaling for recommendationservice**
+
+---
+
+# 🛠️ Step-by-step Solution for Task 4
+
+---
+
+## 1️⃣ Apply Horizontal Pod Autoscaling to the Frontend
+
+Configure the frontend to automatically scale based on CPU usage.
+
+### Create the frontend HPA:
+
+```bash
+kubectl autoscale deployment frontend \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=12 \
+  -n dev
+```
+
+Verify:
+```bash
+kubectl get hpa -n dev
+```
+
+Expected:
+```bash
+frontend   Deployment/frontend   50%   1   12   ...
+```
+This ensures auto-scaling without downtime since the HPA slowly ramps replicas based on CPU load.
+
+## 2️⃣ Enable Cluster Autoscaling on the Node Pool
+
+Your node pool must be able to scale to support additional pods during traffic spikes.
+
+Update the existing node pool ― optimized-pool-5299 ― with:
+- min nodes = 1
+- max nodes = 6
+
+Run:
+```bash
+gcloud container clusters update onlineboutique-cluster-987 \
+  --enable-autoscaling \
+  --min-nodes=1 \
+  --max-nodes=6 \
+  --node-pool=optimized-pool-5299 \
+  --zone us-central1-c
+```
+
+Verify:
+```bash
+gcloud container node-pools describe optimized-pool-5299 \
+  --cluster=onlineboutique-cluster-987 \
+  --zone us-central1-c | grep -i autoscaling -A 3
+```
+
+## 3️⃣ Run a Load Test (~8,000 users)
+
+This simulates the heavy marketing traffic.
+
+First, get your frontend external IP:
+```bash
+kubectl get svc frontend-external -n dev
+```
+
+Then run the load test:
+```bash
+kubectl exec $(kubectl get pod --namespace=dev | grep 'loadgenerator' | cut -f1 -d ' ') -it --namespace=dev -- bash -c 'export USERS=8000; locust --host="http://YOUR_FRONTEND_EXTERNAL_IP" --headless -u "8000" 2>&1'
+```
+
+Replace:
+```bash
+YOUR_FRONTEND_EXTERNAL_IP
+```
+with the actual IP.
+
+This will start generating massive traffic → causing:
+- frontend pods to scale up
+- possibly new nodes to be created
+- recommendationservice likely to crash or struggle
