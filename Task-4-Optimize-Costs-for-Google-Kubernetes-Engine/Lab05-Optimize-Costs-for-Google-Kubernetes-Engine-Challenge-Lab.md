@@ -1,10 +1,4 @@
 # 🚀 Optimize Costs for Google Kubernetes Engine: Challenge Lab  
-**⏱ Duration:** 1 hour 30 minutes  
-**💰 Credits:** 5  
-**📈 Level:** Intermediate  
-**🧪 Lab Code:** GSP343  
-
----
 
 ## 🧩 Introduction
 
