@@ -143,3 +143,54 @@ gcloud container node-pools delete default-pool \
   --cluster=onlineboutique-cluster-651
 ```
 This ensures you are only running the optimized node pool, reducing costs while maintaining performance.
+
+---
+
+## Task 3: Apply a Frontend Update
+
+The dev team wants to push a last-minute update to the frontend without causing downtime. Follow these steps:
+
+---
+
+### Step 1: Set a Pod Disruption Budget (PDB)
+
+Create a Pod Disruption Budget for the frontend deployment to ensure high availability during updates:
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: onlineboutique-frontend-pdb
+  namespace: dev
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: frontend
+EOF
+```
+> This ensures that at least 1 pod is always available during updates or maintenance.
+
+
+## Step 2: Update the Frontend Deployment Image
+
+The dev team has provided an updated Docker image:
+```bash
+gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1
+```
+
+Edit the frontend deployment to use this new image and set the imagePullPolicy to Always:
+```bash
+kubectl set image deployment/frontend frontend=gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1 --namespace dev
+kubectl patch deployment frontend -n dev --patch '{"spec":{"template":{"spec":{"containers":[{"name":"frontend","imagePullPolicy":"Always"}]}}}}'
+```
+
+Step 3: Verify the Update
+
+Check that the frontend pods are running the updated image:
+```bash
+kubectl get pods -n dev -o wide
+kubectl describe deployment frontend -n dev | grep Image
+```
+> Note: The Pod Disruption Budget ensures that at least one pod remains available while the rollout occurs, preventing downtime.
