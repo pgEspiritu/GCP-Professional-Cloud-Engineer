@@ -478,3 +478,46 @@ This will start generating massive traffic → causing:
 - frontend pods to scale up
 - possibly new nodes to be created
 - recommendationservice likely to crash or struggle
+
+## 4️⃣ Observe scaling behavior
+
+Check deployments & HPA activity:
+```bash
+kubectl get hpa -n dev
+kubectl get deploy -n dev
+kubectl get pods -n dev -o wide
+```
+
+Check node scaling:
+```bash
+kubectl get nodes
+```
+
+As CPU spikes, you should see:
+- Frontend scaling up toward 12 pods
+- New nodes appearing automatically
+
+## 5️⃣ Apply Horizontal Pod Autoscaling to recommendationservice
+
+Because this microservice becomes overwhelmed during the load test, apply HPA.
+
+Create recommendationservice autoscaler:
+```bash
+kubectl autoscale deployment recommendationservice \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=5 \
+  -n dev
+```
+
+Verify:
+```bash
+kubectl get hpa -n dev
+```
+
+You should now see:
+```bash
+frontend               1 -> 12
+recommendationservice  1 -> 5
+```
+
