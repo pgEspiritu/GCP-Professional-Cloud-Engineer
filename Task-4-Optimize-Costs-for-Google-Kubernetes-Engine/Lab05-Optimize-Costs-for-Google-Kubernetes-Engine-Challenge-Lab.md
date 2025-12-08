@@ -400,10 +400,6 @@ To avoid being paged at 3 AM 😴 and to prevent over-provisioning expensive res
 
 ---
 
-# 🛠️ Step-by-step Solution for Task 4
-
----
-
 ## 1️⃣ Apply Horizontal Pod Autoscaling to the Frontend
 
 Configure the frontend to automatically scale based on CPU usage.
@@ -521,3 +517,132 @@ frontend               1 -> 12
 recommendationservice  1 -> 5
 ```
 
+---
+
+# ✅ Task 5 — Optional Optimization of Other Services
+
+In this task, you evaluate other services in OnlineBoutique and apply extra autoscaling where needed, based on CPU or memory pressure.
+
+Below is the step-by-step recommended approach.
+
+## 🧭 Step 1 — Inspect All Workloads for Stress
+
+Run:
+```bash
+kubectl top pods -n dev
+```
+
+Watch for pods with high CPU or MEM usage (usually greater than 70%).
+- Common services that often show pressure during load tests:
+- recommendationservice (CPU-heavy)
+- productcatalogservice (CPU bursts)
+- cartservice (memory usage spikes)
+- adservice (CPU + gRPC bursts)
+- checkoutservice (CPU moderate)
+
+You can also visually check in:
+GKE Dashboard → Workloads → CPU & Memory graphs
+
+## 🧭 Step 2 — Add Autoscaling to Stressed Services
+
+Use CPU-based scaling for CPU-heavy workloads, and memory-based scaling for RAM-bound workloads.
+
+### 🟦 A. Example: Autoscale productcatalogservice (CPU 50%, 1–5 pods)
+```bash
+kubectl autoscale deployment productcatalogservice \
+  -n dev \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=5
+```
+
+### 🟩 B. Example: Autoscale adservice (CPU 60%, 2–6 pods)
+```bash
+kubectl autoscale deployment adservice \
+  -n dev \
+  --cpu-percent=60 \
+  --min=2 \
+  --max=6
+```
+
+### 🟧 C. Example: Autoscale cartservice based on Memory
+
+Memory-based autoscaling requires a custom metric in older versions of Kubernetes, but GKE supports it natively via Metrics Server.
+
+Apply memory-based autoscaling:
+```bash
+kubectl autoscale deployment cartservice \
+  -n dev \
+  --metric=resource.memory.averageUtilization=70 \
+  --min=1 \
+  --max=5
+```
+
+If your cluster rejects the memory command (older GKE versions), then apply CPU autoscaling instead:
+```bash
+kubectl autoscale deployment cartservice \
+  -n dev \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=5
+```
+
+### 🟥 D. Example: Autoscale checkoutservice
+```bash
+kubectl autoscale deployment checkoutservice \
+  -n dev \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=4
+```
+
+### 🟨 E. Example: Autoscale shippingservice
+```bash
+kubectl autoscale deployment shippingservice \
+  -n dev \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=4
+```
+
+🧭 Step 3 — Verify All HPAs
+
+Run:
+```bash
+kubectl get hpa -n dev
+```
+You should now see:
+- frontend
+- recommendationservice
+- any other services you scaled
+
+Each HPA should show:
+- CPU % target
+- Current usage
+- Min/Max pods
+
+---
+
+# 🎉 Task Completed
+
+You have successfully completed the **Optimize Costs for Google Kubernetes Engine: Challenge Lab**! 🏆
+
+Throughout this lab, you have:
+
+- ✅ Deployed the **OnlineBoutique** application to **Google Kubernetes Engine (GKE)**  
+- ✅ Created namespaces to separate **dev** and **prod** environments  
+- ✅ Configured **optimized node pools** to reduce costs and better utilize resources  
+- ✅ Applied **Pod Disruption Budgets (PDBs)** to ensure zero downtime during updates  
+- ✅ Updated the frontend deployment with a **new Docker image** and set `ImagePullPolicy: Always`  
+- ✅ Implemented **Horizontal Pod Autoscaling (HPA)** for:
+  - `frontend` deployment  
+  - `recommendationservice` deployment  
+- ✅ Scaled additional services based on proper resource metrics for cost efficiency  
+- ✅ Optionally enabled **Node Auto Provisioning** to handle dynamic node requirements  
+- ✅ Verified scaling behavior with **load testing** simulating thousands of concurrent users  
+
+💡 By completing this lab, you have demonstrated your ability to:
+
+- Optimize cluster and node pool configurations for **cost and performance**  
+- Ensure high availability during updates and scaling events  
+- Apply autoscaling strategies for both pods and nodes in a real production-like scenario  
