@@ -114,7 +114,7 @@ Confirm kubectl can reach the cluster:
 ```bash
 kubectl get nodes
 ```
-# Expect: 2 nodes listed and READY
+Expect: 2 nodes listed and READY
 
 ## 4️⃣ Create namespaces: dev and prod
 ```bash
