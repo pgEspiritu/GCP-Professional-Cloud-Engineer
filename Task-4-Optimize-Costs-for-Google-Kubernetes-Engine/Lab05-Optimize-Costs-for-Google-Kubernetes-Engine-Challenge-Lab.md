@@ -52,12 +52,6 @@ You will be responsible for deploying the **OnlineBoutique app to GKE** and maki
 
 ---
 
-### Step 0: Set Default Zone
-Set the default zone for your gcloud session:
-
-```bash
-gcloud config set compute/zone us-east1-c
-```
 
 ## Task 1: Create a Cluster and Deploy Your App
 
@@ -67,7 +61,24 @@ Before you can deploy the application, you'll need to:
 2. **Name it** `onlineboutique-cluster-651`.
 3. **Start small** with a zonal cluster of only **two (2) nodes**.
 
-### Step 1: Create Namespaces
+### Step 0: Set Default Zone
+Set the default zone for your gcloud session:
+
+```bash
+gcloud config set compute/zone us-east1-c
+```
+
+### Step 1: Create the Cluster
+
+Create a small zonal cluster with 2 nodes and machine type e2-standard-2 using the rapid release channel:
+```bash
+gcloud container clusters create onlineboutique-cluster-651 \
+  --num-nodes=2 \
+  --machine-type=e2-standard-2 \
+  --release-channel=rapid
+```
+
+### Step 2: Create Namespaces
 Before deploying the shop, set up namespaces to separate resources for the two environments: `dev` and `prod`.
 
 ```bash
@@ -84,7 +95,7 @@ cd microservices-demo
 kubectl apply -f ./release/kubernetes-manifests.yaml --namespace dev
 ```
 
-Step 3: Verify Deployment
+Step 4: Verify Deployment
 
 Check that your OnlineBoutique store is up and running by getting the external IP of the frontend service:
 ```bash
