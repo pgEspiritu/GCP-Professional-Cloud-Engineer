@@ -205,3 +205,75 @@ kubectl get pods -n dev -o wide
 kubectl describe deployment frontend -n dev | grep Image
 ```
 > Note: The Pod Disruption Budget ensures that at least one pod remains available while the rollout occurs, preventing downtime.
+
+---
+
+## Task 4: Autoscale from Estimated Traffic
+
+A marketing campaign is coming up that will cause a traffic surge on the OnlineBoutique shop. To handle this efficiently, you will configure **horizontal pod autoscaling** for the frontend and backend services, and **cluster autoscaling** for the node pool.
+
+---
+
+### Step 1: Apply Horizontal Pod Autoscaling (HPA) to Frontend
+
+Scale the `frontend` deployment automatically:
+
+- Target CPU utilization: 50%
+- Minimum pods: 1
+- Maximum pods: 11
+
+```bash
+kubectl autoscale deployment frontend \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=11 \
+  --namespace dev
+```
+
+Verify the HPA:
+```bash
+kubectl get hpa -n dev
+```
+> This ensures the frontend scales smoothly without downtime.
+
+### Step 2: Enable Cluster Autoscaling
+
+If the pod autoscaler requires more resources than currently available, the cluster can add nodes automatically:
+- Minimum nodes: 1
+- Maximum nodes: 6
+```bash
+gcloud container clusters update onlineboutique-cluster-651 \
+  --enable-autoscaling \
+  --min-nodes=1 \
+  --max-nodes=6 \
+  --zone us-east1-c \
+  --node-pool optimized-pool-9216
+```
+
+Verify cluster autoscaling:
+```bash
+gcloud container clusters describe onlineboutique-cluster-651 --zone us-east1-c \
+  --format="yaml(nodePools)"
+```
+
+### Step 3: Run Load Test to Simulate Traffic Surge
+
+OnlineBoutique includes a built-in load generator. Increase simulated traffic to replicate the marketing campaign:
+
+1. Get the EXTERNAL-IP of the frontend service:
+```bash
+kubectl get svc -n dev frontend-external
+```
+
+2. Run the load generator with 8000 concurrent users. Replace YOUR_FRONTEND_EXTERNAL_IP with the actual IP:
+```bash
+kubectl exec $(kubectl get pod --namespace=dev | grep 'loadgenerator' | cut -f1 -d ' ') \
+  -it --namespace=dev -- bash -c 'export USERS=8000; locust --host="http://YOUR_FRONTEND_EXTERNAL_IP" --headless -u 8000 2>&1'
+```
+
+3. Observe workloads and monitor cluster performance:
+```bash
+kubectl get pods -n dev -o wide
+kubectl top pods -n dev
+```
+> You may notice that recommendationservice is struggling under the increased load.
