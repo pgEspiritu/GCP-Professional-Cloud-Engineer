@@ -159,3 +159,111 @@ frontend-external  LoadBalancer   10.x.x.x       34.x.x.x         80:xxxxx/TCP  
 ## 8️⃣ Verify the OnlineBoutique store in your browser
 Open http://<EXTERNAL-IP>/ in your browser (use the IP you obtained).
 You should see the OnlineBoutique storefront UI.
+
+---
+
+# 🧩 Task 2 — Migrate to an Optimized Node Pool
+
+After analyzing your cluster resources, you observe:
+
+- 🧠 Your workloads leave **plenty of unused RAM**, meaning a node type with less memory will work.
+- ⚙️ Scaling most deployments only adds **~100m CPU per replica**, so a machine type with less CPU is also sufficient.
+- 📉 Therefore, a **smaller and more cost-efficient machine type** can handle your workload.
+
+Your task:
+
+- Create a new node pool named **`optimized-pool-5299`**  
+- Use machine type **`custom-2-3584`** (2 vCPU, 3.5 GB RAM)  
+- Use **2 nodes**  
+- Migrate the workloads by draining `default-pool`  
+- Delete the old node pool after workloads have moved
+
+## 1️⃣ Create the optimized node pool
+
+Run:
+
+```bash
+gcloud container node-pools create optimized-pool-5299 \
+  --cluster=onlineboutique-cluster-987 \
+  --machine-type=custom-2-3584 \
+  --num-nodes=2 \
+  --zone=us-central1-c
+```
+
+Verify creation:
+```bash
+gcloud container node-pools list \
+  --cluster=onlineboutique-cluster-987 \
+  --zone=us-central1-c
+```
+
+## 2️⃣ Confirm nodes are ready
+```bash
+kubectl get nodes -o wide
+```
+
+You should now see two new nodes labeled with:
+```pgsql
+gke-onlineboutique-cluster-987-optimized-pool-5299-xxxxx
+```
+They must show STATUS: Ready.
+
+## 3️⃣ Cordon the old node pool (default-pool)
+
+This prevents scheduling new pods onto old nodes.
+
+Identify nodes in the default pool:
+```bash
+kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool
+```
+
+Cordon each node:
+```bash
+kubectl cordon <node-name>
+```
+
+Repeat for all nodes in default-pool.
+
+## 4️⃣ Drain the old node pool
+
+This forces pods to migrate to the new node pool.
+Use the following command to safely evict pods without deleting services:
+```bash
+kubectl drain <node-name> \
+  --ignore-daemonsets \
+  --delete-emptydir-data \
+  --force
+```
+Run this for each node in the default pool.
+
+✔️ As pods are drained, Kubernetes automatically re-schedules them onto nodes in optimized-pool-5299.
+
+## 5️⃣ Verify pods have moved to the new node pool
+
+Run:
+```bash
+kubectl get pods -n dev -o wide
+```
+
+Check the NODE column → all pods should now be running on nodes from:
+```bash
+optimized-pool-5299
+```
+
+## 6️⃣ Delete the old node pool
+
+Once workloads are migrated safely:
+```bash
+gcloud container node-pools delete default-pool \
+  --cluster=onlineboutique-cluster-987 \
+  --zone=us-central1-c \
+  --quiet
+```
+
+Verify only the optimized pool remains:
+```bash
+gcloud container node-pools list \
+  --cluster=onlineboutique-cluster-987 \
+  --zone=us-central1-c
+```
+
