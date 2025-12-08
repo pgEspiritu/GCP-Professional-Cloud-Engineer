@@ -267,3 +267,121 @@ gcloud container node-pools list \
   --zone=us-central1-c
 ```
 
+---
+
+# 🧩 Task 3 — Apply a Frontend Update (Zero Downtime)
+
+Your dev team has requested a **last-minute frontend update**, and you must roll it out **without downtime**.  
+To do this safely, you will:
+
+1. Create a **Pod Disruption Budget (PDB)** for the frontend  
+2. Apply the new **Docker image**  
+3. Update the **ImagePullPolicy**  
+4. Let Kubernetes handle the **rolling update** safely
+
+---
+
+## 1️⃣ Create a Pod Disruption Budget (PDB)
+
+A PDB ensures Kubernetes never evicts too many pods at once during drains, upgrades, or node events — preventing downtime.
+
+We will create one named:
+
+**`onlineboutique-frontend-pdb`**  
+with:
+
+- **minAvailable: 1**
+- **applies to the frontend deployment**
+- **namespace: dev**
+
+Create a YAML file:
+
+```bash
+cat <<EOF > frontend-pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: onlineboutique-frontend-pdb
+  namespace: dev
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: frontend
+EOF
+```
+
+Apply the PDB:
+```bash
+kubectl apply -f frontend-pdb.yaml
+```
+
+Verify:
+```bash
+kubectl get pdb -n dev
+```
+
+Expect:
+```php
+onlineboutique-frontend-pdb   1   <current>   <desired>
+```
+
+## 2️⃣ Edit the frontend deployment
+
+Open the deployment for editing:
+```bash
+kubectl edit deployment frontend -n dev
+```
+This opens a text editor (usually vi).
+
+## 3️⃣ Update the container image
+
+Find the container spec:
+```yaml
+containers:
+- name: server
+  image: gcr.io/qwiklabs-resources/onlineboutique-frontend:<old-version>
+```
+
+Replace the line with:
+```yaml
+image: gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1
+```
+
+## 4️⃣ Set ImagePullPolicy to Always
+
+Still inside the deployment spec, add or modify:
+```yaml
+imagePullPolicy: Always
+```
+
+Your container spec should now look like:
+```yaml
+containers:
+- name: server
+  image: gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1
+  imagePullPolicy: Always
+```
+Save and exit (:wq for vi).
+
+## 5️⃣ Confirm the rolling update begins
+
+Check rollout status:
+```bash
+kubectl rollout status deployment frontend -n dev
+```
+
+You should see:
+```scharp
+deployment "frontend" successfully rolled out
+```
+
+## 6️⃣ Verify updated pods are running the new image
+```bash
+kubectl get pods -n dev -o wide
+```
+
+Expect:
+```bash
+Image: gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1
+```
