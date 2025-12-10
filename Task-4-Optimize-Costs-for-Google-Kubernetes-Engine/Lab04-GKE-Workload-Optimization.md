@@ -1,7 +1,7 @@
 # 🚀 GKE Workload Optimization — Lab Guide  
 
 
-# 📘 Overview
+## 📘 Overview
 
 One of the many benefits of using Google Cloud is its billing model that charges you only for the resources you use. With that in mind, it’s important to allocate reasonable resources for your apps and infrastructure—and optimize them continuously.
 
@@ -11,7 +11,7 @@ This lab walks you through concepts and tools that increase **resource efficienc
 
 ---
 
-# 🎯 Objectives
+## 🎯 Objectives
 
 In this lab, you will learn how to:
 
@@ -22,9 +22,9 @@ In this lab, you will learn how to:
 
 ---
 
-# 🧰 Setup and Requirements
+## 🧰 Setup and Requirements
 
-## Before clicking **Start Lab**
+### Before clicking **Start Lab**
 - Read all instructions (lab timer cannot be paused).  
 - You will be given **temporary Google Cloud credentials**.  
 - Use only the provided student account (to avoid personal billing).  
@@ -34,7 +34,7 @@ This hands-on lab uses a real Google Cloud environment.
 
 ---
 
-# ▶️ Start the Lab & Sign In
+## ▶️ Start the Lab & Sign In
 
 1. Click **Start Lab**.  
 2. View the **Lab Details** panel (temporary Username & Password).  
@@ -50,7 +50,7 @@ After login, the Google Cloud Console opens.
 
 ---
 
-# 💻 Activate Cloud Shell
+## 💻 Activate Cloud Shell
 
 Cloud Shell provides a VM with tools pre-installed (including gcloud CLI).
 
@@ -69,7 +69,7 @@ Verify project:
 gcloud config list project
 ```
 
-# 🛠 Provision Lab Environment
+## 🛠 Provision Lab Environment
 
 Set your default compute zone:
 ```bash
@@ -82,7 +82,9 @@ gcloud container clusters create test-cluster --num-nodes=3 --enable-ip-alias
 ```
 > `--enable-ip-alias` enables alias IPs required for container-native load balancing via Ingress.
 
-# 📦 Deploy the gb-frontend Application (Single Pod)
+![Lab 4.1](images/Lab-4.1.png)
+
+## 📦 Deploy the gb-frontend Application (Single Pod)
 
 Create the Pod manifest:
 ```bash
@@ -111,6 +113,8 @@ Apply it:
 kubectl apply -f gb_frontend_pod.yaml
 ```
 > Note: Scoring for this task may take 1–2 minutes.
+
+![Lab 4.2](images/Lab-4.2.png)
 
 ---
 
@@ -142,7 +146,6 @@ This requires your cluster to be **VPC-native**, which was enabled earlier using
 ```bash
 --enable-ip-alias
 ```
-
 
 ---
 
@@ -176,6 +179,8 @@ Apply:
 kubectl apply -f gb_frontend_cluster_ip.yaml
 ```
 
+![Lab 4.3](images/Lab-4.3.png)
+
 ## 🌐 Create the Ingress Resource
 
 Create gb_frontend_ingress.yaml:
@@ -198,6 +203,8 @@ Apply:
 ```bash
 kubectl apply -f gb_frontend_ingress.yaml
 ```
+
+   ![Lab 4.4](images/Lab-4.4.png)
 
 ## 🏗 What Happens Next?
 
@@ -242,7 +249,12 @@ Retrieve the ingress external IP:
 ```bash
 kubectl get ingress gb-frontend-ingress
 ```
+
+![Lab 4.5](images/Lab-4.5.png)
+
 Open the external IP in your browser to view the application.
+
+![Lab 4.6](images/Lab-4.6.png)
 
 ---
 
@@ -261,6 +273,8 @@ gsutil -m cp -r gs://spls/gsp769/locust-image .
 ```
 The locust-image directory contains Locust configuration files.
 
+![Lab 4.7](images/Lab-4.7.png)
+
 ## 🏗 Step 2 — Build & Push the Locust Docker Image
 
 Build and store Locust in Container Registry:
@@ -268,6 +282,15 @@ Build and store Locust in Container Registry:
 gcloud builds submit \
     --tag gcr.io/${GOOGLE_CLOUD_PROJECT}/locust-tasks:latest locust-image
 ```
+
+![Lab 4.7](images/Lab-4.7.png)
+![Lab 4.8](images/Lab-4.8.png)
+![Lab 4.9](images/Lab-4.9.png)
+![Lab 4.10](images/Lab-4.10.png)
+![Lab 4.11](images/Lab-4.11.png)
+![Lab 4.12](images/Lab-4.12.png)
+![Lab 4.13](images/Lab-4.13.png)
+![Lab 4.14](images/Lab-4.14.png)
 
 Verify it exists:
 ```bash
@@ -278,7 +301,6 @@ Expected output example:
 ```ini
 Only listing images in gcr.io/qwiklabs-gcp-01-343cd312530e.
 ```
-
 
 ## 🚀 Step 3 — Deploy Locust (Main + Workers)
 
@@ -300,11 +322,15 @@ kubectl get service locust-main
 ```
 If <pending>, wait a moment and rerun.
 
+![Lab 4.15](images/Lab-4.15.png)
+
 Open the UI in a browser:
 ```bash
 http://EXTERNAL_IP:8089
 ```
 You will see the Locust dashboard.
+
+![Lab 4.16](images/Lab-4.16.png)
 
 ## 🏋️ Step 5 — Load Test (Baseline)
 
@@ -313,9 +339,13 @@ In Locust UI, enter:
 - Spawn rate: 20
 Click Start swarming.
 
+![Lab 4.17](images/Lab-4.17.png)
+
 After a few seconds you should see:
 - Status: Running with 200 users
 - Approx. 150 RPS (Requests Per Second)
+
+![Lab 4.18](images/Lab-4.18.png)
 
 ## 📊 Step 6 — Observe Pod Resource Usage
 
@@ -330,6 +360,8 @@ Expected behavior:
 - Memory: Around 80Mi, well below the 256Mi request
 This is your per-pod capacity under typical load.
 
+![Lab 4.19](images/Lab-4.19.png)
+
 ## ⚡ Step 7 — Test a Sudden Spike (Burst Load)
 
 In Locust, click Edit:
@@ -339,11 +371,15 @@ Click Start swarming
 
 This generates 700 new users in 2–3 seconds.
 
+![Lab 4.20](images/Lab-4.20.png)
+
 Observe the pod metrics again in the Console.
 
 Expected behavior:
 - CPU spikes to ~0.07 cores (70% of request)
 - Memory remains around 80Mi
+
+![Lab 4.21](images/Lab-4.21.png)
 
 This indicates your application:
 - Is more CPU-bound than memory-bound
@@ -400,6 +436,8 @@ Apply the manifest:
 kubectl apply -f liveness-demo.yaml
 ```
 
+![Lab 4.22](images/Lab-4.22.png)
+
 📝 Notes
 - initialDelaySeconds — how long to wait before the first probe
 - periodSeconds — how often the probe runs
@@ -412,6 +450,10 @@ Check pod events:
 kubectl describe pod liveness-demo-pod
 ```
 You will initially see only creation and startup events.
+
+![Lab 4.23](images/Lab-4.23.png)
+![Lab 4.24](images/Lab-4.24.png)
+![Lab 4.25](images/Lab-4.25.png)
 
 ❌ Trigger a liveness probe failure
 Delete the file being checked:
@@ -434,6 +476,10 @@ Example:
 Warning  Unhealthy   Liveness probe failed: cat: /tmp/alive: No such file or directory
 Normal   Killing     Container failed liveness probe, will be restarted
 ```
+
+![Lab 4.26](images/Lab-4.26.png)
+![Lab 4.27](images/Lab-4.27.png)
+![Lab 4.28](images/Lab-4.28.png)
 
 🧠 Other types of liveness probes
 - HTTP probe — checks for valid HTTP responses
@@ -510,6 +556,11 @@ Warning  Unhealthy  Readiness probe failed: cat: /tmp/healthz: No such file or d
 ```
 Readiness probe failures do not restart the pod.
 
+![Lab 4.29](images/Lab-4.29.png)
+![Lab 4.30](images/Lab-4.30.png)
+![Lab 4.31](images/Lab-4.31.png)
+![Lab 4.32](images/Lab-4.32.png)
+
 ## ✔ Make the pod “Ready”
 
 Create the expected file:
@@ -529,6 +580,8 @@ ContainersReady True
 ```
 Refresh the browser — you should now see the Welcome to nginx! page.
 
+![Lab 4.33](images/Lab-4.33.png)
+
 ## 🧠 Why readiness probes matter
 
 Readiness probes:
@@ -543,94 +596,141 @@ A good readiness probe example:
 
 ---
 
-# 🛡️ Task 4 — Pod Disruption Budgets (PDBs)
+# Task 4. Pod Disruption Budgets (PDB) 🚦
 
-Pod Disruption Budgets help protect your application's availability during voluntary disruptions, such as:
-- Node draining
-- Deployment updates
-- Admin actions (deleting/rolling updates)
-- Moving pods between nodes
-PDBs ensure that a minimum number of pods stay running so your app remains accessible.
+Ensuring reliability and uptime for your GKE application includes using **Pod Disruption Budgets (PDB)**.  
+A **PDB** limits how many pods of a replicated application can be down at the same time due to **voluntary disruptions**.
 
-## ✅ Step 1: Replace Single Pod With Deployment
+Voluntary disruptions include:
+- Deleting or updating a deployment 🔄  
+- Rolling updates  
+- Draining nodes 🧹  
+- Moving pods to different nodes  
 
-Delete your single pod:
+---
+
+## 🛠️ Deploy the Application as a Deployment
+
+### 1️⃣ Delete the single pod app:
 ```bash
 kubectl delete pod gb-frontend
 ```
 
-Create deployment of 5 replicas:
+### 2️⃣ Create a deployment manifest with 5 replicas:
+```yaml
+cat << EOF > gb_frontend_deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gb-frontend
+  labels:
+    run: gb-frontend
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      run: gb-frontend
+  template:
+    metadata:
+      labels:
+        run: gb-frontend
+    spec:
+      containers:
+        - name: gb-frontend
+          image: gcr.io/google-samples/gb-frontend-amd64:v5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          ports:
+            - containerPort: 80
+              protocol: TCP
+EOF
+```
+
+### 3️⃣ Apply the deployment:
 ```bash
 kubectl apply -f gb_frontend_deployment.yaml
 ```
 
-## 🔄 Step 2: Drain Nodes Without a PDB (App Will Go Down)
+![Lab 4.34](images/Lab-4.34.png)
+![Lab 4.35](images/Lab-4.35.png)
 
-Drain all nodes in the default node pool:
+## 🧪 Behavior Without a Pod Disruption Budget
+
+Drain the nodes:
 ```bash
 for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool -o=name); do
   kubectl drain --force --ignore-daemonsets --grace-period=10 "$node";
 done
 ```
+This evicts pods and cordons nodes so no new pods are scheduled.
 
-Check deployment status:
+![Lab 4.36](images/Lab-4.36.png)
+
+Check replica count:
 ```bash
 kubectl describe deployment gb-frontend | grep ^Replicas
 ```
 
-Expected result without PDB:
+Possible output:
 ```ini
-5 desired | 5 updated | 5 total | 0 available | 5 unavailable
+Replicas: 5 desired | 5 updated | 5 total | 0 available | 5 unavailable
 ```
-➡️ Application is DOWN because Kubernetes freely evicted all pods.
+With all pods unavailable, the application is down ❌.
 
-## 🔧 Step 3: Uncordon Nodes
-
-Bring nodes back:
+### 🔄 Restore Nodes Before Enabling PDB
+Uncordon nodes:
 ```bash
 for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool -o=name); do
   kubectl uncordon "$node";
 done
 ```
 
-Confirm all pods recover:
+Check deployment again:
 ```bash
 kubectl describe deployment gb-frontend | grep ^Replicas
 ```
 
 Expected:
 ```ini
-5 desired | 5 updated | 5 total | 5 available | 0 unavailable
+Replicas: 5 desired | 5 updated | 5 total | 5 available | 0 unavailable
 ```
 
-## 🛡️ Step 4: Create a Pod Disruption Budget
-
-Require minimum 4 pods available:
+## 🛡️ Create a Pod Disruption Budget
+Create a PDB requiring min-available = 4:
 ```bash
 kubectl create poddisruptionbudget gb-pdb --selector run=gb-frontend --min-available 4
 ```
 
-## 🔄 Step 5: Drain Nodes Again (Now PDB Protects Availability)
+## 🧪 Behavior With Pod Disruption Budget
+Drain the nodes again:
 ```bash
 for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=default-pool -o=name); do
   kubectl drain --timeout=30s --ignore-daemonsets --grace-period=10 "$node";
 done
 ```
 
-You’ll see Kubernetes evict only one pod, then refuse to evict more:
-```vbnet
-error when evicting pod ... Cannot evict pod as it would violate the pod's disruption budget.
+Sample output:
+```ini
+evicting pod default/gb-frontend-597d4d746c-fxsdg
+evicting pod default/gb-frontend-597d4d746c-tcrf2
+evicting pod default/gb-frontend-597d4d746c-kwvmv
+evicting pod default/gb-frontend-597d4d746c-6jdx5
+error when evicting pod "gb-frontend-597d4d746c-fxsdg" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
 ```
-Press CTRL+C to stop the loop.
+Press CTRL+C to exit.
 
 Check deployment status:
 ```bash
 kubectl describe deployment gb-frontend | grep ^Replicas
 ```
-➡️ Because min-available is 4, Kubernetes stops evicting pods to protect availability.
 
----
-
+Expected:
+```ini
+Replicas: 5 desired | 5 updated | 5 total | 4 available | 1 unavailable
+```
+Kubernetes will not evict more pods until a replacement pod becomes available elsewhere — this enforces the PDB ✔️.
 # Task Completed
 
 You successfully created a container-native load balancer using Ingress, enabling more efficient and intelligent load balancing for your GKE applications.
