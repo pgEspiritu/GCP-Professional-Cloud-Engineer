@@ -1,7 +1,4 @@
 # 🚀 Build Infrastructure with Terraform on Google Cloud: Challenge Lab
-**GSP345 – Intermediate • 1 hour 30 minutes ⏱️ • 5 Credits 💰**
-
----
 
 ## 📝 Overview
 In a **challenge lab**, you’re given a **scenario** and a set of **tasks**. Instead of following step-by-step instructions, you must use the skills learned from earlier labs to complete the tasks on your own.
