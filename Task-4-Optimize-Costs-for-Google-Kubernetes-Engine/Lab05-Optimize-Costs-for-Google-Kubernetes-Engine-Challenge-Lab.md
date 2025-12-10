@@ -94,6 +94,10 @@ gcloud container clusters create onlineboutique-cluster-987 \
   --verbosity=info
 ```
 
+![Lab 5.1](images/Lab-5.1.png)
+![Lab 5.2](images/Lab-5.2.png)
+![Lab 5.3](images/Lab-5.3.png)
+
 Notes:
 - --num-nodes 2 creates 2 nodes in the single zone.
 - --release-channel rapid sets the rapid release channel.
@@ -122,12 +126,17 @@ kubectl get namespaces
 ```
 > Expect: dev and prod listed along with others (kube-system, default, etc.)
 
+![Lab 5.4](images/Lab-5.4.png)
+
 ## 5️⃣ Clone the OnlineBoutique repo and deploy to `dev`
 ```bash
 git clone https://github.com/GoogleCloudPlatform/microservices-demo.git
 cd microservices-demo
 kubectl apply -f ./release/kubernetes-manifests.yaml --namespace dev
 ```
+
+![Lab 5.5](images/Lab-5.5.png)
+![Lab 5.6](images/Lab-5.6.png)
 
 ## 6️⃣ Verify resources are created and pods are running
 
@@ -136,6 +145,8 @@ Watch pods come up (give a few minutes for images to pull and pods to become REA
 kubectl get pods -n dev --watch
 ```
 > You should see many pods (frontend, productcatalogservice, cartservice, etc.). Some pods may restart during initial pulls; wait until most show READY and STATUS is Running.
+
+![Lab 5.7](images/Lab-5.7.png)
 
 ## 7️⃣ Find the external IP for the frontend
 The frontend service in this manifest is usually frontend-external (Service type LoadBalancer). Get its external IP:
@@ -150,9 +161,13 @@ frontend-external  LoadBalancer   10.x.x.x       34.x.x.x         80:xxxxx/TCP  
 ```
 > If `EXTERNAL-IP` shows `<pending>`, wait a minute and re-run the command. When ready, copy the external IP.
 
+![Lab 5.8](images/Lab-5.8.png)
+
 ## 8️⃣ Verify the OnlineBoutique store in your browser
 Open http://<EXTERNAL-IP>/ in your browser (use the IP you obtained).
 You should see the OnlineBoutique storefront UI.
+
+![Lab 5.9](images/Lab-5.9.png)
 
 ---
 
@@ -191,6 +206,8 @@ gcloud container node-pools list \
   --zone=us-central1-c
 ```
 
+![Lab 5.10](images/Lab-5.10.png)
+
 ## 2️⃣ Confirm nodes are ready
 ```bash
 kubectl get nodes -o wide
@@ -201,6 +218,8 @@ You should now see two new nodes labeled with:
 gke-onlineboutique-cluster-987-optimized-pool-5299-xxxxx
 ```
 They must show STATUS: Ready.
+
+![Lab 5.11](images/Lab-5.11.png)
 
 ## 3️⃣ Cordon the old node pool (default-pool)
 
@@ -218,6 +237,8 @@ kubectl cordon <node-name>
 
 Repeat for all nodes in default-pool.
 
+![Lab 5.12](images/Lab-5.12.png)
+
 ## 4️⃣ Drain the old node pool
 
 This forces pods to migrate to the new node pool.
@@ -232,6 +253,10 @@ Run this for each node in the default pool.
 
 ✔️ As pods are drained, Kubernetes automatically re-schedules them onto nodes in optimized-pool-5299.
 
+![Lab 5.13](images/Lab-5.13.png)
+![Lab 5.14](images/Lab-5.14.png)
+![Lab 5.15](images/Lab-5.15.png)
+
 ## 5️⃣ Verify pods have moved to the new node pool
 
 Run:
@@ -239,9 +264,11 @@ Run:
 kubectl get pods -n dev -o wide
 ```
 
+![Lab 5.16](images/Lab-5.16.png)
+
 Check the NODE column → all pods should now be running on nodes from:
 ```bash
-optimized-pool-5299
+optimized-pool-5-186005xx
 ```
 
 ## 6️⃣ Delete the old node pool
@@ -260,6 +287,8 @@ gcloud container node-pools list \
   --cluster=onlineboutique-cluster-987 \
   --zone=us-central1-c
 ```
+
+![Lab 5.17](images/Lab-5.17.png)
 
 ---
 
@@ -320,6 +349,8 @@ Expect:
 onlineboutique-frontend-pdb   1   <current>   <desired>
 ```
 
+![Lab 5.18](images/Lab-5.18.png)
+
 ## 2️⃣ Edit the frontend deployment
 
 Open the deployment for editing:
@@ -328,20 +359,23 @@ kubectl edit deployment frontend -n dev
 ```
 This opens a text editor (usually vi).
 
+![Lab 5.19](images/Lab-5.19.png)
+
 ## 3️⃣ Update the container image
 
 Find the container spec:
 ```yaml
 containers:
-- name: server
-  image: gcr.io/qwiklabs-resources/onlineboutique-frontend:<old-version>
+- name: PORT
+  image: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend:<old-version>
 ```
+
+![Lab 5.20](images/Lab-5.20.png)
 
 Replace the line with:
 ```yaml
-image: gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1
+image: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend:v2.1
 ```
-
 ## 4️⃣ Set ImagePullPolicy to Always
 
 Still inside the deployment spec, add or modify:
@@ -353,10 +387,12 @@ Your container spec should now look like:
 ```yaml
 containers:
 - name: server
-  image: gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1
+  image: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend:v2.1
   imagePullPolicy: Always
 ```
 Save and exit (:wq for vi).
+
+![Lab 5.21](images/Lab-5.21.png)
 
 ## 5️⃣ Confirm the rolling update begins
 
@@ -379,6 +415,8 @@ Expect:
 ```bash
 Image: gcr.io/qwiklabs-resources/onlineboutique-frontend:v2.1
 ```
+
+![Lab 5.22](images/Lab-5.22.png)
 
 ---
 
@@ -419,6 +457,8 @@ frontend   Deployment/frontend   50%   1   12   ...
 ```
 This ensures auto-scaling without downtime since the HPA slowly ramps replicas based on CPU load.
 
+![Lab 5.23](images/Lab-5.23.png)
+
 ## 2️⃣ Enable Cluster Autoscaling on the Node Pool
 
 Your node pool must be able to scale to support additional pods during traffic spikes.
@@ -444,6 +484,8 @@ gcloud container node-pools describe optimized-pool-5299 \
   --zone us-central1-c | grep -i autoscaling -A 3
 ```
 
+![Lab 5.24](images/Lab-5.24.png)
+
 ## 3️⃣ Run a Load Test (~8,000 users)
 
 This simulates the heavy marketing traffic.
@@ -464,6 +506,10 @@ YOUR_FRONTEND_EXTERNAL_IP
 ```
 with the actual IP.
 
+![Lab 5.25](images/Lab-5.25.png)
+![Lab 5.26](images/Lab-5.26.png)
+![Lab 5.27](images/Lab-5.27.png)
+
 This will start generating massive traffic → causing:
 - frontend pods to scale up
 - possibly new nodes to be created
@@ -478,6 +524,9 @@ kubectl get deploy -n dev
 kubectl get pods -n dev -o wide
 ```
 
+![Lab 5.28](images/Lab-5.28.png)
+![Lab 5.29](images/Lab-5.29.png)
+
 Check node scaling:
 ```bash
 kubectl get nodes
@@ -486,6 +535,8 @@ kubectl get nodes
 As CPU spikes, you should see:
 - Frontend scaling up toward 12 pods
 - New nodes appearing automatically
+
+![Lab 5.30](images/Lab-5.30.png)
 
 ## 5️⃣ Apply Horizontal Pod Autoscaling to recommendationservice
 
@@ -511,6 +562,8 @@ frontend               1 -> 12
 recommendationservice  1 -> 5
 ```
 
+![Lab 5.31](images/Lab-5.31.png)
+
 ---
 
 # ✅ Task 5 — Optional Optimization of Other Services
@@ -525,6 +578,8 @@ Run:
 ```bash
 kubectl top pods -n dev
 ```
+
+![Lab 5.32](images/Lab-5.32.png)
 
 Watch for pods with high CPU or MEM usage (usually greater than 70%).
 - Common services that often show pressure during load tests:
@@ -614,6 +669,10 @@ Each HPA should show:
 - CPU % target
 - Current usage
 - Min/Max pods
+
+
+![Lab 5.33](images/Lab-5.33.png)
+![Lab 5.34](images/Lab-5.33.png)
 
 ---
 
