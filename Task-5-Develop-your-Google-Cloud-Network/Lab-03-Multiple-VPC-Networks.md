@@ -560,3 +560,101 @@ sudo ifconfig
 
 You should see three interfaces similar to:
 ```ini
+eth0 ... inet 172.16.0.3
+eth1 ... inet 10.130.0.3
+eth2 ... inet 10.128.0.3
+```
+
+---
+
+### 🌐 Explore Network Interface Connectivity
+
+Ping VM instances on each subnet to verify connectivity.
+First, note the internal IPs of:
+- privatenet-vm-1
+- managementnet-vm-1
+- mynet-vm-1
+- mynet-vm-2
+
+---
+
+### 🟢 Test Connectivity (Working Cases)
+
+📌 Ping privatenet-vm-1 (by IP)
+```bash
+ping -c 3 <privatenet-vm-1 IP>
+```
+✔️ Works!
+
+📌 Ping privatenet-vm-1 (by name)
+```bash
+ping -c 3 privatenet-vm-1
+```
+✔️ Works — internal DNS resolves to NIC0.
+
+📌 Ping managementnet-vm-1
+```bash
+ping -c 3 <managementnet-vm-1 IP>
+```
+✔️ Works!
+
+📌 Ping mynet-vm-1
+```bash
+ping -c 3 <mynet-vm-1 IP>
+```
+✔️ Works!
+
+---
+
+🔴 Ping mynet-vm-2 (Fails)
+```bash
+ping -c 3 <mynet-vm-2 IP>
+```
+❌ Does not work.
+
+❗ Why it fails
+The VM’s routing table only includes:
+- NIC0 subnet (172.16.0.0/24)
+- NIC1 subnet (10.130.0.0/20)
+- NIC2 subnet (10.128.0.0/20)
+- Default route via NIC0 (eth0)
+> Since mynet-vm-2 is in 10.132.0.0/20, that subnet is not in the table, so traffic incorrectly exits via eth0.
+
+---
+
+### 📘 View Routing Table
+
+Run:
+```bash
+ip route
+```
+
+Expected output:
+```ini
+default via 172.16.0.1 dev eth0
+10.128.0.0/20 via 10.128.0.1 dev eth2
+10.128.0.1 dev eth2 scope link
+10.130.0.0/20 via 10.130.0.1 dev eth1
+10.130.0.1 dev eth1 scope link
+172.16.0.0/24 via 172.16.0.1 dev eth0
+172.16.0.1 dev eth0 scope link
+```
+
+🧠 Key Insight
+- Primary NIC (eth0) always gets the default route.
+- Traffic to unknown subnets leaves via eth0.
+- To route more intelligently, use policy routing.
+
+📚 See Configuring policy routing in Google Cloud docs.
+
+---
+
+## 🎉 Task Completed
+
+In this lab, you created a VM instance with three network interfaces and verified internal connectivity for VM instances that are on the subnets attached to the multiple-interface VM. 🖧🖧🖧
+
+You also explored the default network along with its:
+   - 🌐 Subnets
+   - 🛣️ Routes
+   - 🔥 Firewall rules
+After that, you created and tested connectivity for a new auto mode VPC network. 🚀
