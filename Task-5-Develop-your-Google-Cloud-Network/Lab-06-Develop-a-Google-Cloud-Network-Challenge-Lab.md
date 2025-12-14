@@ -141,6 +141,8 @@ gcloud config set compute/region "us-east1"
 export REGION=$(gcloud config get compute/region)
 ```
 
+![Lab 6.1](images/Lab-6.1.png)
+
 ---
 
 ### 1️⃣ Create the Custom VPC
@@ -149,6 +151,8 @@ export REGION=$(gcloud config get compute/region)
 gcloud compute networks create griffin-dev-vpc \
   --subnet-mode=custom
 ```
+
+![Lab 6.2](images/Lab-6.2.png)
 
 ### 2️⃣ Create the WordPress Subnet
 
@@ -168,12 +172,17 @@ gcloud compute networks subnets create griffin-dev-mgmt \
   --range=192.168.32.0/20
 ```
 
+![Lab 6.3](images/Lab-6.3.png)
+
 ### 🔍 Verification (Optional but Recommended)
 
 ```bash
 gcloud compute networks subnets list \
   --filter="network:griffin-dev-vpc"
 ```
+
+
+![Lab 6.4](images/Lab-6.4.png)
 
 ---
 
@@ -213,6 +222,8 @@ gcloud compute networks create griffin-prod-vpc \
   --subnet-mode=custom
 ```
 
+![Lab 6.5](images/Lab-6.5.png)
+
 ### 2️⃣ Create the WordPress Subnet
 
 ```bash
@@ -231,12 +242,16 @@ gcloud compute networks subnets create griffin-prod-mgmt \
   --range=192.168.64.0/20
 ```
 
+![Lab 6.6](images/Lab-6.6.png)
+
 ### 🔍 Verification (Optional but Recommended)
 
 ```bash
 gcloud compute networks subnets list \
   --filter="network:griffin-prod-vpc"
 ```
+
+![Lab 6.7](images/Lab-6.7.png)
 
 ---
 
@@ -274,7 +289,7 @@ The bastion host must be reachable via **SSH**.
 
 Allow SSH access to the bastion host.
 
-For dev
+### For dev
 ```bash
 gcloud compute firewall-rules create allow-ssh-1 \
   --direction=INGRESS \
@@ -285,7 +300,9 @@ gcloud compute firewall-rules create allow-ssh-1 \
   --source-ranges=0.0.0.0/0
 ```
 
-For prod
+![Lab 6.8](images/Lab-6.8.png)
+
+### For prod
 ```bash
 gcloud compute firewall-rules create allow-ssh-2 \
   --direction=INGRESS \
@@ -295,6 +312,8 @@ gcloud compute firewall-rules create allow-ssh-2 \
   --rules=tcp:22 \
   --source-ranges=0.0.0.0/0
 ```
+
+![Lab 6.9](images/Lab-6.9.png)
 
 ### 2️⃣ Create the Bastion Host with Two Network Interfaces
 
@@ -310,6 +329,8 @@ gcloud compute instances create griffin-bastion \
 ```
 > ⚠️ The first network interface receives the external IP by default, enabling SSH access.
 
+![Lab 6.10](images/Lab-6.10.png)
+
 ### 3️⃣ Verify the Bastion Host
 
 Check that the VM is running and has two NICs:
@@ -321,12 +342,18 @@ Look for:
 - Two networkInterfaces
 - One external IP on the first interface
 
+![Lab 6.11](images/Lab-6.11.png)
+![Lab 6.12](images/Lab-6.12.png)
+
 ### 4️⃣ SSH into the Bastion Host
 
 ```bash
 gcloud compute ssh griffin-bastion --zone=$ZONE
 ```
 > ✅ Successful login confirms SSH access is working.
+
+![Lab 6.13](images/Lab-6.13.png)
+![Lab 6.14](images/Lab-6.14.png)
 
 ---
 
@@ -373,6 +400,8 @@ gcloud sql instances create griffin-dev-db \
 ```
 > 💡 `db-f1-micro` is cost-effective and sufficient for lab workloads.
 
+![Lab 6.15](images/Lab-6.15.png)
+
 ### 2️⃣ Set the Root Password (If Prompted)
 
 ```bash
@@ -390,6 +419,7 @@ gcloud sql connect griffin-dev-db --user=root
 ```
 > 🔐 Enter the root password when prompted.
 
+![Lab 6.16](images/Lab-6.16.png)
 
 ### 4️⃣ Prepare the WordPress Database
 
@@ -400,6 +430,8 @@ CREATE USER "wp_user"@"%" IDENTIFIED BY "stormwind_rules";
 GRANT ALL PRIVILEGES ON wordpress.* TO "wp_user"@"%";
 FLUSH PRIVILEGES;
 ```
+
+![Lab 6.17](images/Lab-6.17.png)
 
 Exit MySQL:
 ```sql
@@ -417,6 +449,8 @@ Then verify:
 ```sql
 SHOW DATABASES;
 ```
+
+![Lab 6.18](images/Lab-6.18.png)
 
 ---
 
@@ -467,6 +501,8 @@ gcloud container clusters get-credentials griffin-dev \
   --zone=$ZONE
 ```
 
+![Lab 6.19](images/Lab-6.19.png)
+
 ### 3️⃣ Verify Cluster and Nodes
 
 Check cluster status:
@@ -478,6 +514,8 @@ Check nodes:
 ```bash
 kubectl get nodes
 ```
+
+![Lab 6.20](images/Lab-6.20.png)
 
 ---
 
@@ -528,6 +566,8 @@ Open the file:
 nano wp-env.yaml
 ```
 
+![Lab 6.21](images/Lab-6.21.png)
+
 Update the values to match your database credentials:
 ```yaml
 - name: WORDPRESS_DB_USER
@@ -537,6 +577,9 @@ Update the values to match your database credentials:
   value: stormwind_rules
 ```
 > 💡 Ensure both values are correct before saving.
+
+![Lab 6.22](images/Lab-6.22.png)
+![Lab 6.23](images/Lab-6.23.png)
 
 Save and exit (CTRL + O, ENTER, CTRL + X).
 
@@ -577,6 +620,8 @@ Check persistent volume claims:
 kubectl get pvc
 ```
 
+![Lab 6.24](images/Lab-6.24.png)
+
 ---
 
 ## 📰 Task 7: Create a WordPress Deployment (Using CLI)
@@ -616,6 +661,8 @@ PROJECT_ID:REGION:griffin-dev-db
 ```
 Copy this value—you will need it in the next step.
 
+![Lab 6.25](images/Lab-6.25.png)
+
 ### 2️⃣ Edit the WordPress Deployment Configuration
 
 Open the deployment file:
@@ -634,6 +681,9 @@ PROJECT_ID:REGION:griffin-dev-db
 ```
 > ⚠️ Make sure there are no extra spaces or typos.
 
+![Lab 6.26](images/Lab-6.26.png)
+![Lab 6.27](images/Lab-6.27.png)
+
 Save and exit (CTRL + O, ENTER, CTRL + X).
 
 ### 3️⃣ Create the WordPress Deployment
@@ -648,6 +698,8 @@ Verify that the pod is running:
 kubectl get pods
 ```
 > Wait until the WordPress pod shows STATUS: Running.
+
+![Lab 6.28](images/Lab-6.28.png)
 
 ### 4️⃣ Create the WordPress Service
 
@@ -664,10 +716,14 @@ kubectl get svc
 ```
 Look for the EXTERNAL-IP of the WordPress service.
 
+![Lab 6.29](images/Lab-6.29.png)
+
 ### 🌍 Open a browser and navigate to:
 ```bash
 http://EXTERNAL-IP
 ```
+
+![Lab 6.30](images/Lab-6.30.png)
 
 ---
 
