@@ -148,7 +148,7 @@ export ZONE=$(gcloud config get compute/zone)
 
 gcloud config set compute/region "us-east4"
 export REGION=$(gcloud config get compute/region)
-``
+```
 
 ---
 
