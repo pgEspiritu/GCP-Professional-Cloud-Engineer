@@ -143,10 +143,10 @@ Create a **development VPC** named `griffin-dev-vpc` with **two custom subnets**
 
 Configure the default zone and region for the project to ensure all resources are created in the correct location.
 ```bash
-gcloud config set compute/zone "us-east4-b"
+gcloud config set compute/zone "us-east1-c"
 export ZONE=$(gcloud config get compute/zone)
 
-gcloud config set compute/region "us-east4"
+gcloud config set compute/region "us-east1"
 export REGION=$(gcloud config get compute/region)
 ```
 
