@@ -299,7 +299,7 @@ Production VPC access will be through the bastion’s internal interface.
 
 ```bash
 gcloud compute instances create griffin-bastion \
-  --zone=ZONE \
+  --zone=$ZONE \
   --machine-type=e2-medium \
   --image-family=debian-12 \
   --image-project=debian-cloud \
@@ -314,7 +314,7 @@ gcloud compute instances create griffin-bastion \
 Check that the VM is running and has two NICs:
 ```bash
 gcloud compute instances describe griffin-bastion \
-  --zone=ZONE
+  --zone=$ZONE
 ```
 Look for:
 - Two networkInterfaces
@@ -323,7 +323,7 @@ Look for:
 ### 4️⃣ SSH into the Bastion Host
 
 ```bash
-gcloud compute ssh griffin-bastion --zone=ZONE
+gcloud compute ssh griffin-bastion --zone=$ZONE
 ```
 > ✅ Successful login confirms SSH access is working.
 
