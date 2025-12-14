@@ -227,7 +227,7 @@ gcloud compute networks create griffin-prod-vpc \
 ```bash
 gcloud compute networks subnets create griffin-prod-wp \
   --network=griffin-prod-vpc \
-  --region=REGION \
+  --region=$REGION \
   --range=192.168.48.0/20
 ```
 
@@ -236,7 +236,7 @@ gcloud compute networks subnets create griffin-prod-wp \
 ```bash
 gcloud compute networks subnets create griffin-prod-mgmt \
   --network=griffin-prod-vpc \
-  --region=REGION \
+  --region=$REGION \
   --range=192.168.64.0/20
 ```
 
