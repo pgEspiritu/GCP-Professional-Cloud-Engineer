@@ -136,9 +136,19 @@ Create a **development VPC** named `griffin-dev-vpc` with **two custom subnets**
 
 ---
 
-### 🧭 How to Do It (CLI Method)
 
-> 💡 Replace `REGION` with the lab-provided region (for example: `us-central1`).
+## 🧭 How to Do It (CLI Method)
+
+### 🧩 Step 0: Set Default Zone and Region 🌍
+
+Configure the default zone and region for the project to ensure all resources are created in the correct location.
+```bash
+gcloud config set compute/zone "us-east4-b"
+export ZONE=$(gcloud config get compute/zone)
+
+gcloud config set compute/region "us-east4"
+export REGION=$(gcloud config get compute/region)
+``
 
 ---
 
