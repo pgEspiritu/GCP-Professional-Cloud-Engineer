@@ -1,10 +1,5 @@
 # Managing Deployments Using Kubernetes Engine
 
-## 🕒 Lab Overview
-**Duration:** 25 minutes  
-**Credits:** 5  
-**Level:** Intermediate  
-
 DevOps practices often involve multiple deployments to manage scenarios such as **continuous deployment**, **blue-green deployments**, and **canary deployments**. This lab teaches you how to **scale and manage containers** to accomplish these scenarios using Kubernetes.
 
 ---
@@ -108,6 +103,8 @@ gcloud storage cp -r gs://spls/gsp053/kubernetes .
 cd kubernetes
 ```
 
+![Lab 5.1](images/Lab-5.1.png)
+
 ## 🏗️ Create a Cluster
 
 Create a 3-node Kubernetes cluster:
@@ -118,6 +115,8 @@ gcloud container clusters create bootcamp \
   --scopes "https://www.googleapis.com/auth/projecthosting,storage-rw"
 ```
 > ⚠️ Note: Cluster creation may take a few minutes.
+
+![Lab 5.2](images/Lab-5.2.png)
 
 ---
 
@@ -136,10 +135,17 @@ You can also see all of the fields using the `--recursive` option:
 kubectl explain deployment --recursive
 ```
 
+
+![Lab 5.3](images/Lab-5.3.png)
+![Lab 5.4](images/Lab-5.4.png)
+![Lab 5.5](images/Lab-5.5.png)
+
 You can use the explain command as you go through the lab to help you understand the structure of a deployment object and what the individual fields do:
 ```bash
 kubectl explain deployment.metadata.name
 ```
+
+![Lab 5.6](images/Lab-5.6.png)
 
 ---
 
@@ -180,6 +186,9 @@ spec:
 ...
 ```
 > 🔎 This deployment creates three replicas and uses version 1.0.0 of the `fortune-service` container.
+
+![Lab 5.7](images/Lab-5.7.png)
+![Lab 5.8](images/Lab-5.8.png)
 
 ---
 
@@ -225,6 +234,8 @@ kubectl get services fortune-app
 ```
 > ⏳ Note: The `EXTERNAL-IP` may take a few seconds to appear. Re-run the command until it is populated.
 
+![Lab 5.9](images/Lab-5.9.png)
+
 Access the `/version` endpoint:
 ```bash
 curl http://<EXTERNAL-IP>/version
@@ -239,6 +250,8 @@ You can also use a one-liner with output templating:
 ```bash
 curl http://`kubectl get svc fortune-app -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"`/version
 ```
+
+![Lab 5.10](images/Lab-5.10.png)
 
 ---
 
@@ -268,6 +281,8 @@ kubectl get pods | grep fortune-app-blue | wc -l
 ```
 > 🎯 You have successfully learned how to create, expose, and scale Kubernetes deployments.
 
+![Lab 5.11](images/Lab-5.11.png)
+
 ---
 
 # 🔄 Task 3. Rolling update
@@ -283,6 +298,8 @@ To start a rolling update, edit the existing deployment. Kubernetes will detect 
 ```bash
 kubectl edit deployment fortune-app-blue
 ```
+
+![Lab 5.12](images/Lab-5.12.png)
 
 In the editor:
 
@@ -301,6 +318,10 @@ Change it to:
 ```yaml
 image: "us-central1-docker.pkg.dev/qwiklabs-resources/spl-lab-apps/fortune-service:2.0.0"
 ```
+
+![Lab 5.13](images/Lab-5.13.png)
+![Lab 5.14](images/Lab-5.14.png)
+![Lab 5.15](images/Lab-5.15.png)
 
 ---
 
@@ -335,6 +356,8 @@ Check the rollout history:
 kubectl rollout history deployment/fortune-app-blue
 ```
 
+![Lab 5.16](images/Lab-5.16.png)
+
 ---
 
 ### ⏸️ Pause a rolling update
@@ -357,6 +380,8 @@ for p in $(kubectl get pods -l app=fortune-app -o=jsonpath='{.items[*].metadata.
 ````
 Press Ctrl + C to exit the loop.
 
+![Lab 5.17](images/Lab-5.17.png)
+
 ---
 
 ## ▶️ Resume a rolling update
@@ -370,6 +395,8 @@ When complete, verify the status:
 ```bash
 kubectl rollout status deployment/fortune-app-blue
 ```
+
+![Lab 5.18](images/Lab-5.18.png)
 
 ---
 
@@ -389,6 +416,8 @@ curl http://`kubectl get svc fortune-app -o=jsonpath="{.status.loadBalancer.ingr
 ```
 > 🎉 Great job! You’ve successfully practiced rolling updates, pausing, resuming, and rolling back Kubernetes deployments.
 
+![Lab 5.19](images/Lab-5.19.png)
+
 ---
 
 # 🐤 Task 4. Canary deployments
@@ -404,6 +433,9 @@ First, inspect the canary deployment configuration file:
 ```bash
 cat deployments/fortune-app-canary.yaml
 ```
+
+![Lab 5.20](images/Lab-5.20.png)
+![Lab 5.21](images/Lab-5.21.png)
 
 Now create the canary deployment:
 ```bash
@@ -445,6 +477,8 @@ You should observe:
 - Most responses return version 1.0.0
 - A small number of responses return version 2.0.0
 > ✅ This confirms that the canary deployment is receiving only a portion of production traffic.
+
+![Lab 5.22](images/Lab-5.22.png)
 
 ---
 
@@ -491,6 +525,8 @@ Verify that version 2.0.0 is now always served:
 curl http://`kubectl get svc fortune-app -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"`/version
 ```
 
+![Lab 5.23](images/Lab-5.23.png)
+
 ---
 
 ## ⏪ Blue-green rollback
@@ -504,6 +540,8 @@ Verify that traffic has switched back to version 1.0.0:
 ```bash
 curl http://`kubectl get svc fortune-app -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"`/version
 ```
+
+![Lab 5.24](images/Lab-5.24.png)
 
 ---
 
