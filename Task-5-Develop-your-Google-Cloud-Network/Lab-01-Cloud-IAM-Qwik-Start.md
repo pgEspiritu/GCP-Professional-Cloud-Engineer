@@ -242,6 +242,8 @@ You should now see a **permission error**.
    **Cloud Storage > Storage Object Viewer**.
 7. Click **SAVE**.
 
+![Lab 1.14](images/Lab-1.14.png)
+
 ---
 
 ## Verify access (as **Username 2**) 👤📄
@@ -256,16 +258,16 @@ You should now see a **permission error**.
 gsutil ls gs://[YOUR_BUCKET_NAME]
 ```
 
-
 You should see output similar to:
 ```ini
 gs://[YOUR_BUCKET_NAME]/sample.txt
 ```
-
-
 > **Note:** If you see `AccessDeniedException`, wait a minute and retry. IAM changes may take time to propagate.
 
 This confirms that **Username 2 now has view access to the Cloud Storage bucket**. ✔️
+
+
+![Lab 1.15](images/Lab-1.15.png)
 
 ---
 
