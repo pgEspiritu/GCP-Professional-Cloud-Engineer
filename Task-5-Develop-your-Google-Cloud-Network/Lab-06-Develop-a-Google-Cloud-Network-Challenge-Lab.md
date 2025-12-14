@@ -695,48 +695,36 @@ Enable monitoring for the **WordPress development site** by creating an **uptime
 
 ---
 
-### 🧭 How to Do It (CLI Method)
+### 🧭 How to Do It (GPU Method)
 
 > 💡 Replace `EXTERNAL_IP` with the LoadBalancer IP from Task 7  
 > 💡 Replace `REGION` if required by your lab
 
 ---
 
-### 1️⃣ Get the WordPress External IP
+#### ✅ Recommended Method: Google Cloud Console (Guaranteed to Pass)
 
+1. Open Navigation Menu ☰
+2. Go to Monitoring
+3. Click Uptime checks
+4. Click Create Uptime Check
+
+| Setting           | Value                        |
+| ----------------- | ---------------------------- |
+| **Title**         | `WordPress Dev Uptime Check` |
+| **Check type**    | `HTTP`                       |
+| **Protocol**      | `HTTP`                       |
+| **Resource type** | `URL`                        |
+| **Hostname**      | `<WordPress EXTERNAL-IP>`    |
+| **Path**          | `/`                          |
+| **Port**          | `80`                         |
+| **Frequency**     | 1 minute                     |
+| **Regions**       | Leave default                |
+
+👉 Use the EXTERNAL-IP from:
 ```bash
-kubectl get svc
+kubectl get svc wordpress
 ```
-> Copy the EXTERNAL-IP of the WordPress service.
-
-### 2️⃣ Create an Uptime Check
-
-Use the gcloud monitoring CLI to create an HTTP uptime check:
-```bash
-gcloud monitoring uptime-checks create http wordpress-dev-uptime \
-  --display-name="WordPress Dev Uptime Check" \
-  --resource-type=uptime-url \
-  --host=EXTERNAL_IP \
-  --path="/" \
-  --port=80
-```
-> ⚠️ Do not include http:// in the host value.
-
-### 3️⃣ Verify the Uptime Check
-
-List uptime checks:
-```bash
-gcloud monitoring uptime-checks list
-```
-
-Describe the uptime check (optional):
-```bash
-gcloud monitoring uptime-checks describe wordpress-dev-uptime
-```
-
-### 🕒 Monitoring Note
-- Initial uptime check results may take 1–2 minutes to appear
-- Status will show as PASSING once the site responds successfully
 
 ---
 
@@ -764,8 +752,8 @@ Grant **project access** to an additional engineer by assigning the **Editor rol
 ### 1️⃣ Grant the Editor Role
 
 ```bash
-gcloud projects add-iam-policy-binding PROJECT_ID \
-  --member="user:ENGINEER_EMAIL" \
+gcloud projects add-iam-policy-binding qwiklabs-gcp-01-fd82afb89c9b \
+  --member="user:student-01-f3dd7812fcbe@qwiklabs.net" \
   --role="roles/editor"
 ```
 
@@ -779,7 +767,7 @@ gcloud projects get-iam-policy PROJECT_ID
 Check that the additional engineer appears with:
 ```makefile
 role: roles/editor
-member: user:ENGINEER_EMAIL
+member: user:student-01-f3dd7812fcbe@qwiklabs.net
 ```
 
 ---
