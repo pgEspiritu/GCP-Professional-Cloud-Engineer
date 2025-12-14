@@ -285,7 +285,7 @@ Allow SSH access to the bastion host.
 
 For dev
 ```bash
-gcloud compute firewall-rules create allow-ssh \
+gcloud compute firewall-rules create allow-ssh-1 \
   --direction=INGRESS \
   --priority=1000 \
   --network=griffin-dev-vpc \
