@@ -1,8 +1,4 @@
 # Introduction to SQL for BigQuery and Cloud SQL 📊🗄️  
-**Lab · 1 hour 15 minutes · 1 Credit · Introductory**  
-GSP281
-
----
 
 ## Overview 🌐
 SQL (Structured Query Language) is a standard language for data operations that allows you to ask questions and gain insights from structured datasets. It is widely used in database management for tasks ranging from writing transaction records to performing petabyte-scale data analysis.
@@ -192,21 +188,39 @@ Your project currently contains no datasets or tables, so nothing appears when e
 
 You'll load public data into the BigQuery console (not into your project).
 1. In the Explorer, click Add data.
+
+![Lab 2.1](images/Lab-2.1.png)
+
 2. Select Star a project by name.
+
+![Lab 2.2](images/Lab-2.2.png)
+
 3. Enter:
 ```kotlin
 bigquery-public-data
 ```
+
+![Lab 2.3](images/Lab-2.3.png)
+
 4. Click STAR.
 You're still inside your lab project; you only starred a public project.
 
 📂 Newly Accessible Data
 - Project → bigquery-public-data
 - Dataset → london_bicycles
+
+![Lab 2.4](images/Lab-2.4.png)
+
   - Tables:
     - cycle_hire
     - cycle_stations
+
+![Lab 2.5](images/Lab-2.5.png)
+
 Open cycle_hire → click Preview to view sample rows.
+
+![Lab 2.6](images/Lab-2.6.png)
+
 This table contains 83,434,866 rows of London bike-share trips (2015–2017). 🚴‍♂️
 
 ---
@@ -221,6 +235,8 @@ FROM `bigquery-public-data.london_bicycles.cycle_hire`;
 ```
 After ~20 seconds, BigQuery returns 83M+ rows — one per bike trip.
 
+![Lab 2.7](images/Lab-2.7.png)
+
 🕒 2. Using WHERE to Filter Rows
 Find trips lasting 20 minutes or longer.
 Duration is in seconds → 20 minutes = 20 × 60 = 1200 seconds.
@@ -233,6 +249,8 @@ This query takes about a minute.
 
 📊 Result
 Rows returned: 26,441,016
+
+![Lab 2.8](images/Lab-2.8.png)
 
 Fraction of total:
 ```math
@@ -258,6 +276,8 @@ GROUP BY start_station_name;
 - Results: 954 rows, representing 954 distinct London bikeshare starting points.
 > Without GROUP BY, all 83,434,866 rows would be returned.
 
+![Lab 2.9](images/Lab-2.9.png)
+
 ---
 
 ### COUNT() 🔢
@@ -272,6 +292,8 @@ FROM `bigquery-public-data.london_bicycles.cycle_hire`
 GROUP BY start_station_name;
 ```
 - Output shows how many rides start at each station.
+
+![Lab 2.10](images/Lab-2.10.png)
 
 ---
 
@@ -289,6 +311,8 @@ GROUP BY start_station_name;
 - The right column now shows num_starts instead of COUNT(*).
 > Aliases make results easier to read, especially with large datasets.
 
+![Lab 2.11](images/Lab-2.11.png)
+
 ---
 
 ## ORDER BY ⬆️⬇️
@@ -304,6 +328,8 @@ GROUP BY start_station_name
 ORDER BY start_station_name;
 ```
 
+![Lab 2.12](images/Lab-2.12.png)
+
 2. Numerically from lowest to highest count:
 ```sql
 SELECT start_station_name, COUNT(*) AS num 
@@ -311,6 +337,8 @@ FROM `bigquery-public-data.london_bicycles.cycle_hire`
 GROUP BY start_station_name 
 ORDER BY num;
 ```
+
+![Lab 2.13](images/Lab-2.13.png)
 
 3. Numerically from highest to lowest count:
 ```sql
@@ -323,6 +351,7 @@ ORDER BY num DESC;
 - The last query shows "Hyde Park Corner, Hyde Park" as the station with the highest number of starts.
   - 671,688 of 83,434,866 rides (~<1%) start here.
 
+![Lab 2.14](images/Lab-2.14.png)
 
 ---
 
@@ -349,6 +378,9 @@ ORDER BY num DESC;
 2. In the Query Results section, click:
 Save results → CSV (Local download)
 
+![Lab 2.15](images/Lab-2.15.png)
+![Lab 2.16](images/Lab-2.16.png)
+
 3. Note the location and filename of the downloaded CSV — you will need it soon.
 
 ### 2️⃣ Export end station data
@@ -364,6 +396,9 @@ ORDER BY num DESC;
 2. In the Query Results section, click:
 Save results → CSV (Local download)
 
+![Lab 2.17](images/Lab-2.17.png)
+![Lab 2.18](images/Lab-2.18.png)
+
 3. Note the location and filename of this CSV.
 
 ---
@@ -375,17 +410,29 @@ Upload CSV Files to Cloud Storage ☁️📦
   - Keep all other settings as default
   - Click Create
   - Click Confirm if prompted for Public access will be prevented
+
+![Lab 2.19](images/Lab-2.19.png)
+
 3. Open your newly created bucket.
 4. Click UPLOAD → Upload files, and select your start_station_name CSV.
 Repeat for the end_station_name CSV.
+
+![Lab 2.20](images/Lab-2.20.png)
+![Lab 2.21](images/Lab-2.21.png)
+
 5. Rename the files:
 - Click the three dots next to the start station file → Rename → start_station_data.csv
 - Click the three dots next to the end station file → Rename → end_station_data.csv\
+
+![Lab 2.22](images/Lab-2.22.png)
+![Lab 2.23](images/Lab-2.23.png)
 
 You should now see both:
 - `start_station_data.csv`
 - `end_station_data.csv`
 in the Objects list of your bucket.
+
+![Lab 2.24](images/Lab-2.24.png)
 
 ---
 
@@ -393,21 +440,32 @@ in the Objects list of your bucket.
 
 1. In the Cloud Console, go to **Navigation menu → Cloud SQL**.
 2. Click **CREATE INSTANCE → Choose MySQL**.
+
+![Lab 2.25](images/Lab-2.25.png)
+
 3. Configure the instance:
    - **Cloud SQL edition:** Enterprise  
    - **Instance ID:** `my-demo`  
    - **Password:** `[a secure password]` (remember this!)  
    - **Database version:** MySQL 8  
    - **Edition preset:** Development (4 vCPU, 16 GB RAM, 100 GB Storage, Single zone)  
-
 > ⚠️ Warning: Choosing a preset larger than Development will flag your project and terminate the lab.
+
+![Lab 2.26](images/Lab-2.26.png)
+![Lab 2.27](images/Lab-2.27.png)
+![Lab 2.28](images/Lab-2.28.png)
 
 4. Set **Region:** `<Lab Region>`  
 5. Set **Multi zones (Highly available) → Primary Zone:** `<Lab Zone>`  
+
+![Lab 2.29](images/Lab-2.29.png)
+
 6. Click **CREATE INSTANCE**
 
 > ⏱️ Note: Instance creation may take a few minutes.  
 > A green checkmark appears next to the instance name once ready.
+
+![Lab 2.30](images/Lab-2.30.png)
 
 7. Click on the **Cloud SQL instance** to open the **SQL Overview** page.
 
@@ -445,6 +503,8 @@ gcloud auth login --no-launch-browser
 - Open the provided link in the same browser as your Qwiklabs account.
 - Copy the verification code and paste it in Cloud Shell.
 
+![Lab 2.31](images/Lab-2.31.png)
+
 ---
 
 ### 4️⃣ Connect to your Cloud SQL instance
@@ -476,6 +536,8 @@ Expected output:
 Query OK, 1 row affected (0.05 sec)
 ```
 > Your Cloud SQL instance now has a custom database ready to store London bikeshare data.
+
+![Lab 2.32](images/Lab-2.32.png)
 
 --- 
 
@@ -520,21 +582,39 @@ SELECT * FROM london2;
 
 ### 1️⃣ Upload start_station_data.csv → london1
 1. In Cloud SQL console, click IMPORT.
+
+![Lab 2.33](images/Lab-2.33.png)
+
 2. Cloud Storage file field → Browse → start_station_data.csv
 3. File format: CSV
+
+![Lab 2.34](images/Lab-2.34.png)
+![Lab 2.35](images/Lab-2.35.png)
+
 4. Database: bike
 5. Table: london1
+
+![Lab 2.36](images/Lab-2.36.png)
+
 6. Click Import
 
 ### 2️⃣ Upload end_station_data.csv → london2
 1. Repeat the same process for the other CSV file.
 2. Table: london2
 
+![Lab 2.37](images/Lab-2.37.png)
+![Lab 2.38](images/Lab-2.38.png)
+
 ### 3️⃣ Verify data in tables
 ```sql
 SELECT * FROM london1;  -- 955 rows
 SELECT * FROM london2;  -- 959 rows
 ```
+
+![Lab 2.39](images/Lab-2.39.png)
+![Lab 2.40](images/Lab-2.40.png)
+![Lab 2.41](images/Lab-2.41.png)
+![Lab 2.42](images/Lab-2.42.png)
 
 ---
 
@@ -547,6 +627,8 @@ DELETE FROM london2 WHERE num=0;
 ```
 - Output: Query OK, 1 row affected (0.04 sec)
 - These rows are now deleted from the tables.
+
+![Lab 2.43](images/Lab-2.43.png)
 
 ---
 
@@ -583,6 +665,9 @@ ORDER BY top_stations DESC;
 
 - Example Output: Shows top stations for rideshare start and end points (13–14 stations).
 > With these basic SQL commands, you successfully queried a large dataset and extracted meaningful insights. 🚴‍♂️📊
+
+![Lab 2.44](images/Lab-2.44.png)
+![Lab 2.45](images/Lab-2.45.png)
 
 ---
 
