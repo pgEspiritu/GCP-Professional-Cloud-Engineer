@@ -1,14 +1,5 @@
 # 🧪 Develop Your Google Cloud Network: Challenge Lab
 
-⏱ **Duration:** 35 minutes  
-🎓 **Level:** Intermediate  
-💳 **Credits:** 5  
-🆔 **Lab ID:** GSP321  
-
-> ℹ️ *This lab may incorporate AI tools to support your learning.*
-
----
-
 ## 📘 Introduction
 
 In a **challenge lab**, you’re given a **scenario** and a **set of tasks**. Instead of following step-by-step instructions, you will rely on the **skills learned from previous labs** in the course to determine how to complete each task on your own 💡.
