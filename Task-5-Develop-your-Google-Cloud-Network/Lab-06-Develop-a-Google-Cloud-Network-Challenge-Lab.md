@@ -460,7 +460,7 @@ Create a **Google Kubernetes Engine (GKE) cluster** named `griffin-dev` with **2
 
 ```bash
 gcloud container clusters create griffin-dev \
-  --zone=ZONE \
+  --zone=$ZONE \
   --num-nodes=2 \
   --machine-type=e2-standard-4 \
   --network=griffin-dev-vpc \
@@ -473,7 +473,7 @@ gcloud container clusters create griffin-dev \
 Configure kubectl to access the new cluster:
 ```bash
 gcloud container clusters get-credentials griffin-dev \
-  --zone=ZONE
+  --zone=$ZONE
 ```
 
 ### 3️⃣ Verify Cluster and Nodes
