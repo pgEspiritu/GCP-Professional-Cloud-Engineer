@@ -1,8 +1,4 @@
 # Cloud IAM: Qwik Start ☁️🔐  
-**Lab · 45 minutes · 1 Credit · Introductory**  
-GSP064
-
----
 
 ## Overview 📘
 Google Cloud's Identity and Access Management (IAM) service lets you create and manage permissions for Google Cloud resources. Cloud IAM unifies access control for Google Cloud services into a single system and provides a consistent set of operations.
@@ -47,6 +43,8 @@ These represent Cloud IAM identities with different permissions. Their roles def
 4. Click **Next**, then accept the terms of service.  
 5. The Cloud Console opens—agree and continue.
 
+![Lab 1.1](images/Lab-1.1.png)
+
 ---
 
 ## Sign in to Cloud Console as the second user 👤 (User 2)
@@ -56,6 +54,8 @@ These represent Cloud IAM identities with different permissions. Their roles def
 3. Copy and paste the password from the Lab Connection panel.
 4. Click **Next**, then accept the terms.  
 5. The Cloud Console opens—agree and continue.
+
+![Lab 1.2](images/Lab-1.2.png)
 
 You should now have **two Cloud Console tabs** open—one for each user.
 
@@ -80,6 +80,9 @@ Hover over your **Avatar** in the top-right corner to see the active username.
 2. Go to **Navigation menu > IAM & Admin > IAM**.  
    You are now in the **IAM & Admin** console.
 3. Click **+ GRANT ACCESS** at the top of the page.
+
+![Lab 1.3](images/Lab-1.3.png)
+
 4. Scroll down to **Basic** in the *Select a role* section and mouse over it.
 
 There are three roles:
@@ -88,6 +91,8 @@ There are three roles:
 - **Viewer**
 
 These are **primitive roles** in Google Cloud. They set **project-level permissions** and, unless otherwise specified, control access and management to *all* Google Cloud services.
+
+![Lab 1.4](images/Lab-1.4.png)
 
 ---
 
@@ -121,6 +126,8 @@ You should observe:
 
 This illustrates how IAM roles determine what actions you can or cannot perform.
 
+![Lab 1.5](images/Lab-1.5.png)
+
 ---
 
 Switch back to the **Username 1** console for the next step.
@@ -139,12 +146,18 @@ Switch back to the **Username 1** console for the next step.
 
 > **Note:** If you get a permissions error, sign out and sign back in using **Username 1** credentials.
 
+
+![Lab 1.6](images/Lab-1.6.png)
+
+
 3. Update the following fields (leave all others as default):
 
 | **Property** | **Value** |
 |--------------|-----------|
 | **Name** | A **globally unique name** (create your own!) → click **CONTINUE** |
 | **Location Type** | **Multi-Region** |
+
+![Lab 1.7](images/Lab-1.7.png)
 
 4. Note your bucket name for later steps.
 5. Click **CREATE**.
@@ -156,14 +169,15 @@ Switch back to the **Username 1** console for the next step.
 
 ## Upload a sample file 📄⬆️
 1. On the **Bucket Details** page, click **UPLOAD FILES**.
+
+![Lab 1.8](images/Lab-1.8.png)
+
 2. Select any **text (.txt)** or **HTML (.html)** file from your computer.
 3. Click the **three dots** next to the uploaded file → **Rename**.
 4. Rename the file to **sample.txt**.
 5. Click **RENAME**.
 
-Click **Check my progress** to verify:
-
-✔️ *Create a bucket and upload a sample file*
+![Lab 1.9](images/Lab-1.9.png)
 
 ---
 
@@ -175,6 +189,8 @@ Click **Check my progress** to verify:
 Because **Username 2** has the **Viewer** role, they have *read-only* access.  
 They can view Cloud Storage buckets and files within the project, but cannot modify them.
 
+![Lab 1.10](images/Lab-1.10.png)
+
 ---
 
 # Task 3. Remove project access 🚫🔐
@@ -184,7 +200,13 @@ They can view Cloud Storage buckets and files within the project, but cannot mod
 2. Go to **Navigation menu > IAM & Admin > IAM**.
 3. Click the **pencil icon** to the right of **Username 2**.  
    > *You may need to widen your browser window to see the icon.*
+
+![Lab 1.11](images/Lab-1.11.png)
+
 4. Remove the **Project Viewer** role by clicking the **trashcan icon** next to the role.
+
+![Lab 1.12](images/Lab-1.12.png)
+
 5. Click **SAVE**.
 
 You will notice that **Username 2 disappears from the Members list**, meaning the user now has **no access**.
@@ -201,6 +223,9 @@ You will notice that **Username 2 disappears from the Members list**, meaning th
 You should now see a **permission error**.
 
 > ⏱️ If you don’t see the error yet, wait about **2 minutes** and refresh—permission revocation may take time to propagate.
+
+
+![Lab 1.13](images/Lab-1.13.png)
 
 ---
 
