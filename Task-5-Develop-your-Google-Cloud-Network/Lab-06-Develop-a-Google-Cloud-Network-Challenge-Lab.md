@@ -283,6 +283,7 @@ The bastion host must be reachable via **SSH**.
 
 Allow SSH access to the bastion host.
 
+For dev
 ```bash
 gcloud compute firewall-rules create allow-ssh \
   --direction=INGRESS \
@@ -292,8 +293,17 @@ gcloud compute firewall-rules create allow-ssh \
   --rules=tcp:22 \
   --source-ranges=0.0.0.0/0
 ```
-🔎 This rule allows SSH access via the dev VPC.
-Production VPC access will be through the bastion’s internal interface.
+
+For prod
+```bash
+gcloud compute firewall-rules create allow-ssh-2 \
+  --direction=INGRESS \
+  --priority=1000 \
+  --network=griffin-prod-vpc \
+  --action=ALLOW \
+  --rules=tcp:22 \
+  --source-ranges=0.0.0.0/0
+```
 
 ### 2️⃣ Create the Bastion Host with Two Network Interfaces
 
@@ -364,7 +374,7 @@ Create a **MySQL Cloud SQL instance** named `griffin-dev-db` in the assigned **R
 ```bash
 gcloud sql instances create griffin-dev-db \
   --database-version=MYSQL_8_0 \
-  --region=REGION \
+  --region=$REGION \
   --tier=db-f1-micro \
   --storage-type=SSD \
   --storage-size=10GB \
