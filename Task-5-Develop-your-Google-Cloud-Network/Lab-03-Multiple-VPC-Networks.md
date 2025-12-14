@@ -106,11 +106,17 @@ Create two custom networks—**managementnet** and **privatenet**—and configur
 
    You will see the existing **default** and **mynetwork** VPCs.
 
+![Lab 3.1](images/Lab-3.1.png)
+
 2. Click **Create VPC Network**.
+
+![Lab 3.2](images/Lab-3.2.png)
 
 3. Configure the network:
    - **Name:** `managementnet`
    - **Subnet creation mode:** `Custom`
+
+![Lab 3.3](images/Lab-3.3.png)
 
 4. Add a subnet:
    | Property | Value |
@@ -119,14 +125,18 @@ Create two custom networks—**managementnet** and **privatenet**—and configur
    | Region | `<Region_1>` |
    | IPv4 range | `10.130.0.0/20` |
 
+![Lab 3.4](images/Lab-3.4.png)
+![Lab 3.5](images/Lab-3.5.png)
+
 5. Click **Done**.
 
 6. Click **EQUIVALENT COMMAND LINE** to view the gcloud equivalent, then click **Close**.
 
+![Lab 3.6](images/Lab-3.6.png)
+
 7. Click **Create**.
 
-### ✅ Test Completed Task
-Use **Check my progress** to confirm creation of **managementnet**.
+![Lab 3.7](images/Lab-3.7.png)
 
 ---
 
@@ -144,6 +154,9 @@ Create subnets:
 gcloud compute networks subnets create privatesubnet-1 --network=privatenet --region=Region_1 --range=172.16.0.0/24
 gcloud compute networks subnets create privatesubnet-2 --network=privatenet --region=Region_2 --range=172.20.0.0/20
 ```
+
+![Lab 3.8](images/Lab-3.8.png)
+![Lab 3.9](images/Lab-3.9.png)
 
 ---
 
@@ -170,6 +183,8 @@ SUBNET_MODE: CUSTOM
 > `default` and `mynetwork` = Auto mode (subnets created in all regions)
 > `managementnet` and `privatenet` = Custom mode (you manually create subnets)
 
+![Lab 3.10](images/Lab-3.10.png)
+
 ---
 
 ### 🔍 List VPC Subnets
@@ -186,6 +201,16 @@ RANGE: 10.128.0.0/20
 ...
 ```
 
+![Lab 3.11](images/Lab-3.11.png)
+![Lab 3.12](images/Lab-3.12.png)
+
+VPC Networks:
+![Lab 3.13](images/Lab-3.13.png)
+
+Subnets:
+![Lab 3.14](images/Lab-3.14.png)
+![Lab 3.15](images/Lab-3.15.png)
+
 ---
 
 ### 🔥 Create Firewall Rules for managementnet (Cloud Console)
@@ -193,6 +218,9 @@ RANGE: 10.128.0.0/20
 1. In Cloud console:
 Navigation menu → VPC network → Firewall
 2. Click + Create Firewall Rule
+
+![Lab 3.16](images/Lab-3.16.png)
+
 3. Configure:
 | Property           | Value                              |
 | ------------------ | ---------------------------------- |
@@ -203,8 +231,18 @@ Navigation menu → VPC network → Firewall
 | Source IPv4 ranges | `0.0.0.0/0`                        |
 | Protocols & ports  | `tcp:22`, `tcp:3389`, `icmp`       |
 > Important: Include `/0` in `0.0.0.0/0.`
+
+![Lab 3.17](images/Lab-3.17.png)
+![Lab 3.18](images/Lab-3.18.png)
+![Lab 3.19](images/Lab-3.19.png)
+
 4. Click EQUIVALENT COMMAND LINE (for reference), then Close.
+
+![Lab 3.20](images/Lab-3.20.png)
+
 5. Click Create.
+
+![Lab 3.21](images/Lab-3.21.png)
 
 ---
 
@@ -225,6 +263,8 @@ PRIORITY: 1000
 ALLOW: icmp,tcp:22,tcp:3389
 DISABLED: False
 ```
+
+![Lab 3.22](images/Lab-3.22.png)
 
 ---
 
@@ -251,9 +291,14 @@ ALLOW: icmp,tcp:22,tcp:3389
 - Custom networks (privatenet, managementnet) combine multiple protocols in one rule
 - Auto networks (default, mynetwork) may separate protocols across rules
 
+![Lab 3.23](images/Lab-3.23.png)
+![Lab 3.24](images/Lab-3.24.png)
+
 In the Cloud console, navigate again to:
 Navigation menu → VPC network → Firewall
 to view all firewall rules.
+
+![Lab 3.25](images/Lab-3.25.png)
 
 ---
 
@@ -275,6 +320,8 @@ Create two VM instances:
 
 2. Click **Create Instance**.
 
+![Lab 3.26](images/Lab-3.26.png)
+
 3. Under **Machine configuration**, set:
 
 | Property | Value |
@@ -285,6 +332,10 @@ Create two VM instances:
 | Series | `E2` |
 | Machine Type | `e2-micro` |
 
+![Lab 3.27](images/Lab-3.27.png)
+![Lab 3.28](images/Lab-3.28.png)
+![Lab 3.29](images/Lab-3.29.png)
+
 4. Click **Networking**.
 
 5. Under **Network interfaces**, edit and set:
@@ -294,14 +345,16 @@ Create two VM instances:
 | Network | `managementnet` |
 | Subnetwork | `managementsubnet-1` |
 
+![Lab 3.30](images/Lab-3.30.png)
+
 6. Click **Done**.
 
 7. Click **EQUIVALENT CODE** to view gcloud equivalent, then **Close**.
 
+![Lab 3.31](images/Lab-3.31.png)
+
 8. Click **Create**.
 
-### ✅ Test Completed Task
-Use **Check my progress** to confirm the VM instance was created.
 
 ---
 
@@ -352,6 +405,9 @@ STATUS: RUNNING
 ...
 ```
 
+![Lab 3.32](images/Lab-3.32.png)
+![Lab 3.33](images/Lab-3.33.png)
+
 ---
 
 ### 📊 View VM Networking in Console
@@ -366,6 +422,8 @@ There are now:
 
 These instances are spread across three different networks:
 managementnet, mynetwork, and privatenet, with no two VMs sharing both zone and network.
+
+![Lab 3.34](images/Lab-3.34.png)
 
 ---
 
@@ -382,10 +440,14 @@ You will confirm whether VM instances are reachable from the public internet.
 1. In the Cloud console, navigate to:  
    **Navigation menu → Compute Engine → VM instances**
 
+![Lab 3.35](images/Lab-3.35.png)
+
 2. Note the **external IPs** of:
    - **mynet-vm-2**
    - **managementnet-vm-1**
    - **privatenet-vm-1**
+
+![Lab 3.36](images/Lab-3.36.png)
 
 3. From the VM **mynet-vm-1**, click **SSH** to open a terminal.
 
@@ -419,6 +481,8 @@ This is allowed because:
   - External IPs are public-facing.
   - You previously configured ICMP firewall rules that allow external pings.
 
+![Lab 3.37](images/Lab-3.37.png)
+
 ---
 
 ### 🔒 Ping Internal IP Addresses
@@ -428,6 +492,8 @@ Now test internal communication between VM instances.
   - mynet-vm-2
   - managementnet-vm-1
   - privatenet-vm-1
+
+![Lab 3.38](images/Lab-3.38.png)
 
 2. Return to the SSH session of mynet-vm-1.
 
@@ -473,6 +539,8 @@ For this task, consider:
 - region_1 = Region_1
 - region_2 = Region_2
 
+![Lab 3.39](images/Lab-3.39.png)
+
 ---
 
 ## 🧪 Task 4: Create a VM Instance with Multiple Network Interfaces
@@ -496,6 +564,11 @@ The CIDR ranges of the subnets must not overlap — this is required to attach m
 | **Series**       | `E2`            |
 | **Machine Type** | `e2-standard-4` |
 > 💡 Note: e2-standard-4 allows up to 4 network interfaces.
+
+![Lab 3.40](images/Lab-3.40.png)
+![Lab 3.41](images/Lab-3.41.png)
+![Lab 3.42](images/Lab-3.42.png)
+
 4. Click Networking → Edit Network interfaces.
 
 🔌 NIC #1
@@ -506,6 +579,8 @@ The CIDR ranges of the subnets must not overlap — this is required to attach m
 | **Subnetwork** | privatesubnet-1 |
 Click Done.
 
+![Lab 3.43](images/Lab-3.43.png)
+
 🔌 NIC #2
 
 Click Add a network interface.
@@ -515,6 +590,8 @@ Click Add a network interface.
 | **Subnetwork** | managementsubnet-1 |
 Click Done.
 
+![Lab 3.44](images/Lab-3.44.png)
+
 🔌 NIC #3
 
 Click Add a network interface.
@@ -523,6 +600,8 @@ Click Add a network interface.
 | **Network**    | mynetwork |
 | **Subnetwork** | mynetwork |
 Click Done.
+
+![Lab 3.45](images/Lab-3.45.png)
 
 Finally, click Create.
 
@@ -539,13 +618,19 @@ NIC 0
 - Internal IP within 172.16.0.0/24
 - Correct firewall rules
 
+![Lab 3.46](images/Lab-3.46.png)
+
 NIC 1
 - Attached to managementsubnet-1
 - Internal IP within 10.130.0.0/20
 
+![Lab 3.47](images/Lab-3.47.png)
+
 NIC 2
 - Attached to mynetwork
 - Internal IP within 10.128.0.0/20
+
+![Lab 3.48](images/Lab-3.48.png)
 
 > 📝 Each NIC gets its own internal IP so the VM can communicate with each network independently.
 
@@ -564,6 +649,8 @@ eth0 ... inet 172.16.0.3
 eth1 ... inet 10.130.0.3
 eth2 ... inet 10.128.0.3
 ```
+
+![Lab 3.49](images/Lab-3.49.png)
 
 ---
 
@@ -620,6 +707,10 @@ The VM’s routing table only includes:
 - Default route via NIC0 (eth0)
 > Since mynet-vm-2 is in 10.132.0.0/20, that subnet is not in the table, so traffic incorrectly exits via eth0.
 
+
+![Lab 3.50](images/Lab-3.50.png)
+![Lab 3.51](images/Lab-3.51.png)
+
 ---
 
 ### 📘 View Routing Table
@@ -639,6 +730,8 @@ default via 172.16.0.1 dev eth0
 172.16.0.0/24 via 172.16.0.1 dev eth0
 172.16.0.1 dev eth0 scope link
 ```
+
+![Lab 3.52](images/Lab-3.52.png)
 
 🧠 Key Insight
 - Primary NIC (eth0) always gets the default route.
