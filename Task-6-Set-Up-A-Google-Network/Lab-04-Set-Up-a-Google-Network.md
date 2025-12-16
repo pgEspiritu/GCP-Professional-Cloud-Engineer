@@ -82,19 +82,19 @@ Create a **VPC network** with **two subnets** and configure firewall rules to al
 ### 📌 Requirements
 
 #### 🌐 VPC Network
-- **Name:** `network-name` (replace with your desired name)
+- **Name:** `vpc-network-9utl`
 - **Subnet mode:** Custom
 - **Dynamic routing mode:** Regional
 
 #### 📍 Subnet A
-- **Name:** `subnet-a-name`
-- **Region:** `network-region-1`
+- **Name:** `subnet-a-a2o3`
+- **Region:** `us-east1`
 - **IP stack:** IPv4 (single-stack)
 - **IPv4 range:** `10.10.10.0/24`
 
 #### 📍 Subnet B
-- **Name:** `subnet-b-name`
-- **Region:** `network-region-2`
+- **Name:** `subnet-b-2rlm`
+- **Region:** `europe-west4`
 - **IP stack:** IPv4 (single-stack)
 - **IPv4 range:** `10.10.20.0/24`
 
@@ -102,14 +102,10 @@ Create a **VPC network** with **two subnets** and configure firewall rules to al
 
 ### 🧭 How to Do It (CLI Method)
 
-> 💡 Replace `network-name`, `subnet-a-name`, `subnet-b-name`, `network-region-1`, and `network-region-2` with the lab-provided names and regions.
-
----
-
 ### 1️⃣ Create the Custom VPC Network
 
 ```bash
-gcloud compute networks create network-name \
+gcloud compute networks create vpc-network-9utl \
   --subnet-mode=custom \
   --bgp-routing-mode=regional
 ```
@@ -119,21 +115,21 @@ gcloud compute networks create network-name \
 ### 2️⃣ Create Subnet A
 
 ```bash
-gcloud compute networks subnets create subnet-a-name \
-  --network=network-name \
-  --region=network-region-1 \
+gcloud compute networks subnets create subnet-a-a2o3 \
+  --network=vpc-network-9utl \
+  --region=us-east1 \
   --range=10.10.10.0/24 \
-  --stack-type=IPV4
+  --stack-type=IPV4_ONLY
 ```
 
 ### 3️⃣ Create Subnet B
 
 ```bash
-gcloud compute networks subnets create subnet-b-name \
-  --network=network-name \
-  --region=network-region-2 \
+gcloud compute networks subnets create subnet-b-2rlm \
+  --network=vpc-network-9utl \
+  --region=europe-west4 \
   --range=10.10.20.0/24 \
-  --stack-type=IPV4
+  --stack-type=IPV4_ONLY
 ```
 
 ---
@@ -143,7 +139,7 @@ gcloud compute networks subnets create subnet-b-name \
 List subnets in the network:
 ```bash
 gcloud compute networks subnets list \
-  --filter="network:network-name"
+  --filter="network:vpc-network-9utl"
 ```
 > You should see both `subnet-a-name` and `subnet-b-name` with the correct IP ranges.
 
@@ -169,8 +165,8 @@ Create firewall rules to allow **SSH, RDP, and ICMP traffic** on the VPC network
 ### 📌 Requirements
 
 #### Firewall Rule 1: SSH Access
-- **Name:** `firewall-rule-1`
-- **Network:** `network-name`
+- **Name:** `vjrz-firewall-ssh`
+- **Network:** `vpc-network-9utl`
 - **Priority:** 1000
 - **Direction:** Ingress
 - **Action:** Allow
@@ -179,8 +175,8 @@ Create firewall rules to allow **SSH, RDP, and ICMP traffic** on the VPC network
 - **Protocol & Port:** TCP:22 (SSH)
 
 #### Firewall Rule 2: RDP Access
-- **Name:** `firewall-rule-2`
-- **Network:** `network-name`
+- **Name:** `pthb-firewall-rdp`
+- **Network:** `vpc-network-9utl`
 - **Priority:** 65535
 - **Direction:** Ingress
 - **Action:** Allow
@@ -189,8 +185,8 @@ Create firewall rules to allow **SSH, RDP, and ICMP traffic** on the VPC network
 - **Protocol & Port:** TCP:3389 (RDP)
 
 #### Firewall Rule 3: ICMP (Ping)
-- **Name:** `firewall-rule-3`
-- **Network:** `network-name`
+- **Name:** `wllh-firewall-icmp`
+- **Network:** `vpc-network-9utl`
 - **Priority:** 1000
 - **Direction:** Ingress
 - **Action:** Allow
@@ -202,15 +198,11 @@ Create firewall rules to allow **SSH, RDP, and ICMP traffic** on the VPC network
 
 ### 🧭 How to Do It (CLI Method)
 
-> 💡 Replace placeholders (`network-name`, `firewall-rule-1`, etc.) with the actual names used in your lab.
-
----
-
 ### 1️⃣ Create Firewall Rule for SSH
 
 ```bash
-gcloud compute firewall-rules create firewall-rule-1 \
-  --network=network-name \
+gcloud compute firewall-rules create vjrz-firewall-ssh \
+  --network=vpc-network-9utl \
   --priority=1000 \
   --direction=INGRESS \
   --action=ALLOW \
@@ -224,8 +216,8 @@ gcloud compute firewall-rules create firewall-rule-1 \
 ### 2️⃣ Create Firewall Rule for RDP
 
 ```bash
-gcloud compute firewall-rules create firewall-rule-2 \
-  --network=network-name \
+gcloud compute firewall-rules create pthb-firewall-rdp \
+  --network=vpc-network-9utl \
   --priority=65535 \
   --direction=INGRESS \
   --action=ALLOW \
@@ -239,8 +231,8 @@ gcloud compute firewall-rules create firewall-rule-2 \
 ### 3️⃣ Create Firewall Rule for ICMP
 
 ```bash
-gcloud compute firewall-rules create firewall-rule-3 \
-  --network=network-name \
+gcloud compute firewall-rules create wllh-firewall-icmp \
+  --network=vpc-network-9utl \
   --priority=1000 \
   --direction=INGRESS \
   --action=ALLOW \
@@ -256,7 +248,7 @@ gcloud compute firewall-rules create firewall-rule-3 \
 List firewall rules in the network:
 ```bash
 gcloud compute firewall-rules list \
-  --filter="network:network-name"
+  --filter="network:vpc-network-9utl"
 ```
 > Check that all three rules exist with correct protocols, ports, priorities, and source ranges.
 
@@ -281,9 +273,9 @@ Create virtual machines in each subnet, assign network tags for firewall rules, 
 ### 📌 Requirements
 
 | VM Name      | Subnet         | Zone    |
-|-------------|----------------|--------|
-| us-test-01  | subnet-a-name  | ZONE   |
-| us-test-02  | subnet-b-name  | ZONE   |
+|-------------|----------------|-------------|
+| us-test-01  | subnet-a-a2o3  | us-east1-c   |
+| us-test-02  | subnet-b-2rlm  | europe-west4-a   |
 
 - VMs must use network tags required by the firewall rules.
 - Connectivity is tested via **ping (ICMP)**.
@@ -292,17 +284,14 @@ Create virtual machines in each subnet, assign network tags for firewall rules, 
 
 ### 🧭 How to Do It (CLI Method)
 
-> 💡 Replace placeholders (`subnet-a-name`, `subnet-b-name`, `ZONE`) with your actual lab values.
-
----
 
 ### 1️⃣ Create VM in Subnet A
 
 ```bash
 gcloud compute instances create us-test-01 \
-  --zone=ZONE \
+  --zone=us-east1-c \
   --machine-type=e2-micro \
-  --subnet=subnet-a-name \
+  --subnet=subnet-a-a2o3 \
   --tags=all-instances \
   --image-family=debian-12 \
   --image-project=debian-cloud
@@ -314,9 +303,9 @@ gcloud compute instances create us-test-01 \
 
 ```bash
 gcloud compute instances create us-test-02 \
-  --zone=ZONE \
+  --zone=europe-west4-a \
   --machine-type=e2-micro \
-  --subnet=subnet-b-name \
+  --subnet=subnet-b-2rlm \
   --tags=all-instances \
   --image-family=debian-12 \
   --image-project=debian-cloud
@@ -324,27 +313,27 @@ gcloud compute instances create us-test-02 \
 
 ---
 
-### 3️⃣ Verify SSH Access to the VMs
-
-Open an SSH session to `us-test-01`:
-```bash
-gcloud compute ssh us-test-01 --zone=ZONE
-```
-
----
-
-### 4️⃣ Test Connectivity Between VMs Using ICMP
+### 3️⃣ Get the Internal IP Address of Instance 2
 
 Get the internal IP address of us-test-02:
 ```bash
 gcloud compute instances describe us-test-02 \
-  --zone=ZONE \
+  --zone=europe-west4-a \
   --format='get(networkInterfaces[0].networkIP)'
+```
+> In my lab, internal IP Address is 10.10.20.2
+---
+
+### 4️⃣ Verify SSH Access to the VMs & Test Connectivity Between VMs Using ICMP
+
+Open an SSH session to `us-test-01`:
+```bash
+gcloud compute ssh us-test-01 --zone=us-east1-c
 ```
 
 Ping `us-test-02` from `us-test-01`:
 ```bash
-ping -c 3 <us-test-02-internal-ip-address>
+ping -c 3 10.10.20.2
 ```
 > This tests ICMP connectivity between the two VMs.
 
@@ -354,7 +343,7 @@ ping -c 3 <us-test-02-internal-ip-address>
 
 If the VMs are in different regions, you can test latency:
 ```bash
-ping -c 3 us-test-02.ZONE
+ping -c 3 us-test-02.europe-west4-a
 ```
 > Replace ZONE with the zone of `us-test-02`.
 
