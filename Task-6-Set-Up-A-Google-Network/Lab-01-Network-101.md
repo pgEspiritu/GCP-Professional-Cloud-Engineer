@@ -1,13 +1,5 @@
 # 🌐 Networking 101
 
-🧪 **Experiment** | 🧑‍🏫 **Lab**  
-⏱️ **15 minutes** | 💳 **1 Credit**  
-📊 **Introductory**  
-ℹ️ This lab may incorporate AI tools to support your learning.  
-🆔 **GSP016**
-
----
-
 ## 📘 Overview
 
 In this lab, you will learn the **basics of networking on Google Cloud**, including how it differs from traditional on-premises environments.
@@ -169,6 +161,8 @@ gcloud config set compute/region "Region"
 export REGION=$(gcloud config get compute/region)
 ```
 
+![Lab 1.1](images/Lab-1.1.png)
+
 ---
 
 ## 🧭 Task 1. Review the Default Network
@@ -195,6 +189,8 @@ When a new Google Cloud project is created, a **default VPC network** is automat
    - 📡 IP address ranges
    - 🚪 Gateways
    - 🌍 Network type (auto/custom)
+
+![Lab 1.2](images/Lab-1.2.png)
 
 ---
 
@@ -258,6 +254,9 @@ Custom or auto networks you create later **do not** include any firewall rules b
    - 🏷️ Priority
    - 🌐 Network
 
+![Lab 1.3](images/Lab-1.3.png)
+![Lab 1.4](images/Lab-1.4.png)
+
 ---
 
 ## 🛣️ Network Routes
@@ -311,20 +310,27 @@ When manually assigning subnetwork IP ranges, you must first create a **custom V
 
 2. Click **Create VPC Network**
 
+![Lab 1.5](images/Lab-1.5.png)
+
 3. Enter:
    - **Name**: `taw-custom-network`
+
+![Lab 1.6](images/Lab-1.6.png)
 
 ---
 
 ## 🧩 Create Subnetworks (Custom Tab)
 
 ### First Subnet
-- **Subnet name**: `subnet-<REGION>`
-- **Region**: `<REGION>`
+- **Subnet name**: `subnet-us-east1`
+- **Region**: `us-east1`
 - **IP address range**: `10.0.0.0/16`
 - Click **Done**
 
 🪟 The **Create a VPC network** dialog box is now populated.
+
+![Lab 1.7](images/Lab-1.7.png)
+![Lab 1.8](images/Lab-1.8.png)
 
 ---
 
@@ -332,8 +338,15 @@ When manually assigning subnetwork IP ranges, you must first create a **custom V
 
 Click **Add Subnet**, then add:
 
-- `subnet-<REGION>`, `<REGION>`, `10.1.0.0/16`
-- `subnet-<REGION>`, `<REGION>`, `10.2.0.0/16`
+- `subnet-us-east4`, `us-east4`, `10.1.0.0/16`
+
+![Lab 1.9](images/Lab-1.9.png)
+![Lab 1.10](images/Lab-1.10.png)
+
+- `subnet-us-central1`, `us-central1`, `10.2.0.0/16`
+
+![Lab 1.11](images/Lab-1.11.png)
+![Lab 1.12](images/Lab-1.12.png)
 
 ---
 
@@ -377,6 +390,8 @@ You will:
 
 3. Open the **Firewalls** tab, then click **Add Firewall Rule**
 
+![Lab 1.13](images/Lab-1.13.png)
+
 ---
 
 ## 🌍 Firewall Rule: Allow HTTP
@@ -391,6 +406,10 @@ You will:
 | Protocols and ports | tcp:80 | HTTP only |
 
 📸 Your screen should resemble the populated **Create a firewall rule** dialog.
+
+![Lab 1.14](images/Lab-1.14.png)
+![Lab 1.15](images/Lab-1.15.png)
+![Lab 1.16](images/Lab-1.16.png)
 
 - Click **Create** and wait for success
 
@@ -409,6 +428,10 @@ You will:
 | Source IPv4 ranges | `0.0.0.0/0` |
 | Protocols and ports | Other protocols → `icmp` |
 
+![Lab 1.17](images/Lab-1.17.png)
+![Lab 1.18](images/Lab-1.18.png)
+![Lab 1.19](images/Lab-1.19.png)
+
 ---
 
 ### 🔁 Internal Communication Rule
@@ -420,6 +443,10 @@ You will:
 | Source filter | IPv4 ranges |
 | Source IPv4 ranges | `10.0.0.0/16`, `10.1.0.0/16`, `10.2.0.0/16` |
 | Protocols and ports | tcp:0-65535, udp:0-65535, icmp |
+
+![Lab 1.20](images/Lab-1.20.png)
+![Lab 1.21](images/Lab-1.22.png)
+![Lab 1.22](images/Lab-1.22.png)
 
 ---
 
@@ -434,6 +461,10 @@ You will:
 | Source IPv4 ranges | `0.0.0.0/0` |
 | Protocols and ports | tcp:22 |
 
+![Lab 1.23](images/Lab-1.23.png)
+![Lab 1.24](images/Lab-1.24.png)
+![Lab 1.25](images/Lab-1.25.png)
+
 ---
 
 ### 🖥️ RDP Rule
@@ -446,6 +477,10 @@ You will:
 | Source IPv4 ranges | `0.0.0.0/0` |
 | Protocols and ports | tcp:3389 |
 
+![Lab 1.26](images/Lab-1.26.png)
+![Lab 1.27](images/Lab-1.27.png)
+![Lab 1.28](images/Lab-1.28.png)
+
 ---
 
 ## ✅ Review Firewall Rules
@@ -454,6 +489,8 @@ You will:
 - Confirm all rules are listed under `taw-custom-network`
 
 📸 The Firewall rules tab should display all newly created rules.
+
+![Lab 1.29](images/Lab-1.29.png)
 
 ---
 
