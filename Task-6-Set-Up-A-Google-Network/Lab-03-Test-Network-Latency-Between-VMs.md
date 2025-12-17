@@ -1,12 +1,5 @@
 ## 🧪 Test Network Latency Between VMs
 
-⏱️ **Duration:** 15 minutes  
-🎓 **Level:** Introductory  
-💳 **Credits:** 1  
-🧪 **Lab ID:** GSP161  
-
----
-
 ## 📘 Overview
 When using a **Virtual Private Cloud (VPC)** network, your **VMs and subnetworks can be deployed anywhere**—across regions and zones 🌍.  
 This lab focuses on **network connectivity and performance**, showing how a **multi-region, multi-zone VPC** improves availability, scalability, and speed.
@@ -77,6 +70,8 @@ gcloud config set compute/region "Region"
 export REGION=$(gcloud config get compute/region)
 ```
 
+![Lab 3.1](images/Lab-3.1.png)
+
 ---
 
 ## 🧪 Task 1. Connect VMs and Check Latency
@@ -128,12 +123,17 @@ gcloud compute instances create us-test-03 \
   --tags ssh,http,rules
 ```
 
+![Lab 3.4](images/Lab-3.4.png)
+![Lab 3.5](images/Lab-3.5.png)
+
 ---
 
 ### 🔗 Verify VM Connectivity
 ▶️ SSH into us-test-01
 1. Go to Compute Engine > VM instances
 2. Click SSH next to us-test-01
+
+![Lab 3.6](images/Lab-3.6.png)
 
 ---
 
@@ -157,6 +157,8 @@ Example output:
 ```
 > ✔️ This confirms ICMP traffic is allowed by your firewall rules.
 
+![Lab 3.7](images/Lab-3.7.png)
+
 ---
 
 ## ⏱️ Measure Network Latency
@@ -176,6 +178,8 @@ PING us-test-02.ZONE.c.cloud-network-module-101.internal (10.2.0.2)
 64 bytes from 10.2.0.2: icmp_seq=3 ttl=64 time=104 ms
 ```
 > 📌 The reported time is the RTT (Round Trip Time) between regions.
+
+![Lab 3.8](images/Lab-3.8.png)
 
 ### 🧠 Key Concepts to Think About
 - 🌍 How does latency differ between regions?
@@ -231,6 +235,9 @@ sudo apt-get update
 sudo apt-get -y install traceroute mtr tcpdump iperf whois host dnsutils siege
 ```
 
+![Lab 3.9](images/Lab-3.9.png)
+![Lab 3.10](images/Lab-3.10.png)
+
 ### 🌍 Run Traceroute to an External Site
 
 Test traceroute using a public destination:
@@ -271,6 +278,10 @@ traceroute -m 255 bad.horse
 - Are paths shorter when destinations are geographically closer?
 - How consistent are RTT values across hops?
 
+![Lab 3.11](images/Lab-3.11.png)
+![Lab 3.12](images/Lab-3.12.png)
+![Lab 3.13](images/Lab-3.13.png)
+
 ---
 
 ## 🚀 Task 3. Use iperf to Test Performance
@@ -302,6 +313,8 @@ SSH into us-test-01 and run:
 iperf -s
 ```
 
+![Lab 3.14](images/Lab-3.14.png)
+
 Run the iperf client (us-test-02)
 
 From us-test-02, run:
@@ -309,13 +322,20 @@ From us-test-02, run:
 iperf -c us-test-01.ZONE
 ```
 
+![Lab 3.15](images/Lab-3.15.png)
+![Lab 3.16](images/Lab-3.16.png)
+
 📈 Sample Output
 ```bash
 [  3]  0.0-10.0 sec   298 MBytes   249 Mbits/sec
 ```
+
+![Lab 3.17](images/Lab-3.17.png)
+
 - Transfer → Total data sent
 - Bandwidth → Measured throughput
 > When finished, stop the server on us-test-01 with Ctrl + C.
+
 
 ---
 
@@ -334,6 +354,8 @@ gcloud compute instances create us-test-04 \
 --tags ssh,http
 ```
 
+![Lab 3.18](images/Lab-3.18.png)
+
 Install tools on us-test-04
 
 SSH into us-test-04 and run:
@@ -341,6 +363,8 @@ SSH into us-test-04 and run:
 sudo apt-get update
 sudo apt-get -y install traceroute mtr tcpdump iperf whois host dnsutils siege
 ```
+
+![Lab 3.19](images/Lab-3.19.png)
 
 ---
 
@@ -357,12 +381,20 @@ Start UDP server (us-test-02)
 iperf -s -u
 ```
 
+![Lab 3.20](images/Lab-3.20.png)
+
 Run UDP client (us-test-01)
 ```bash
 iperf -c us-test-02.ZONE -u -b 2G
 ```
-
 > 🚀 This often achieves higher throughput than a single TCP stream.
+
+![Lab 3.21](images/Lab-3.21.png)
+
+
+back to us-test-02
+
+![Lab 3.22](images/Lab-3.22.png)
 
 ---
 
@@ -372,11 +404,21 @@ Start server (us-test-01)
 iperf -s
 ```
 
+![Lab 3.23](images/Lab-3.23.png)
+
 Run client with parallel streams (us-test-02)
 ```bash
 iperf -c us-test-01.ZONE -P 20
 ```
 > 📊 The combined bandwidth should be close to the maximum achievable for the network path.
+
+![Lab 3.24](images/Lab-3.24.png)
+![Lab 3.25](images/Lab-3.25.png)
+
+back to us-test-01
+
+![Lab 3.26](images/Lab-3.26.png)
+![Lab 3.27](images/Lab-3.27.png)
 
 ---
 
