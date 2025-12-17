@@ -1,14 +1,5 @@
 # 🌐 Create a Custom Network and Apply Firewall Rules
 
-**Experiment · Lab · ⏱️ 30 minutes · 💳 1 Credit**  
-**Level:** Introductory  
-**Lab ID:** GSP159  
-**Platform:** Google Cloud Skills Boost  
-
-> ℹ️ This lab may incorporate AI tools to support your learning.
-
----
-
 ## 📘 Overview
 
 In this hands-on lab, you will **design and implement a secure network architecture** on Google Cloud. Using **Cloud Shell** and the **gcloud CLI**, you will:
@@ -135,6 +126,8 @@ gcloud config set compute/region "Region"
 export REGION=$(gcloud config get compute/region)
 ```
 
+![Lab 2.1](images/Lab-2.1.png)
+
 ---
 
 # 🧩 Task 1. Create Custom Network with Cloud Shell
@@ -158,6 +151,8 @@ taw-custom-network  custom
 ```
 > ⚠️ Note:
 > Instances on this network will not be reachable until firewall rules are created.
+
+   ![Lab 2.2](images/Lab-2.2.png)
 
 Example firewall rules (shown by the system):
 ```bash
@@ -224,6 +219,9 @@ NAME           REGION   NETWORK              RANGE
 subnet-Region  Region   taw-custom-network   10.2.0.0/16
 ```
 
+![Lab 2.3](images/Lab-2.3.png)
+![Lab 2.4](images/Lab-2.4.png)
+
 ## 📋 Verify the Subnetworks
 
 List all subnetworks created under taw-custom-network:
@@ -239,6 +237,8 @@ subnet-Region  Region   taw-custom-network   10.1.0.0/16
 subnet-Region  Region   taw-custom-network   10.2.0.0/16
 subnet-Region  Region   taw-custom-network   10.0.0.0/16
 ```
+
+![Lab 2.5](images/Lab-2.5.png)
 
 ---
 
@@ -319,6 +319,10 @@ gcloud compute firewall-rules create "nw101-allow-ssh" \
 --target-tags "ssh"
 ```
 
+![Lab 2.6](images/Lab-2.6.png)
+![Lab 2.7](images/Lab-2.7.png)
+![Lab 2.8](images/Lab-2.8.png)
+
 ---
 
 ### 🔍 Review Firewall Rules
@@ -328,6 +332,9 @@ Use the Cloud Console to verify your firewall rules:
 📍 Navigation menu → VPC network → Firewall rules
 
 You should see all newly created rules associated with taw-custom-network.
+
+![Lab 2.9](images/Lab-2.9.png)
+![Lab 2.10](images/Lab-2.10.png)
 
 ---
 
