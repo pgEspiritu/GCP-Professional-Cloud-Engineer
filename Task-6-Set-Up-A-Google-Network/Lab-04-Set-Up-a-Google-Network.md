@@ -110,6 +110,8 @@ gcloud compute networks create vpc-network-9utl \
   --bgp-routing-mode=regional
 ```
 
+![Lab 4.1](images/Lab-4.1.png)
+
 ---
 
 ### 2️⃣ Create Subnet A
@@ -132,6 +134,8 @@ gcloud compute networks subnets create subnet-b-2rlm \
   --stack-type=IPV4_ONLY
 ```
 
+![Lab 4.2](images/Lab-4.2.png)
+
 ---
 
 ### 🔍 Verification
@@ -142,6 +146,8 @@ gcloud compute networks subnets list \
   --filter="network:vpc-network-9utl"
 ```
 > You should see both `subnet-a-name` and `subnet-b-name` with the correct IP ranges.
+
+![Lab 4.3](images/Lab-4.3.png)
 
 ---
 
@@ -241,6 +247,9 @@ gcloud compute firewall-rules create wllh-firewall-icmp \
   --target-tags=all-instances
 ```
 
+![Lab 4.4](images/Lab-4.4.png)
+![Lab 4.5](images/Lab-4.5.png)
+
 ---
 
 ### 🔍 Verification
@@ -251,6 +260,8 @@ gcloud compute firewall-rules list \
   --filter="network:vpc-network-9utl"
 ```
 > Check that all three rules exist with correct protocols, ports, priorities, and source ranges.
+
+![Lab 4.6](images/Lab-4.6.png)
 
 ---
 
@@ -297,6 +308,8 @@ gcloud compute instances create us-test-01 \
   --image-project=debian-cloud
 ```
 
+![Lab 4.7](images/Lab-4.7.png)
+
 ---
 
 ### 2️⃣ Create VM in Subnet B
@@ -311,6 +324,8 @@ gcloud compute instances create us-test-02 \
   --image-project=debian-cloud
 ```
 
+![Lab 4.8](images/Lab-4.8.png)
+
 ---
 
 ### 3️⃣ Get the Internal IP Address of Instance 2
@@ -322,6 +337,9 @@ gcloud compute instances describe us-test-02 \
   --format='get(networkInterfaces[0].networkIP)'
 ```
 > In my lab, internal IP Address is 10.10.20.2
+
+![Lab 4.9](images/Lab-4.9.png)
+
 ---
 
 ### 4️⃣ Verify SSH Access to the VMs & Test Connectivity Between VMs Using ICMP
@@ -346,6 +364,8 @@ If the VMs are in different regions, you can test latency:
 ping -c 3 us-test-02.europe-west4-a
 ```
 > Replace ZONE with the zone of `us-test-02`.
+
+![Lab 4.10](images/Lab-4.10.png)
 
 ---
 
