@@ -49,7 +49,7 @@ In this task, you will create a **small, cost-effective Kubernetes cluster** to 
 - Create a Kubernetes cluster named **`echo-cluster`**
 - Use **exactly 2 nodes**
 - Use machine type **`e2-standard-2`**
-- Deploy the cluster in **ZONE**
+- Deploy the cluster in **`us-east1-d`**
 
 ---
 
@@ -59,7 +59,7 @@ Run the following command in **Cloud Shell**:
 
 ```bash
 gcloud container clusters create echo-cluster \
-  --zone ZONE \
+  --zone us-east1-d \
   --num-nodes 2 \
   --machine-type e2-standard-2
 ```
@@ -71,7 +71,7 @@ gcloud container clusters create echo-cluster \
 After the cluster is created, configure kubectl so it can communicate with the cluster:
 ```bash
 gcloud container clusters get-credentials echo-cluster \
-  --zone ZONE
+  --zone us-east1-d
 ```
 
 ---
@@ -117,7 +117,12 @@ The archive is stored in a Cloud Storage bucket **owned by your lab project**.
 ### 🛠️ How to Do It (CLI)
 
 ```bash
-gsutil cp gs://$GOOGLE_CLOUD_PROJECT/echo-web.tar.gz .
+gsutil cp gs://qwiklabs-gcp-04-0a832141152a/echo-web.tar.gz .
+```
+
+verify:
+```bash
+ls
 ```
 
 ---
@@ -127,12 +132,20 @@ gsutil cp gs://$GOOGLE_CLOUD_PROJECT/echo-web.tar.gz .
 Unpack the application files:
 ```bash
 tar -xzf echo-web.tar.gz
-cd echo-web
 ```
 ✅ This directory should contain:
 - Dockerfile
 - Application source files (Go app)
 
+verify again:
+```bash
+ls
+```
+
+you should see:
+Dockerfile
+main.go
+manifest
 ---
 
 ### 🧱 Step 3: Build the Docker Image (Tagged as v1)
@@ -141,7 +154,7 @@ Build the Docker image and tag it correctly so it can be used later by Kubernete
 
 🛠️ How to Do It (CLI)
 ```bash
-docker build -t gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app:v1 .
+docker build -t gcr.io/qwiklabs-gcp-04-0a832141152a/echo-app:v1 .
 ```
 
 ---
@@ -198,7 +211,7 @@ gcloud auth configure-docker gcr.io
 
 Push the v1-tagged image to Container Registry:
 ```bash
-docker push gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app:v1
+docker push gcr.io/qwiklabs-gcp-04-0a832141152a/echo-app:v1
 ```
 > ⏳ Wait for the push to complete.
 
@@ -209,7 +222,7 @@ docker push gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app:v1
 Confirm the image exists in Container Registry:
 ```bash
 gcloud container images list \
-  --repository=gcr.io/$GOOGLE_CLOUD_PROJECT
+  --repository=gcr.io/qwiklabs-gcp-04-0a832141152a
 ```
 
 You should see:
@@ -220,7 +233,7 @@ gcr.io/PROJECT_ID/echo-app
 Optional: list tags
 ```bash
 gcloud container images list-tags \
-  gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app
+  gcr.io/qwiklabs-gcp-04-0a832141152a/echo-app
 ```
 
 ---
@@ -255,7 +268,7 @@ Create a Kubernetes deployment using your pushed image:
 
 ```bash
 kubectl create deployment echo-web \
-  --image=gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app:v1
+  --image=gcr.io/qwiklabs-gcp-04-0a832141152a/echo-app:v1
 ```
 > ✅ This creates a deployment named echo-web in the default namespace.
 
