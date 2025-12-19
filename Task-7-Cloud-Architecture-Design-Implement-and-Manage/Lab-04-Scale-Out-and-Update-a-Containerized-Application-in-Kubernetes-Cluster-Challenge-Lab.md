@@ -1,14 +1,5 @@
 # 📦 Scale Out and Update a Containerized Application on a Kubernetes Cluster: Challenge Lab
 
-**Lab ID:** GSP305  
-**Level:** Intermediate  
-**Duration:** ~15 minutes  
-**Credits:** 5  
-
-This challenge lab is performed on **:contentReference[oaicite:0]{index=0}** and focuses on **updating and scaling containerized applications** running on Kubernetes.
-
----
-
 ## 📘 Overview
 
 In a **challenge lab**, you are given a real-world scenario and a set of objectives instead of step-by-step instructions. You are expected to rely on previously learned skills, experiment safely, and troubleshoot issues on your own. An **automated scoring system** will validate whether each requirement has been completed correctly.
@@ -30,7 +21,7 @@ The environment uses:
 - A Kubernetes cluster named **`echo-cluster`**
 - A deployment named **`echo-web`**
 - A containerized test application named **`echo-app`**
-- All resources deployed in **ZONE**
+- All resources deployed in **`us-central1-c`**
 
 You will begin with an existing deployment running **version v1** of the application and then update it to a newer version provided by the development team.
 
@@ -63,7 +54,7 @@ Kubernetes Engine → Clusters
 The initial version of the application (`v1`) is deployed using the following commands (already provided as reference):
 
 ```bash
-gcloud container clusters get-credentials echo-cluster --zone=ZONE
+gcloud container clusters get-credentials echo-cluster --zone=us-central1-c
 kubectl create deployment echo-web --image=gcr.io/qwiklabs-resources/echo-app:v1
 kubectl expose deployment echo-web --type=LoadBalancer --port 80 --target-port 8000
 ```
@@ -105,7 +96,7 @@ In this step, you will work with the **updated version (v2)** of the sample appl
 The archive is stored in a Cloud Storage bucket provided by the lab.
 
 ```bash
-gsutil cp gs://bucket-name/echo-web-v2.tar.gz .
+gsutil cp gs://qwiklabs-gcp-03-bd3e022566b2/echo-web-v2.tar.gz .
 ```
 > 📌 Replace bucket-name with the exact bucket name shown in the lab instructions.
 
@@ -127,7 +118,7 @@ tar -xzf echo-web-v2.tar.gz
 
 Build the Docker image and tag it as v2 so it can be used for the application update.
 ```bash
-docker build -t gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app:v2 .
+docker build -t gcr.io/qwiklabs-gcp-03-bd3e022566b2/echo-app:v2 .
 ```
 
 ✔️ Verification
@@ -139,7 +130,6 @@ docker images | grep echo-app
 
 You should see both versions listed, similar to:
 ```bash
-gcr.io/PROJECT_ID/echo-app   v1
 gcr.io/PROJECT_ID/echo-app   v2
 ```
 
@@ -183,7 +173,7 @@ gcloud auth configure-docker gcr.io
 
 Push the updated image to GCR:
 ```bash
-docker push gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app:v2
+docker push gcr.io/qwiklabs-gcp-03-bd3e022566b2/echo-app:v2
 ```
 ⏳ Wait until the push completes successfully.
 
@@ -194,15 +184,15 @@ docker push gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app:v2
 List images in your project’s registry:
 ```bash
 gcloud container images list \
-  --repository=gcr.io/$GOOGLE_CLOUD_PROJECT
+  --repository=gcr.io/qwiklabs-gcp-03-bd3e022566b2
 ```
 
 Verify the available tags:
 ```bash
 gcloud container images list-tags \
-  gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app
+  gcr.io/qwiklabs-gcp-03-bd3e022566b2/echo-app
 ```
-You should see both v1 and v2 tags.
+You should see one v2 tag.
 
 ---
 
@@ -217,8 +207,6 @@ You should see both v1 and v2 tags.
 ## 🚀 Task 3: Deploy the Updated Application to the Kubernetes Cluster
 
 In this step, you will update the running **echo-web** deployment to use the new **v2** container image and ensure the application remains accessible externally on **port 80**.
-
-This deployment runs on **:contentReference[oaicite:0]{index=0} Kubernetes Engine (GKE)**.
 
 ---
 
@@ -235,7 +223,7 @@ This deployment runs on **:contentReference[oaicite:0]{index=0} Kubernetes Engin
 Make sure your local `kubectl` is configured for the correct cluster and zone:
 
 ```bash
-gcloud container clusters get-credentials echo-cluster --zone=ZONE
+gcloud container clusters get-credentials echo-cluster --zone=us-central1-c
 ```
 
 ---
@@ -245,7 +233,7 @@ gcloud container clusters get-credentials echo-cluster --zone=ZONE
 Update the container image in the existing deployment:
 ```bash
 kubectl set image deployment/echo-web \
-  echo-web=gcr.io/$GOOGLE_CLOUD_PROJECT/echo-app:v2
+  echo-app=gcr.io/qwiklabs-gcp-03-bd3e022566b2/echo-app:v2
 ```
 This performs a rolling update, replacing v1 pods with v2 pods without downtime.
 
@@ -279,8 +267,9 @@ Look for:
 
 Once available, test the application:
 ```bash
-curl http://EXTERNAL-IP
+curl http://34.60.214.204
 ```
+> For my lab, the external ip is = 34.60.214.204
 > ✅ The output should now include the v2 version identifier, confirming the update.
 
 ---
@@ -353,10 +342,6 @@ Repeated responses may show different pod identifiers, confirming traffic distri
 
 ## ✅ Task 5: Confirm the Application Is Running
 
-In this step, you will verify that the **echo-web** application is running correctly and responding to requests from outside the cluster using its external IP address on **:contentReference[oaicite:0]{index=0} Kubernetes Engine (GKE)**.
-
----
-
 ## 🌐 Step 1: Get the External IP Address
 
 Run the following command to retrieve the service details:
@@ -374,12 +359,12 @@ Look for the EXTERNAL-IP associated with the echo-web service.
 
 Use a browser or curl to access the application:
 ```bash
-curl http://EXTERNAL-IP
+curl http://34.60.214.204
 ```
 
 Or open the following in your web browser:
 ```cpp
-http://EXTERNAL-IP
+http://34.60.214.204
 ```
 
 ---
