@@ -1,14 +1,5 @@
 # 🛠️ Migrate a MySQL Database to Google Cloud SQL — Challenge Lab
 
-**Lab ID:** GSP306  
-**Level:** Advanced  
-**Duration:** 20 minutes  
-**Credits:** 7  
-**Format:** Challenge Lab  
-**Note:** This lab may incorporate AI tools to support learning.
-
----
-
 ## 📘 Overview
 
 This is a **challenge lab**, meaning you are given a scenario and required tasks **without step-by-step instructions**. You are expected to apply and extend the skills learned from prior labs.
@@ -64,7 +55,7 @@ You are required to:
 1. Create a new **Cloud SQL** instance to host the migrated database.
 2. Create a **database dump** from the existing local MySQL database.
 3. Import the dump into the Cloud SQL database.
-4. Reconfigure the **:contentReference[oaicite:1]{index=1}** application to use the new Cloud SQL database instead of the local MySQL server.
+4. Reconfigure the application to use the new Cloud SQL database instead of the local MySQL server.
 
 ### WordPress Configuration File
 - Location:  
@@ -87,8 +78,8 @@ You are required to:
 ## 🌍 Location Requirements
 
 Use the following values **where applicable**:
-- **Zone:** `ZONE`
-- **Region:** `REGION`
+- **Zone:** `us-east4-b`
+- **Region:** `us-east4`
 
 ---
 
@@ -105,7 +96,7 @@ Use the following values **where applicable**:
 ## ✅ Task 1: Create a New Cloud SQL Instance (CLI)
 
 ### 🎯 Goal
-Create a **MySQL Cloud SQL** instance using the **Google Cloud CLI**, deployed in the required **Region: `REGION`**, suitable for hosting a WordPress database.
+Create a **MySQL Cloud SQL** instance using the **Google Cloud CLI**, deployed in the required **Region: `us-east4`**, suitable for hosting a WordPress database.
 
 ---
 
@@ -120,8 +111,8 @@ Create a **MySQL Cloud SQL** instance using the **Google Cloud CLI**, deployed i
 Use variables to avoid mistakes and keep commands reusable.
 
 ```bash
-export REGION=REGION
-export ZONE=ZONE
+export REGION=us-east4
+export ZONE=us-east4-b
 export SQL_INSTANCE=wordpress-sql
 export ROOT_PASSWORD=Password1*
 ```
@@ -167,7 +158,7 @@ Verify:
 
 ---
 
-## ✅ Solution — Task 2: Configure the New Database (CLI)
+## ✅ Task 2: Configure the New Database (CLI)
 
 ### 🎯 Goal
 Configure the Cloud SQL instance by creating the WordPress database and user so it is ready to receive the migrated data.
@@ -216,63 +207,91 @@ gcloud sql users list --instance=$SQL_INSTANCE
 
 ---
 
-## ✅ Solution — Task 3: Perform Database Dump and Import (CLI)
+## ✅ Task 3: Perform Database Dump and Import (CLI)
 
 ### 🎯 Goal
-Export the existing local **WordPress** MySQL database and import it into the newly created **Cloud SQL** database.
+Dump the local WordPress MySQL database, upload it to **Cloud Storage**, and import it into **Cloud SQL**.
 
 ---
 
 ### 🔹 Step 1: Define Task-Specific Variables
-(Only variables **not** defined in Tasks 1–2)
+(Only variables not defined in previous tasks)
 
 ```bash
 export DUMP_FILE=wordpress.sql
-export CLOUDSQL_CONNECTION=$(gcloud sql instances describe $SQL_INSTANCE --format="value(connectionName)")
+export BUCKET_NAME=wordpress-db-backup-$RANDOM
 ```
 
 ---
 
-### 🔹 Step 2: Create a Database Dump from the Local MySQL Server
+### 🔹 Step 2: Create a Cloud Storage Bucket
 
-Run this command on the blog VM.
+The bucket must be in the same region as the Cloud SQL instance.
+```bash
+gsutil mb -l $REGION gs://$BUCKET_NAME
+```
 
+---
+
+### 🔹 Step 3: Dump the Local MySQL Database
+
+Run this on the blog VM.
 ```bash
 mysqldump -u blogadmin -p wordpress > $DUMP_FILE
 ```
 
 When prompted, enter:
-```bash
+```
 Password1*
 ```
 
 ---
 
-### 🔹 Step 3: Import the Dump into Cloud SQL
-
-Use the Cloud SQL import command.
+### 🔹 Step 4: Upload the Dump to Cloud Storage
 
 ```bash
-gcloud sql import sql $SQL_INSTANCE $DUMP_FILE \
+gsutil cp $DUMP_FILE gs://$BUCKET_NAME/
+```
+
+---
+
+### 🔹 Step 5: Import the Dump into Cloud SQL
+
+Use the Cloud Storage object as the import source.
+
+```bash
+gcloud sql import sql $SQL_INSTANCE \
+  gs://$BUCKET_NAME/$DUMP_FILE \
   --database=$DB_NAME
 ```
 
 ---
 
-### 🔹 Step 4: Verify the Import
-(Optional but recommended)
+### 🔹 Step 6: Verify the Import
+
+Connect to Cloud SQL and confirm tables exist.
 
 ```bash
-gcloud sql databases describe $DB_NAME \
-  --instance=$SQL_INSTANCE
+mysql -h $CLOUDSQL_IP -u $DB_USER -p $DB_NAME
 ```
+
+Then run:
+
+```sql
+SHOW TABLES;
+```
+
+You should see WordPress tables such as:
+- wp_posts
+- wp_users
+- wp_options
 
 ---
 
-### 📝 Notes
-- The dump includes all tables, data, and schema required by WordPress
-- Do not modify the SQL dump file before importing
-- A successful import is required before reconfiguring the application in the next task
+## 📝 Notes
+- Cloud SQL only accepts imports from Cloud Storage
+- Do not modify the SQL dump before importing
+- A successful import is required before reconfiguring WordPress in Task 4
 
 ---
 
