@@ -1,14 +1,5 @@
 # 🖥️ Deploy a Compute Instance with a Remote Startup Script: Challenge Lab
 
-🧪 **Experiment**  
-⏱️ **Duration:** 15 minutes  
-💳 **Credits:** 5  
-📊 **Level:** Intermediate  
-🧠 **Note:** This lab may incorporate AI tools to support your learning.  
-🆔 **Lab ID:** GSP301  
-
----
-
 ## 📘 Overview
 
 In a **challenge lab**, you are provided with a real-world scenario and a list of tasks—but **no step-by-step instructions**. You must rely on the skills you’ve already learned to determine how to complete each task.
@@ -134,6 +125,8 @@ You should see:
 install-web.sh
 ```
 
+![Lab 1.1](images/Lab-1.1.png)
+
 ---
 
 ### ✅ Expected Result
@@ -174,6 +167,8 @@ gcloud compute instances create web-vm \
   --tags=http-server
 ```
 
+![Lab 1.2](images/Lab-1.2.png)
+
 ---
 
 #### 🔍 Verification
@@ -183,6 +178,8 @@ Check VM status:
 gcloud compute instances list
 ```
 > Ensure web-vm is RUNNING.
+
+![Lab 1.3](images/Lab-1.3.png)
 
 ---
 
@@ -220,6 +217,8 @@ gcloud compute firewall-rules create allow-http \
 gcloud compute firewall-rules list --filter=allow-http
 ```
 
+![Lab 1.4](images/Lab-1.4.png)
+
 ---
 
 ### ✅ Expected Result
@@ -249,6 +248,8 @@ gcloud compute instances describe web-vm \
   --format='get(networkInterfaces[0].accessConfigs[0].natIP)'
 ```
 
+![Lab 1.5](images/Lab-1.5.png)
+
 ---
 
 2️⃣ Test via Browser
@@ -257,6 +258,8 @@ Open a browser and visit:
 ```bash
 http://EXTERNAL_IP
 ```
+
+![Lab 1.6](images/Lab-1.6.png)
 
 ---
 
