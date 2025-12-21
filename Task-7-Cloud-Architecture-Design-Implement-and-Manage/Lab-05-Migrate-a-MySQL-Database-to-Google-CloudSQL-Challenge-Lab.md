@@ -210,7 +210,7 @@ gcloud sql users list --instance=$SQL_INSTANCE
 ## ✅ Task 3: Perform Database Dump and Import (CLI)
 
 ### 🎯 Goal
-Dump the local WordPress MySQL database, upload it to **Cloud Storage**, and import it into **Cloud SQL**.
+Export the local WordPress MySQL database from the **blog VM** and import it into the **Cloud SQL instance**.
 
 ---
 
@@ -218,136 +218,129 @@ Dump the local WordPress MySQL database, upload it to **Cloud Storage**, and imp
 (Only variables not defined in previous tasks)
 
 ```bash
-export DUMP_FILE=wordpress.sql
-export BUCKET_NAME=wordpress-db-backup-$RANDOM
+export BLOG_VM_EXTERNAL_IP=104.196.164.85
 ```
+> `104.196.164.85` is the external IP address of the blog VM provided by the lab.
 
 ---
 
-### 🔹 Step 2: Create a Cloud Storage Bucket
+### 🔹 Step 2: Authorize blog VM to your cloudSQL instance
 
-The bucket must be in the same region as the Cloud SQL instance.
 ```bash
-gsutil mb -l $REGION gs://$BUCKET_NAME
+gcloud sql instances patch wordpress --authorized-networks $BLOG_VM_EXTERNAL_IP/32 --quiet
 ```
+
+or
+
+```bash
+gcloud sql instances patch wordpress --authorized-networks 104.196.164.85/32 --quiet
+```
+> This allows the blog VM to connect to the Cloud SQL instance using its public IP.
 
 ---
 
-### 🔹 Step 3: Dump the Local MySQL Database
+### 🔹 Step 3: Connect to blog VM using SSH
 
 Run this on the blog VM.
 ```bash
-mysqldump -u blogadmin -p wordpress > $DUMP_FILE
+gcloud compute ssh blog --zone=$ZONE
 ```
-
-When prompted, enter:
-```
-Password1*
-```
+When prompted:
+- Type `Y` to continue
+- Press Enter to accept the default SSH key settings
 
 ---
 
-### 🔹 Step 4: Upload the Dump to Cloud Storage
+### 🔹 Step 4: Storing CloudSQL instance IP into a variable
 
 ```bash
-gsutil cp $DUMP_FILE gs://$BUCKET_NAME/
+export CLOUD_SQL_IP=$(gcloud sql instances describe wordpress-sql --format='value(ipAddresses[0].ipAddress)')
 ```
+> This retrieves the public IP address of the Cloud SQL instance for later use.
 
 ---
 
-### 🔹 Step 5: Import the Dump into Cloud SQL
-
-Use the Cloud Storage object as the import source.
+### 🔹 Step 5: Connect to the Cloud SQL Instance
 
 ```bash
-gcloud sql import sql $SQL_INSTANCE \
-  gs://$BUCKET_NAME/$DUMP_FILE \
-  --database=$DB_NAME
+mysql --host=$CLOUD_SQL_IP --user=root --password=Password1*
 ```
+> This verifies that the Cloud SQL instance is reachable from the blog VM.
 
 ---
 
-### 🔹 Step 6: Verify the Import
-
-Connect to Cloud SQL and confirm tables exist.
+### 🔹 Step 6: Creating Database & User for your Cloud SQL Database
 
 ```bash
-mysql -h $CLOUDSQL_IP -u $DB_USER -p $DB_NAME
+CREATE DATABASE wordpress;
+CREATE USER 'blogadmin'@'%' IDENTIFIED BY 'Password1*';
+GRANT ALL PRIVILEGES ON wordpress.* TO 'blogadmin'@'%';
+FLUSH PRIVILEGES;
 ```
 
-Then run:
+Then exit
 
 ```sql
-SHOW TABLES;
+exit
 ```
 
-You should see WordPress tables such as:
-- wp_posts
-- wp_users
-- wp_options
+### 🔹 Step 7: Create a Backup of the WordPress MySQL database and Restore to Cloud SQL instance
+
+```bash
+mysql --host=$CLOUD_SQL_IP --user=root -pPassword1* --verbose wordpress < wordpress_db_backup.sql\
+```
+> 📄 A file named wordpress_db_backup.sql is created.
+This file can later be restored into another MySQL server or database.
+
+
+then restore:
+
+```bash
+mysql --host=$CLOUD_SQL_IP --user=root -pPassword1* --verbose wordpress < wordpress_db_backup.sql
+```
+> 📥 The contents of wordpress_db_backup.sql are loaded into the wordpress database on the Cloud SQL server.
 
 ---
 
-## 📝 Notes
-- Cloud SQL only accepts imports from Cloud Storage
-- Do not modify the SQL dump before importing
-- A successful import is required before reconfiguring WordPress in Task 4
+## 📝 Notes (Task 3)
+- Public IP authorization is required for VM-to-Cloud-SQL connectivity
+- The SQL dump file contains both schema and data
+- Database and user must exist before restoring data
+- Importing with --verbose helps confirm successful execution
 
 ---
 
-### ## ✅ Task 4: Reconfigure the WordPress Installation (CLI)
+### ✅ Task 4: Reconfigure the WordPress Installation (CLI)
 
 ### 🎯 Goal
 Update the WordPress configuration so the application uses the **Cloud SQL** database instead of the local MySQL server.
 
 ---
 
-### 🔹 Step 1: Define Task-Specific Variables
-(Only variables **not** defined in Tasks 1–3)
+### 🔹 Step 1: Restart the Apache Webserver Service
 
 ```bash
-export WP_CONFIG=/var/www/html/wordpress/wp-config.php
-export CLOUDSQL_IP=$(gcloud sql instances describe $SQL_INSTANCE --format="value(ipAddresses[0].ipAddress)")
+sudo service apache2 restart
 ```
+> This ensures the web server is running before applying configuration changes.
 
 ---
 
-### 🔹 Step 2: Update Database Connection Settings
-
-Edit the WordPress configuration file to point to Cloud SQL.
+### 🔹 Step 2: Replace the Database IP configuration from localhost to our cloudSQL instance IP
 
 ```bash
-sudo sed -i "s/define('DB_NAME'.*/define('DB_NAME', '$DB_NAME');/" $WP_CONFIG
-sudo sed -i "s/define('DB_USER'.*/define('DB_USER', '$DB_USER');/" $WP_CONFIG
-sudo sed -i "s/define('DB_PASSWORD'.*/define('DB_PASSWORD', '$DB_PASSWORD');/" $WP_CONFIG
-sudo sed -i "s/define('DB_HOST'.*/define('DB_HOST', '$CLOUDSQL_IP');/" $WP_CONFIG
+sudo sed -i "s/localhost/$CLOUD_SQL_IP/g" /var/www/html/wordpress/wp-config.php
 ```
+> This replaces the local database host (localhost) with the Cloud SQL instance IP.
 
 ---
 
-### 🔹 Step 3: Restart the Web Server
+## 📝 Notes (Task 4)
 
-Apply the configuration changes.
-
-```bash
-sudo systemctl restart apache2
-```
-
----
-
-### 🔹 Step 4: Verify the Site
-
-- Open a browser
-- Navigate to the external IP of the blog instance
-- Confirm the WordPress site loads correctly
-
----
-
-### 📝 Notes
-
-- WordPress now connects directly to Cloud SQL using the instance IP
-- If the database connection is misconfigured, the site will fail to load
-- A working site confirms a successful migration and reconfiguration
+- WordPress database settings are read from wp-config.php
+- sed -i modifies the file directly without creating a copy
+- Updating DB_HOST is required after migrating the database
+- Apache restart ensures PHP reloads the updated configuration
 
 ---
 
@@ -398,17 +391,6 @@ sudo tail -f /var/log/apache2/error.log
 | Cannot connect to Cloud SQL     | Confirm `CLOUDSQL_IP` is correct, check user/password, ensure Cloud SQL **public IP** is enabled and authorized for the VM |
 | WordPress shows database errors | Check `wp-config.php` for correct DB_NAME, DB_USER, DB_PASSWORD, DB_HOST                                                   |
 | Missing content                 | Verify the import completed successfully using `mysql -h $CLOUDSQL_IP -u $DB_USER -p $DB_NAME -e "SHOW TABLES;"`           |
-
----
-
-### 🔹 Step 5: Optional — Test with wp-cli
-
-If wp-cli is installed, you can run:
-
-```bash
-wp db check --path=/var/www/html/wordpress
-```
-- Ensures database tables are accessible and intact.
 
 ---
 
