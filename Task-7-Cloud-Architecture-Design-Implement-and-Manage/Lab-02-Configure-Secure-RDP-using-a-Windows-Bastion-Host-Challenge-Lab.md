@@ -27,6 +27,8 @@ gcloud compute networks create securenetwork \
 ```
 > ✅ This allows you to manually define subnets (required by the lab).
 
+![Lab 2.1](images/Lab-2.1.png)
+
 ---
 
 ### 🛠️ Step 2: Create a Subnet in the Required Region
@@ -38,6 +40,8 @@ gcloud compute networks subnets create secure-subnet \
   --region=europe-west4 \
   --range=10.0.0.0/24
 ```
+
+![Lab 2.2](images/Lab-2.2.png)
 
 ✅ Results:
 - Subnet created inside securenetwork
@@ -65,6 +69,8 @@ gcloud compute firewall-rules create allow-rdp-bastion \
 - ✅ Important:
   - The bastion-rdp tag must be added later to the bastion VM
   - No other instances will be exposed to the internet
+
+![Lab 2.3](images/Lab-2.3.png)
 
 ---
 
@@ -104,6 +110,8 @@ gcloud compute instances create vm-securehost \
   --tags=secure-server
 ```
 
+![Lab 2.4](images/Lab-2.4.png)
+
 --- 
 
 ✅ This instance:
@@ -142,6 +150,8 @@ gcloud compute instances create vm-bastionhost \
 - bastion-rdp tag matches the RDP firewall rule from Task 1
 - Only this VM is exposed to TCP 3389
 
+![Lab 2.5](images/Lab-2.5.png)
+
 ---
 
 ### 🔐 Step 3: Configure Windows User & Reset Passwords
@@ -155,12 +165,16 @@ gcloud compute reset-windows-password vm-bastionhost \
   --zone europe-west4-c
 ```
 
+![Lab 2.6](images/Lab-2.6.png)
+
 🔑 Secure Host Password
 ```bash
 gcloud compute reset-windows-password vm-securehost \
   --user app_admin \
   --zone europe-west4-c
 ```
+
+![Lab 2.7](images/Lab-2.7.png)
 
 📌 IMPORTANT
 - Copy and save the username & password for both VMs
@@ -214,9 +228,15 @@ Compute Engine → VM instances
 ```
 3. Locate vm-bastionhost
 4. Click the RDP button next to it
+
+![Lab 2.8](images/Lab-2.8.png)
+
 5. Log in using:
    - Username: app_admin
    - Password: __Dv;e-n+Q|5G>y _(Generated in task 2)_
+
+![Lab 2.9](images/Lab-2.9.png)
+![Lab 2.10](images/Lab-2.10.png)
 
 ---
 
@@ -229,13 +249,23 @@ Compute Engine → VM instances
     mstsc.exe
     ```
   - Press Enter
+
+![Lab 2.11](images/Lab-2.11.png)
+
 2. In the Remote Desktop Connection window:
-  - Enter the internal IP address of vm-securehost
+  -  Enter the internal IP address of vm-securehost
     - (Find it in the Compute Engine → VM instances page)
+
+![Lab 2.12](images/Lab-2.12.png)
+![Lab 2.13](images/Lab-2.13.png)
+
   - Click Connect
 3. Log in using:
   - Username: app_admin
   - Password: l\Lxajk%:Hy?c>B
+
+![Lab 2.14](images/Lab-2.14.png)
+![Lab 2.15](images/Lab-2.15.png)
 
 ---
 
@@ -250,23 +280,43 @@ Once logged in to vm-securehost, perform the following:
 ```sql
 Manage → Add Roles and Features
 ```
+
+![Lab 2.16](images/Lab-2.16.png)
+
 3. In the Add Roles and Features Wizard:
   - Click Next until you reach Installation Type
   - Select:
   ```sql
   Role-based or feature-based installation
   ```
+
+![Lab 2.17](images/Lab-2.17.png)
+
 4. Continue and select the local server:
    ```
    vm-securehost
    ```
+
+![Lab 2.18](images/Lab-2.18.png)
+
 5. On the Server Roles page:
   - Check ☑ Web Server (IIS)
+
+![Lab 2.19](images/Lab-2.19.png)
+
 6. When prompted:
   - Click Add Features
+
+![Lab 2.20](images/Lab-2.20.png)
+  
   - Click Next through remaining pages
 7. Click Install
+
+![Lab 2.21](images/Lab-2.21.png)
+
 ⏳ Wait for the installation to complete.
+
+![Lab 2.22](images/Lab-2.22.png)
 
 ---
 
