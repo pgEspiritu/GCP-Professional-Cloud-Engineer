@@ -84,6 +84,8 @@ kubectl get nodes
 ```
 > You should see 2 nodes in the Ready state.
 
+![Lab 3.1](images/Lab-3.1.png)
+
 ---
 
 ## ✅ Task 1 Completed
@@ -171,6 +173,9 @@ You should see an image similar to:
 gcr.io/PROJECT_ID/echo-app   v1   <IMAGE_ID>
 ```
 
+![Lab 3.2](images/Lab-3.2.png)
+![Lab 3.3](images/Lab-3.3.png)
+
 ---
 
 ## ✅ Task 2 Completed
@@ -184,7 +189,7 @@ gcr.io/PROJECT_ID/echo-app   v1   <IMAGE_ID>
 
 ## 📤 Task 3: Push the Image to Google Container Registry
 
-In this task, you will push the Docker image you built in the previous step to **Google Container Registry (GCR)** using the required **`gcr.io` hostname** on **:contentReference[oaicite:0]{index=0}**.
+In this task, you will push the Docker image you built in the previous step to **Google Container Registry (GCR)** using the required **`gcr.io` hostname**.
 
 ---
 
@@ -236,6 +241,11 @@ gcloud container images list-tags \
   gcr.io/qwiklabs-gcp-04-0a832141152a/echo-app
 ```
 
+![Lab 3.4](images/Lab-3.4.png)
+![Lab 3.5](images/Lab-3.5.png)
+![Lab 3.6](images/Lab-3.6.png)
+![Lab 3.7](images/Lab-3.7.png)
+
 ---
 
 ## ✅ Task 3 Completed
@@ -249,7 +259,7 @@ gcloud container images list-tags \
 
 ## 🚀 Task 4: Deploy the Application to the Kubernetes Cluster
 
-In this task, you will deploy the Docker image to your Kubernetes cluster **echo-cluster** and expose it as a service that responds on **port 80**, even though the container listens on **port 8000**. This ensures the application is accessible as a standard web service on **:contentReference[oaicite:0]{index=0}**.
+In this task, you will deploy the Docker image to your Kubernetes cluster **echo-cluster** and expose it as a service that responds on **port 80**, even though the container listens on **port 8000**. This ensures the application is accessible as a standard web service.
 
 ---
 
@@ -314,6 +324,8 @@ echo-web   LoadBalancer   10.0.0.12      34.68.123.45   80:XXXXX/TCP   5m
 - Open the EXTERNAL-IP in a browser to confirm the application responds
 - The application should show Echo-app responses, indicating successful deployment
 
+![Lab 3.8](images/Lab-3.8.png)
+![Lab 3.9](images/Lab-3.9.png)
 ---
 
 ## ✅ Task 4 Completed
