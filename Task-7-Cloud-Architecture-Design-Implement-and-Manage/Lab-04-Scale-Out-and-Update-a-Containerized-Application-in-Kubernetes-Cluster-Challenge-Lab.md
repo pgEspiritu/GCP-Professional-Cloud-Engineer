@@ -39,6 +39,8 @@ Cloud Storage → Buckets
 
 - Confirm that the file **`echo-web-v2.tar.gz`** exists in the specified bucket
 
+![Lab 4.1](images/Lab-4.1.png)
+
 ### ☸️ Kubernetes Engine
 - Navigate to:
 ```text
@@ -46,6 +48,8 @@ Kubernetes Engine → Clusters
 ```
 
 - Confirm that **`echo-cluster`** exists and shows a **green checkmark**, indicating it is running and healthy
+
+![Lab 4.2](images/Lab-4.2.png)
 
 ---
 
@@ -58,6 +62,8 @@ gcloud container clusters get-credentials echo-cluster --zone=us-central1-c
 kubectl create deployment echo-web --image=gcr.io/qwiklabs-resources/echo-app:v1
 kubectl expose deployment echo-web --type=LoadBalancer --port 80 --target-port 8000
 ```
+
+![Lab 4.3](images/Lab-4.3.png)
 
 At this point:
 - The application is running on Kubernetes
@@ -133,6 +139,9 @@ You should see both versions listed, similar to:
 gcr.io/PROJECT_ID/echo-app   v2
 ```
 
+![Lab 4.4](images/Lab-4.4.png)
+![Lab 4.5](images/Lab-4.5.png)
+
 ---
 
 ### ✅ Result
@@ -193,6 +202,8 @@ gcloud container images list-tags \
   gcr.io/qwiklabs-gcp-03-bd3e022566b2/echo-app
 ```
 You should see one v2 tag.
+
+![Lab 4.6](images/Lab-4.6.png)
 
 ---
 
@@ -272,6 +283,8 @@ curl http://34.60.214.204
 > For my lab, the external ip is = 34.60.214.204
 > ✅ The output should now include the v2 version identifier, confirming the update.
 
+![Lab 4.7](images/Lab-4.7.png)
+
 ---
 
 ##  ✅ Result
@@ -284,7 +297,7 @@ curl http://34.60.214.204
 
 ## 📈 Task 4: Scale Out the Application to 2 Replicas
 
-In this step, you will increase the number of running instances (pods) of the **echo-web** application to improve availability and demonstrate horizontal scaling in **:contentReference[oaicite:0]{index=0} Kubernetes Engine (GKE)**.
+In this step, you will increase the number of running instances (pods) of the **echo-web** application to improve availability and demonstrate horizontal scaling in Kubernetes Engine (GKE)**.
 
 ---
 
@@ -320,6 +333,8 @@ Verify the pods:
 kubectl get pods
 ```
 You should see two pods in the Running state.
+
+![Lab 4.8](images/Lab-4.8.png)
 
 ---
 
@@ -362,10 +377,14 @@ Use a browser or curl to access the application:
 curl http://34.60.214.204
 ```
 
+![Lab 4.9](images/Lab-4.9.png)
+
 Or open the following in your web browser:
 ```cpp
 http://34.60.214.204
 ```
+
+![Lab 4.10](images/Lab-4.10.png)
 
 ---
 
