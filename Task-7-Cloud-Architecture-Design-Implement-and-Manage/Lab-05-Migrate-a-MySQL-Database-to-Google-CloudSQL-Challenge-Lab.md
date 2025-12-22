@@ -133,6 +133,8 @@ gcloud sql instances create $SQL_INSTANCE \
   --storage-size=10GB
 ```
 
+![Lab 5.1](images/Lab-5.1.png)
+
 ---
 
 🔹 Step 3: Verify the Instance Creation
@@ -147,6 +149,8 @@ Verify:
 - State: RUNNABLE
 - Region: REGION
 - Database Version: MySQL 5.7
+
+  ![Lab 5.2](images/Lab-5.2.png)
 
 ---
 
@@ -193,6 +197,8 @@ gcloud sql users create $DB_USER \
   --password=$DB_PASSWORD
 ```
 
+![Lab 5.3](images/Lab-5.3.png)
+
 ---
 
 ### 🔹 Step 4: Verify Database and User
@@ -201,9 +207,13 @@ gcloud sql users create $DB_USER \
 gcloud sql databases list --instance=$SQL_INSTANCE
 ```
 
+![Lab 5.4](images/Lab-5.4.png)
+
 ```bash
 gcloud sql users list --instance=$SQL_INSTANCE
 ```
+
+                                                                                                                                                                                                                                                                                                                                                                                                                            ![Lab 5.5](images/Lab-5.5.png)
 
 ---
 
@@ -236,6 +246,8 @@ or
 gcloud sql instances patch wordpress --authorized-networks 104.196.164.85/32 --quiet
 ```
 > This allows the blog VM to connect to the Cloud SQL instance using its public IP.
+
+![Lab 5.7](images/Lab-5.7.png)
 
 ---
 
@@ -284,6 +296,10 @@ Then exit
 exit
 ```
 
+![Lab 5.8](images/Lab-5.8.png)
+![Lab 5.9](images/Lab-5.9.png)
+
+---
 ### 🔹 Step 7: Create a Backup of the WordPress MySQL database and Restore to Cloud SQL instance
 
 ```bash
@@ -292,13 +308,15 @@ mysql --host=$CLOUD_SQL_IP --user=root -pPassword1* --verbose wordpress < wordpr
 > 📄 A file named wordpress_db_backup.sql is created.
 This file can later be restored into another MySQL server or database.
 
-
 then restore:
 
 ```bash
 mysql --host=$CLOUD_SQL_IP --user=root -pPassword1* --verbose wordpress < wordpress_db_backup.sql
 ```
 > 📥 The contents of wordpress_db_backup.sql are loaded into the wordpress database on the Cloud SQL server.
+
+![Lab 5.10](images/Lab-5.10.png)
+![Lab 5.11](images/Lab-5.11.png)
 
 ---
 
@@ -333,6 +351,8 @@ sudo sed -i "s/localhost/$CLOUD_SQL_IP/g" /var/www/html/wordpress/wp-config.php
 ```
 > This replaces the local database host (localhost) with the Cloud SQL instance IP.
 
+![Lab 5.12](images/Lab-5.12.png)
+
 ---
 
 ## 📝 Notes (Task 4)
@@ -348,6 +368,8 @@ sudo sed -i "s/localhost/$CLOUD_SQL_IP/g" /var/www/html/wordpress/wp-config.php
 
 ### 🎯 Goal
 Ensure that the WordPress blog works correctly with the Cloud SQL database and fix any issues that arise.
+
+![Lab 5.13](images/Lab-5.13.png)
 
 ---
 
@@ -381,6 +403,9 @@ sudo tail -f /var/log/apache2/error.log
 ```
 - Look for lines mentioning DB_HOST, mysqli_connect, or WordPress.
 - Errors usually indicate incorrect credentials, IP, or database name.
+
+
+![Lab 5.14](images/Lab-5.14.png)
 
 ---
 
