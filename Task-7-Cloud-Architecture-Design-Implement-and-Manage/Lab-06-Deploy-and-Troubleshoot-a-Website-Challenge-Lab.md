@@ -105,6 +105,8 @@ Confirm that the instance:
 - Is running
 - Is located in us-central1-c
 
+![Lab 6.1](images/Lab-6.1.png)
+
 ---
 
 ## ✅ Task 2: Enable Public Access to the VM Instance (CLI)
@@ -137,6 +139,8 @@ Confirm:
 - Port 80 is allowed
 - Target tag is http-server
 
+![Lab 6.2](images/Lab-6.2.png)
+
 ---
 
 ### 📝 Notes
@@ -160,6 +164,8 @@ VM details (from previous tasks):
 ```bash
 gcloud compute ssh prd-mkt-2xr --zone=us-central1-c
 ```
+
+![Lab 6.3](images/Lab-6.3.png)
 
 ---
 
@@ -191,6 +197,9 @@ Verify Apache is running:
 sudo systemctl status apache2
 ```
 
+![Lab 6.4](images/Lab-6.4.png)
+![Lab 6.5](images/Lab-6.5.png)
+
 ---
 
 
@@ -211,6 +220,8 @@ gcloud compute instances describe prd-mkt-2xr \
 ```
 > Copy the returned IP address.
 
+![Lab 6.6](images/Lab-6.6.png)
+
 ---
 
 ## 🔹 Step 2: Access the Website
@@ -219,6 +230,8 @@ Open a web browser and navigate to:
 ```bash
 http://EXTERNAL_IP
 ```
+
+![Lab 6.7](images/Lab-6.7.png)
 
 ---
 
