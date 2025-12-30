@@ -434,3 +434,109 @@ D. Define one SLO as total uptime of the game server within a week. Define the o
 
 ## ✅ Final Answer
 **C. Define one SLO as 99% HTTP requests return the 2xx status code. Define the other SLO as 99% requests return within 100 ms.**
+
+---
+
+# 9. Google Cloud Case Study — Expanding HRL Video Content to Emerging Regions
+
+## Question
+
+HRL wants you to help them bring **existing recorded video content** to **new fans in emerging regions**. Considering the **HRL business and technical requirements**, what should you do?
+
+A. Serve the video content directly from a multi-region Cloud Storage bucket.  
+B. Use Cloud CDN to cache the video content from HRL’s existing public cloud provider.  
+C. Use Apigee Edge to cache the video content from HRL’s existing public cloud provider.  
+D. Replicate the video content in Google Kubernetes Engine clusters in regions close to the fans.  
+
+---
+
+## ✅ **Correct Answer: B**
+
+---
+
+## Explanation
+
+### **B. Use Cloud CDN to cache the video content from HRL’s existing public cloud provider.**
+- **Cloud CDN** is designed to deliver **static and cacheable content** such as recorded video with **low latency** and **high throughput**.
+- It leverages Google’s **global edge network**, bringing content closer to users in emerging regions without requiring full infrastructure deployment.
+- Cloud CDN can cache content from an **external (non-Google Cloud) origin**, allowing HRL to:
+  - Reuse its **existing public cloud provider**.
+  - Avoid costly data migration or duplication.
+  - Scale globally with minimal operational overhead.
+- This approach aligns with HRL’s likely goals of **fast global reach**, **cost efficiency**, and **minimal architectural changes**.
+
+---
+
+## ❌ Why the other options are not correct
+
+### **A. Serve the video content directly from a multi-region Cloud Storage bucket.**
+- This would require **migrating or duplicating** all existing video content into Google Cloud.
+- It introduces unnecessary data transfer costs and operational effort.
+- It does not leverage HRL’s **existing content hosting environment**.
+
+### **C. Use Apigee Edge to cache the video content from HRL’s existing public cloud provider.**
+- **Apigee Edge** is an **API management platform**, not a content delivery network.
+- While it can cache API responses, it is **not optimized for large video streaming workloads**.
+- Using Apigee for video delivery would be inefficient and costly.
+
+### **D. Replicate the video content in Google Kubernetes Engine clusters in regions close to the fans.**
+- Running video content in GKE clusters adds significant **operational complexity**.
+- This approach is expensive and unnecessary compared to a CDN.
+- Kubernetes is not intended to function as a **global video distribution platform**.
+
+---
+
+## ✅ Final Answer
+**B. Use Cloud CDN to cache the video content from HRL’s existing public cloud provider.**
+
+---
+
+# 10. Google Cloud Case Study — Protecting PII While Personalizing Recommendations for TerramEarth
+
+## Question
+
+You are the **data compliance officer** for TerramEarth and must protect customers' **personally identifiable information (PII)**, such as **credit card information**. TerramEarth wants to **personalize product recommendations** for its large industrial customers. You need to **respect data privacy** and still **deliver a usable solution**. What should you do?
+
+A. Use AutoML to provide data to the recommendation service.  
+B. Process PII data on-premises to keep the private information more secure.  
+C. Use the Cloud Data Loss Prevention (DLP) API to provide data to the recommendation service.  
+D. Manually build, train, and test machine learning models to provide product recommendations anonymously.  
+
+---
+
+## ✅ **Correct Answer: C**
+
+---
+
+## Explanation
+
+### **C. Use the Cloud Data Loss Prevention (DLP) API to provide data to the recommendation service.**
+- **Cloud DLP API** is specifically designed to **detect, classify, and protect sensitive data** such as PII (e.g., credit card numbers, names, IDs).
+- It can **mask, tokenize, or redact** sensitive fields before data is used by downstream services like **machine learning recommendation engines**.
+- This enables TerramEarth to:
+  - Maintain **data privacy and regulatory compliance**.
+  - Still use customer data in an **anonymized or de-identified form**.
+  - Safely leverage Google Cloud analytics and ML services for personalization.
+- This approach aligns with Google Cloud best practices for **privacy-preserving analytics**.
+
+---
+
+## ❌ Why the other options are not correct
+
+### **A. Use AutoML to provide data to the recommendation service.**
+- **AutoML** builds machine learning models but does **not protect or anonymize PII** by itself.
+- Sensitive data would still be exposed unless additional privacy controls are applied.
+
+### **B. Process PII data on-premises to keep the private information more secure.**
+- Processing data on-premises does not automatically ensure better security.
+- This approach limits scalability and does not address the need for **privacy-aware data sharing** with cloud-based recommendation services.
+
+### **D. Manually build, train, and test machine learning models to provide product recommendations anonymously.**
+- Manually anonymizing data is error-prone and difficult to maintain at scale.
+- Google Cloud provides **managed services (Cloud DLP)** specifically designed to handle this requirement more securely and efficiently.
+
+---
+
+## ✅ Final Answer
+**C. Use the Cloud Data Loss Prevention (DLP) API to provide data to the recommendation service.**
+
