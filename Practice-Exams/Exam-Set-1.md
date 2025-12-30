@@ -328,3 +328,109 @@ E. Ensure that each cluster is running GKE metering so each team can be charged 
 ## ✅ Final Answers
 **A. Ensure that you aren’t running privileged containers.**  
 **C. Ensure that you are using the native logging mechanisms.**
+
+---
+
+# 7. Google Cloud Case Study — Implementing VPC Service Controls for Mountkirk Games
+
+## Question
+
+You need to implement **Virtual Private Cloud (VPC) Service Controls** for Mountkirk Games. Mountkirk Games wants to allow **Cloud Shell usage** by its developers. Developers should **not have full access to managed services**. You need to balance these conflicting goals with Mountkirk Games’ business requirements. What should you do?
+
+A. Use VPC Service Controls for the entire platform.  
+B. Prioritize VPC Service Controls implementation over Cloud Shell usage for the entire platform.  
+C. Include all developers in an access level associated with the service perimeter, and allow them to use Cloud Shell.  
+D. Create a service perimeter around only the projects that handle sensitive data, and do not grant your developers access to it.  
+
+---
+
+## ✅ **Correct Answer: D**
+
+---
+
+## Explanation
+
+### **D. Create a service perimeter around only the projects that handle sensitive data, and do not grant your developers access to it.**
+- **VPC Service Controls** are designed to reduce the risk of **data exfiltration** from sensitive managed services such as **Cloud Storage**, **BigQuery**, and **Cloud SQL**.
+- Applying service perimeters only to **projects that contain sensitive data** follows Google’s best practice of **scoping security controls narrowly**.
+- This approach allows developers to continue using **Cloud Shell**, which runs in Google-managed projects and often conflicts with strict service perimeters.
+- By not granting developers access to the sensitive service perimeter, Mountkirk Games:
+  - Protects critical data.
+  - Avoids breaking developer workflows.
+  - Prevents developers from having unrestricted access to protected managed services.
+- This solution achieves the required balance between **security** and **developer productivity**.
+
+---
+
+## ❌ Why the other options are not correct
+
+### **A. Use VPC Service Controls for the entire platform.**
+- Applying VPC Service Controls to the entire platform is **overly restrictive**.
+- This would likely interfere with **Cloud Shell access** and slow down development.
+- Google recommends limiting service perimeters to **sensitive workloads**, not all projects.
+
+### **B. Prioritize VPC Service Controls implementation over Cloud Shell usage for the entire platform.**
+- This ignores a key business requirement: developers **must be able to use Cloud Shell**.
+- Google Cloud best practices emphasize balancing **security with usability**, not sacrificing developer efficiency.
+
+### **C. Include all developers in an access level associated with the service perimeter, and allow them to use Cloud Shell.**
+- Cloud Shell does not operate inside customer-defined VPC Service Control perimeters.
+- Granting developers access levels tied to the perimeter may unintentionally provide **broader access to sensitive managed services**, violating the requirement.
+
+---
+
+## ✅ Final Answer
+**D. Create a service perimeter around only the projects that handle sensitive data, and do not grant your developers access to it.**
+
+---
+
+# 8. Google Cloud Case Study — Designing SLOs for a Public Beta Game
+
+## Question
+
+Your new game running on Google Cloud is in **public beta**, and you want to design **meaningful service level objectives (SLOs)** before the game becomes **generally available**. What should you do?
+
+A. Define one SLO as 99.9% game server availability. Define the other SLO as less than 100-ms latency.  
+B. Define one SLO as service availability that is the same as Google Cloud's availability. Define the other SLO as 100-ms latency.  
+C. Define one SLO as 99% HTTP requests return the 2xx status code. Define the other SLO as 99% requests return within 100 ms.  
+D. Define one SLO as total uptime of the game server within a week. Define the other SLO as the mean response time of all HTTP requests that are less than 100 ms.  
+
+---
+
+## ✅ **Correct Answer: C**
+
+---
+
+## Explanation
+
+### **C. Define one SLO as 99% HTTP requests return the 2xx status code. Define the other SLO as 99% requests return within 100 ms.**
+- Google SRE best practices recommend defining SLOs using **user-focused, measurable indicators**, known as **Service Level Indicators (SLIs)**.
+- HTTP success rate (2xx responses) directly reflects **user-perceived availability**, not just whether servers are running.
+- Latency-based SLOs should use **percentiles** (e.g., 99% of requests) rather than averages to account for tail latency, which greatly affects user experience.
+- These SLOs are:
+  - **Quantifiable and observable**
+  - Closely aligned with **real user experience**
+  - Appropriate for a **public beta**, where learning from real traffic is critical before GA
+
+---
+
+## ❌ Why the other options are not correct
+
+### **A. Define one SLO as 99.9% game server availability. Define the other SLO as less than 100-ms latency.**
+- Server availability does not necessarily reflect **end-user experience**.
+- The latency SLO is vague and does not specify a **measurement method** (e.g., percentiles).
+- Google recommends avoiding infrastructure-only metrics for SLOs.
+
+### **B. Define one SLO as service availability that is the same as Google Cloud's availability. Define the other SLO as 100-ms latency.**
+- You should not base your SLOs on **Google Cloud’s platform SLAs**, as they do not represent your application’s behavior.
+- Latency is again undefined in terms of **percentiles or request success criteria**.
+
+### **D. Define one SLO as total uptime of the game server within a week. Define the other SLO as the mean response time of all HTTP requests that are less than 100 ms.**
+- **Total uptime** is an infrastructure metric, not a user-centric SLI.
+- **Mean (average) latency** hides outliers and does not capture poor tail performance.
+- Google SRE explicitly discourages using averages for latency SLOs.
+
+---
+
+## ✅ Final Answer
+**C. Define one SLO as 99% HTTP requests return the 2xx status code. Define the other SLO as 99% requests return within 100 ms.**
