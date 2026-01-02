@@ -1,4 +1,4 @@
-# 17. Google Cloud Case Study — Resiliency Testing for a LAMP Stack Web Portal
+# 1. Google Cloud Case Study — Resiliency Testing for a LAMP Stack Web Portal
 
 ## Question
 
