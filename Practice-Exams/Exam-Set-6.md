@@ -322,3 +322,319 @@ D. A single Organization with multiple projects, each with a central owner
 ## ✅ Final Answer
 
 **C. A single Organization with Folders for each department**
+
+---
+
+# 6. Application Security Design — Preventing Message Spoofing in a Chat App
+
+## Question
+
+You are designing a **mobile chat application**. You want to ensure that people **cannot spoof chat messages**, by providing assurance that a message **was sent by a specific user**.
+
+What should you do?
+
+A. Tag messages client side with the originating user identifier and the destination user.  
+B. Encrypt the message client side using block-based encryption with a shared key.  
+C. Use public key infrastructure (PKI) to encrypt the message client side using the originating user's private key.  
+D. Use a trusted certificate authority to enable SSL connectivity between the client application and the server.  
+
+---
+
+## ✅ **Correct Answer: C**
+
+---
+
+## Explanation
+
+### **C. Use public key infrastructure (PKI) to encrypt the message client side using the originating user's private key**
+
+- Encrypting (or more accurately, **signing**) a message with the **user’s private key** provides:
+  - **Authentication** — proves the message came from the claimed sender.
+  - **Integrity** — ensures the message was not modified in transit.
+  - **Non-repudiation** — the sender cannot deny having sent the message.
+- The recipient (or server) can verify the message using the sender’s **public key**.
+- This directly prevents **message spoofing**, which is the core requirement.
+
+> In practice, this is implemented as a **digital signature**, a standard use of PKI.
+
+---
+
+## ❌ Why the other options are not correct
+
+### **A. Tag messages client side with the originating user identifier**
+- Client-side identifiers can be **easily forged**.
+- Provides no cryptographic proof of message origin.
+
+### **B. Encrypt the message client side using block-based encryption with a shared key**
+- Shared keys provide **confidentiality**, not sender authentication.
+- Any holder of the shared key can impersonate any user.
+
+### **D. Use a trusted certificate authority to enable SSL connectivity**
+- SSL/TLS secures the **transport channel**, not the **message origin**.
+- Does not prevent a compromised or malicious client from spoofing messages.
+
+---
+
+## ✅ Final Answer
+
+**C. Use public key infrastructure (PKI) to encrypt the message client side using the originating user's private key**
+
+---
+
+# 7. Disaster Recovery & Networking — Reliable MySQL Replication to Google Cloud
+
+## Question
+
+As part of implementing a **disaster recovery (DR) plan**, your company is replicating a **production MySQL database** from an on-premises data center to **Google Cloud** using a **Cloud VPN** connection.
+
+They are experiencing **latency issues and packet loss**, which is **disrupting replication**.
+
+What should they do?
+
+A. Configure their replication to use UDP.  
+B. Configure a Google Cloud Dedicated Interconnect.  
+C. Restore their database daily using Google Cloud SQL.  
+D. Add additional VPN connections and load balance them.  
+E. Send the replicated transaction to Google Cloud Pub/Sub.  
+
+---
+
+## ✅ **Correct Answer: B**
+
+---
+
+## Explanation
+
+### **B. Configure a Google Cloud Dedicated Interconnect**
+
+- **Cloud VPN** runs over the public internet and can suffer from:
+  - Variable latency
+  - Packet loss
+  - Jitter  
+- **Dedicated Interconnect** provides:
+  - **Private, high-bandwidth, low-latency connectivity**
+  - **Consistent performance** required for database replication
+  - SLAs suitable for **production and disaster recovery workloads**
+- This is the **recommended Google Cloud solution** for:
+  - Large, continuous data replication
+  - Latency-sensitive database traffic
+  - Enterprise-grade hybrid connectivity
+
+---
+
+## ❌ Why the other options are not correct
+
+### **A. Configure their replication to use UDP**
+- MySQL replication relies on **TCP**, which ensures reliability and ordering.
+- UDP would **increase data loss** and is not supported.
+
+### **C. Restore their database daily using Google Cloud SQL**
+- This is **not replication** and does not meet DR requirements for near-real-time data.
+- Results in **data loss** between backups.
+
+### **D. Add additional VPN connections and load balance them**
+- Multiple VPN tunnels can improve throughput and availability, but:
+  - Still relies on the **public internet**
+  - Does not eliminate latency and packet loss issues
+- Not ideal for **database replication at scale**.
+
+### **E. Send replicated transactions to Pub/Sub**
+- Pub/Sub is a **messaging service**, not a database replication mechanism.
+- Adds complexity and does not ensure transactional consistency.
+
+---
+
+## ✅ Final Answer
+
+**B. Configure a Google Cloud Dedicated Interconnect**
+
+---
+
+# 8. Data Security & Compliance — Sanitizing PII Before Storage
+
+## Question
+
+Your **customer support tool** logs all email and chat conversations to **Cloud Bigtable** for **retention and analysis**.  
+You need to **sanitize the data of personally identifiable information (PII)** or **payment card information (PCI)** **before initial storage**.
+
+What is the recommended approach?
+
+A. Hash all data using SHA256  
+B. Encrypt all data using elliptic curve cryptography  
+C. De-identify the data with the Cloud Data Loss Prevention API  
+D. Use regular expressions to find and redact phone numbers, email addresses, and credit card numbers  
+
+---
+
+## ✅ **Correct Answer: C**
+
+---
+
+## Explanation
+
+### **C. De-identify the data with the Cloud Data Loss Prevention (DLP) API**
+
+- **Cloud DLP API** is purpose-built for:
+  - **Detecting** sensitive data (PII, PCI, PHI)
+  - **De-identifying** data using techniques such as:
+    - Masking
+    - Tokenization
+    - Redaction
+    - Format-preserving encryption
+- Supports **prebuilt detectors** for:
+  - Credit card numbers
+  - Email addresses
+  - Phone numbers
+  - Names and other PII
+- This approach:
+  - Reduces compliance scope (e.g., PCI, GDPR)
+  - Preserves data utility for analytics
+  - Is **Google-recommended best practice** for handling sensitive data
+
+---
+
+## ❌ Why the other options are not correct
+
+### **A. Hash all data using SHA256**
+- Hashing all data:
+  - Destroys analytical value
+  - Does not allow selective de-identification
+- Not suitable when you still need to analyze conversations.
+
+### **B. Encrypt all data using elliptic curve cryptography**
+- Encryption protects data **at rest and in transit**, but:
+  - Does **not sanitize** sensitive fields
+  - Still leaves raw PII accessible after decryption
+- Does not reduce compliance scope.
+
+### **D. Use regular expressions to redact sensitive data**
+- Regex-based approaches are:
+  - Error-prone
+  - Hard to maintain
+  - Likely to miss edge cases and international formats
+- Not compliant with enterprise-grade data protection standards.
+
+---
+
+## ✅ Final Answer
+
+**C. De-identify the data with the Cloud Data Loss Prevention API**
+
+---
+
+# 9. Google Cloud Shell — Persisting Custom Utilities
+
+## Question
+
+You are using **Cloud Shell** and need to install a **custom utility** for use in a few weeks.  
+You want the utility to:
+
+- Be in the **default execution path**
+- **Persist across Cloud Shell sessions**
+
+Where should you store the file?
+
+A. `~/bin`  
+B. Cloud Storage  
+C. `/google/scripts`  
+D. `/usr/local/bin`  
+
+---
+
+## ✅ **Correct Answer: A**
+
+---
+
+## Explanation
+
+### **A. `~/bin`**
+
+- In **Cloud Shell**, the **home directory (`~`) is persistent** across sessions.
+- The directory `~/bin` is:
+  - Automatically included in the **default `$PATH`**
+  - Preserved even when the Cloud Shell VM is recycled
+- Any executable placed in `~/bin` can be:
+  - Run directly without specifying a full path
+  - Available in future sessions without reinstallation
+
+This makes `~/bin` the **recommended and supported location** for custom utilities in Cloud Shell.
+
+---
+
+## ❌ Why the other options are not correct
+
+### **B. Cloud Storage**
+- Files in Cloud Storage are **not in the execution path**.
+- You would need to download the file into Cloud Shell each session before use.
+
+### **C. `/google/scripts`**
+- This directory is **not guaranteed to persist** across sessions.
+- Not intended for user-installed custom binaries.
+
+### **D. `/usr/local/bin`**
+- Cloud Shell runs on a **temporary VM**.
+- System directories like `/usr/local/bin` **do not persist** when the session is restarted.
+
+---
+
+## ✅ Final Answer
+
+**A. `~/bin`**
+
+---
+
+# 10. Hybrid Connectivity — High-Bandwidth Private Connection
+
+## Question
+
+You want to create a **private connection** between your **Compute Engine instances** and your **on-premises data center**.  
+
+Requirements:  
+- Minimum **20 Gbps** connection  
+- Follow **Google-recommended practices**  
+
+How should you set up the connection?
+
+A. Create a VPC and connect it to your on-premises data center using **Dedicated Interconnect**  
+B. Create a VPC and connect it to your on-premises data center using a **single Cloud VPN**  
+C. Create a **Cloud CDN** and connect it to your on-premises data center using Dedicated Interconnect  
+D. Create a **Cloud CDN** and connect it to your on-premises data center using a single Cloud VPN  
+
+---
+
+## ✅ **Correct Answer: A**
+
+---
+
+## Explanation
+
+### **A. Create a VPC and connect it to your on-premises data center using Dedicated Interconnect**
+
+- **Dedicated Interconnect** provides:
+  - **Private, high-bandwidth, low-latency connectivity**
+  - Speeds **from 10 Gbps to 100 Gbps per connection**
+  - SLA-backed performance for enterprise workloads
+- A **VPC** allows your Compute Engine instances to communicate securely with your on-premises network.
+- This is the **Google-recommended solution** for large-scale hybrid cloud connectivity.
+
+---
+
+## ❌ Why the other options are not correct
+
+### **B. Create a VPC and connect using a single Cloud VPN**
+- Cloud VPN uses the **public Internet**, which:
+  - Cannot reliably provide **20+ Gbps**
+  - Has variable latency and possible packet loss
+- Suitable only for **low to moderate bandwidth** requirements
+
+### **C & D. Use Cloud CDN**
+- Cloud CDN is a **content delivery network**:
+  - Optimized for **web content caching and delivery**
+  - Not a solution for **private connectivity** between on-premises and cloud
+- Does **not support hybrid connectivity** or guaranteed bandwidth
+
+---
+
+## ✅ Final Answer
+
+**A. Create a VPC and connect it to your on-premises data center using Dedicated Interconnect**
