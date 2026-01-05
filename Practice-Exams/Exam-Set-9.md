@@ -307,3 +307,339 @@ D. 1. Create a Stackdriver alert when storage exceeds 75%, and increase the avai
 ## ✅ Final Answer
 
 **B. Enable automatic storage increase, scale instance type to 32 cores, and create Stackdriver alert for replication lag**
+
+---
+
+# 6. OLAP Marketing Analytics and Reporting on Google Cloud
+
+## Question
+
+You are tasked with building an **online analytical processing (OLAP)** marketing analytics and reporting tool. This requires a **relational database** that can operate on **hundreds of terabytes of data**.
+
+What is the **Google-recommended tool** for such applications?
+
+A. Cloud Spanner, because it is globally distributed  
+B. Cloud SQL, because it is a fully managed relational database  
+C. Cloud Firestore, because it offers real-time synchronization across devices  
+D. BigQuery, because it is designed for large-scale processing of tabular data  
+
+---
+
+## ✅ **Correct Answer: D**
+
+---
+
+## Explanation
+
+### Why **D. BigQuery** is correct
+- **BigQuery** is Google’s **fully managed, serverless data warehouse**
+- It is specifically designed for:
+  - **OLAP workloads**
+  - **Hundreds of terabytes to petabytes of data**
+  - Complex analytical queries using **SQL**
+- Key advantages:
+  - Columnar storage optimized for analytics
+  - Massively parallel query execution
+  - No infrastructure management
+  - Built-in scalability and high performance
+
+👉 BigQuery is the **standard Google-recommended solution** for large-scale analytics and reporting.
+
+---
+
+## ❌ Why the other options are incorrect
+
+### **A. Cloud Spanner**
+❌ Incorrect  
+- Designed for **OLTP**, not OLAP
+- Optimized for transactional workloads with strong consistency, not large-scale analytics
+
+---
+
+### **B. Cloud SQL**
+❌ Incorrect  
+- Suitable for small to medium relational databases
+- **Not designed to scale to hundreds of terabytes**
+- Performance degrades for analytical workloads
+
+---
+
+### **C. Cloud Firestore**
+❌ Incorrect  
+- NoSQL document database
+- Optimized for real-time application data, **not analytical queries**
+
+---
+
+## ✅ Final Answer
+
+**D. BigQuery, because it is designed for large-scale processing of tabular data**
+
+---
+
+# 7. Authenticating Application VMs to Cloud Pub/Sub
+
+## Question
+
+Your company pushes batches of **sensitive transaction data** from its **application server VMs** to **Cloud Pub/Sub** for processing and storage.  
+What is the **Google-recommended** way for your application to authenticate to the required Google Cloud services?
+
+A. Ensure that VM service accounts are granted the appropriate Cloud Pub/Sub IAM roles.  
+B. Ensure that VM service accounts do not have access to Cloud Pub/Sub, and use VM access scopes to grant the appropriate Cloud Pub/Sub IAM roles.  
+C. Generate an OAuth2 access token for accessing Cloud Pub/Sub, encrypt it, and store it in Cloud Storage for access from each VM.  
+D. Create a gateway to Cloud Pub/Sub using a Cloud Function, and grant the Cloud Function service account the appropriate Cloud Pub/Sub IAM roles.
+
+---
+
+## ✅ **Correct Answer: A**
+
+---
+
+## Explanation
+
+### Why **A** is correct
+- **Service accounts** are the **recommended and secure authentication mechanism** for applications running on Compute Engine
+- By attaching a **service account** to the VM and granting it the appropriate **Cloud Pub/Sub IAM roles** (for example, `roles/pubsub.publisher`), the application:
+  - Avoids hard-coded credentials
+  - Uses short-lived, automatically rotated credentials
+  - Follows the **principle of least privilege**
+- Authentication is handled transparently by Google Cloud libraries using **Application Default Credentials (ADC)**
+
+👉 This is the **standard, secure, and scalable approach** recommended by Google.
+
+---
+
+## ❌ Why the other options are incorrect
+
+### **B. Use access scopes instead of IAM**
+❌ Incorrect  
+- **Access scopes do not grant permissions by themselves**
+- IAM roles are still required
+- Google recommends **IAM-first**, not scope-based access control
+
+---
+
+### **C. Generate and store OAuth tokens**
+❌ Incorrect  
+- Storing tokens is insecure and operationally complex
+- Tokens expire and require manual rotation
+- Violates Google security best practices
+
+---
+
+### **D. Use a Cloud Function as a gateway**
+❌ Incorrect  
+- Adds unnecessary complexity and latency
+- Does not improve security compared to using VM service accounts
+- Not required for standard Pub/Sub publishing
+
+---
+
+## ✅ Final Answer
+
+**A. Ensure that VM service accounts are granted the appropriate Cloud Pub/Sub IAM roles**
+
+---
+
+# 8. Cloud VPN Design for a Multi-Region VPC
+
+## Question
+
+You want to establish a **Compute Engine application in a single VPC across two regions**.  
+The application must **communicate over VPN to an on-premises network**.
+
+How should you deploy the VPN?
+
+A. Use VPC Network Peering between the VPC and the on-premises network.  
+B. Expose the VPC to the on-premises network using IAM and VPC Sharing.  
+C. Create a global Cloud VPN Gateway with VPN tunnels from each region to the on-premises peer gateway.  
+D. Deploy Cloud VPN Gateway in each region. Ensure that each region has at least one VPN tunnel to the on-premises peer gateway.
+
+---
+
+## ✅ **Correct Answer: D**
+
+---
+
+## Explanation
+
+### Why **D** is correct
+- **Cloud VPN gateways are regional resources**
+- When your application spans **multiple regions**, you must:
+  - Deploy a **Cloud VPN gateway in each region**
+  - Create **at least one VPN tunnel per region** to the on-premises VPN gateway
+- This design:
+  - Ensures **regional resiliency**
+  - Allows workloads in each region to access on-premises systems
+  - Follows **Google-recommended best practices** for hybrid networking
+
+👉 Each region operates independently, so each requires its **own VPN gateway and tunnel**.
+
+---
+
+## ❌ Why the other options are incorrect
+
+### **A. VPC Network Peering**
+❌ Incorrect  
+- VPC Peering works **only between Google Cloud VPCs**
+- It **cannot connect** to on-premises networks
+
+---
+
+### **B. IAM and VPC Sharing**
+❌ Incorrect  
+- IAM and VPC Sharing manage **access and project relationships**
+- They do **not provide network connectivity**
+
+---
+
+### **C. Global Cloud VPN Gateway**
+❌ Incorrect  
+- **Cloud VPN gateways are not global**
+- They are strictly **regional resources**
+
+---
+
+## ✅ Final Answer
+
+**D. Deploy Cloud VPN Gateway in each region. Ensure that each region has at least one VPN tunnel to the on-premises peer gateway**
+
+---
+
+# 9. BigQuery Log Retention and Storage Optimization
+
+## Question
+
+Your applications will be writing their logs to **BigQuery** for analysis.  
+Each application should have its **own table**.  
+Any logs **older than 45 days must be removed**.
+
+You want to **optimize storage** and **follow Google-recommended practices**.
+
+What should you do?
+
+A. Configure the expiration time for your tables at 45 days  
+B. Make the tables time-partitioned, and configure the partition expiration at 45 days  
+C. Rely on BigQuery's default behavior to prune application logs older than 45 days  
+D. Create a script that uses the BigQuery command line tool (bq) to remove records older than 45 days  
+
+---
+
+## ✅ **Correct Answer: B**
+
+---
+
+## Explanation
+
+### Why **B** is correct
+- **Time-partitioned tables** are the **recommended approach** for log and event data in BigQuery
+- Setting a **partition expiration**:
+  - Automatically deletes data older than **45 days**
+  - Reduces storage costs
+  - Avoids manual cleanup jobs
+- Improves:
+  - Query performance (scans only relevant partitions)
+  - Cost control
+  - Operational simplicity
+
+👉 This approach is **automatic, scalable, and cost-efficient**, aligning with Google best practices.
+
+---
+
+## ❌ Why the other options are incorrect
+
+### **A. Table expiration**
+❌ Suboptimal  
+- Deletes the **entire table**, not just old data
+- Not suitable for continuously written log tables
+
+---
+
+### **C. Default BigQuery behavior**
+❌ Incorrect  
+- BigQuery **does not automatically delete data**
+- Data is retained indefinitely unless configured otherwise
+
+---
+
+### **D. Manual deletion with scripts**
+❌ Not recommended  
+- Requires ongoing maintenance
+- Error-prone and inefficient
+- Increases operational overhead
+
+---
+
+## ✅ Final Answer
+
+**B. Make the tables time-partitioned, and configure the partition expiration at 45 days**
+
+---
+
+# 10. Google Kubernetes Engine Node Autoscaling Based on CPU Load
+
+## Question
+
+You want your **Google Kubernetes Engine (GKE)** cluster to **automatically add or remove nodes based on CPU load**.
+
+What should you do?
+
+A. Configure a HorizontalPodAutoscaler with a target CPU usage. Enable the Cluster Autoscaler from the GCP Console.  
+B. Configure a HorizontalPodAutoscaler with a target CPU usage. Enable autoscaling on the managed instance group for the cluster using the gcloud command.  
+C. Create a deployment and set the maxUnavailable and maxSurge properties. Enable the Cluster Autoscaler using the gcloud command.  
+D. Create a deployment and set the maxUnavailable and maxSurge properties. Enable autoscaling on the cluster managed instance group from the GCP Console.  
+
+---
+
+## ✅ **Correct Answer: A**
+
+---
+
+## Explanation
+
+### Why **A** is correct
+To scale **nodes automatically based on CPU load**, you need **two components working together**:
+
+1. **Horizontal Pod Autoscaler (HPA)**
+   - Scales **pods** based on CPU (or memory) utilization
+   - Example: increases pods when CPU exceeds a threshold
+
+2. **Cluster Autoscaler**
+   - Scales **nodes** when:
+     - Pods cannot be scheduled due to insufficient resources
+     - Nodes are underutilized and can be removed
+
+By:
+- Configuring **HPA** → pod-level scaling
+- Enabling **Cluster Autoscaler** → node-level scaling
+
+👉 This is the **Google-recommended architecture** for workload-driven autoscaling in GKE.
+
+---
+
+## ❌ Why the other options are incorrect
+
+### **B. Enable autoscaling on the managed instance group**
+❌ Incorrect  
+- GKE **does not recommend managing node scaling directly via MIG autoscaling**
+- GKE Cluster Autoscaler must be used instead
+
+---
+
+### **C. Using maxUnavailable and maxSurge**
+❌ Incorrect  
+- These settings control **rolling updates**, not autoscaling
+- They do **not** respond to CPU load
+
+---
+
+### **D. Autoscaling MIG + rolling update settings**
+❌ Incorrect  
+- MIG autoscaling is not workload-aware in GKE
+- Rolling update properties are unrelated to scaling decisions
+
+---
+
+## ✅ Final Answer
+
+**A. Configure a HorizontalPodAutoscaler with a target CPU usage. Enable the Cluster Autoscaler from the GCP Console.**
