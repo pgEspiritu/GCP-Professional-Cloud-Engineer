@@ -432,3 +432,404 @@ This combination ensures:
 ## ✅ Final Answer
 
 **b**
+
+---
+
+# 7. Migrating Analytics and Reporting for Mountkirk Games
+
+## Question
+
+For this question, refer to the **Mountkirk Games** case study. Mountkirk Games wants to migrate from their current **analytics and statistics reporting model** to one that meets their **technical requirements on Google Cloud Platform**.  
+
+Which **two steps** should be part of their **migration plan**? (**Choose two.**)
+
+a. Evaluate the impact of migrating their current **batch ETL code to Cloud Dataflow**.  
+b. Write a **schema migration plan** to **denormalize data** for better performance in **BigQuery**.  
+c. Draw an architecture diagram that shows how to move from a **single MySQL database to a MySQL cluster**.  
+d. Load **10 TB of analytics data** from a previous game into a **Cloud SQL instance**, and run test queries against the full dataset to confirm that they complete successfully.  
+e. Integrate **Cloud Armor** to defend against possible **SQL injection attacks** in analytics files uploaded to Cloud Storage.  
+
+---
+
+## ✅ Correct Answers
+
+**a** and **b**
+
+---
+
+## Explanation
+
+Mountkirk Games is moving to a **cloud-native analytics platform**, typically:
+
+- **Cloud Pub/Sub**  
+- **Cloud Dataflow**  
+- **BigQuery**
+
+To migrate successfully:
+
+### **A. Migrate ETL to Dataflow**
+Cloud Dataflow replaces traditional **batch ETL pipelines** with a **scalable, serverless data processing service**, enabling:
+- Faster processing  
+- Streaming and batch pipelines  
+- Lower operational overhead  
+
+### **B. Redesign schema for BigQuery**
+BigQuery is optimized for:
+- **Denormalized schemas**
+- **Columnar storage**
+- **Analytical queries**
+
+A schema migration plan is required to convert:
+- Relational MySQL-style schemas  
+→ BigQuery-optimized analytics tables  
+
+---
+
+## ❌ Why the other options are wrong
+
+**c. MySQL cluster design**  
+- BigQuery replaces MySQL for analytics  
+- Clustering MySQL does not meet analytics requirements  
+
+**d. Load 10 TB into Cloud SQL**  
+- Cloud SQL is **not designed for analytics at this scale**  
+
+**e. Cloud Armor**  
+- Protects **web applications**, not analytics pipelines  
+
+---
+
+## ✅ Final Answer
+
+**a and b**
+
+---
+
+# 8. Compute Architecture for Mountkirk Games
+
+## Question
+
+For this question, refer to the **Mountkirk Games case study**. You need to analyze and define the **technical architecture for the compute workloads** for your company, Mountkirk Games.  
+
+Considering the **Mountkirk Games business and technical requirements**, what should you do?
+
+a. Create **network load balancers**. Use **preemptible Compute Engine instances**  
+b. Create **network load balancers**. Use **non-preemptible Compute Engine instances**  
+c. Create a **global load balancer with managed instance groups and autoscaling policies**. Use **preemptible Compute Engine instances**  
+d. Create a **global load balancer with managed instance groups and autoscaling policies**. Use **non-preemptible Compute Engine instances**
+
+---
+
+## ✅ Correct Answer
+
+**d. Create a global load balancer with managed instance groups and autoscaling policies. Use non-preemptible Compute Engine instances**
+
+---
+
+## Explanation
+
+Mountkirk Games runs a **global online gaming platform**, which requires:
+
+- 🌍 **Global user access**
+- ⚡ **Low latency**
+- 📈 **Automatic scaling for traffic spikes**
+- 🛑 **High availability**
+- 🎮 **No disruption to live gaming sessions**
+
+The best architecture is:
+
+> **Global HTTP(S) Load Balancer + Managed Instance Groups (MIGs) + Autoscaling + Non-preemptible VMs**
+
+This provides:
+
+- **Global traffic routing** to the nearest healthy backend  
+- **High availability** with health checks and multi-region deployments  
+- **Automatic scaling** based on load  
+- **Safe rolling updates** without downtime  
+- **Stable servers** for long-running game sessions  
+
+Non-preemptible VMs ensure that game servers **are not terminated unexpectedly**, which is critical for live multiplayer games.
+
+---
+
+## ❌ Why the other options are wrong
+
+**a. Network Load Balancer + Preemptible VMs**  
+- Network load balancers are **regional only**  
+- Preemptible VMs can shut down anytime, causing **player disconnections**
+
+**b. Network Load Balancer + Non-preemptible VMs**  
+- Still **regional only**, not suitable for a **global gaming platform**
+
+**c. Global Load Balancer + Preemptible VMs**  
+- Preemptible VMs can be terminated at any time, making them **unsafe for game servers**
+
+---
+
+## ✅ Final Answer
+
+**d**
+
+---
+
+# 9. Designing Mountkirk Games for the Future
+
+## Question
+
+For this question, refer to the **Mountkirk Games case study**.  
+Mountkirk Games wants to design their solution for the **future** in order to take advantage of **cloud and technology improvements** as they become available.  
+
+Which **two** steps should they take? *(Choose two.)*
+
+a. Store as much analytics and game activity data as financially feasible today so it can be used to train machine learning models to predict user behavior in the future.  
+b. Begin packaging their game backend artifacts in **container images** and running them on **Google Kubernetes Engine** to improve the ability to scale up or down based on game activity.  
+c. Set up a **CI/CD pipeline** using **Jenkins and Spinnaker** to automate canary deployments and improve development velocity.  
+d. Adopt a **schema versioning tool** to reduce downtime when adding new game features that require storing additional player data in the database.  
+e. Implement a **weekly rolling maintenance process** for the Linux virtual machines so they can apply critical kernel patches and package updates and reduce the risk of 0-day vulnerabilities.
+
+---
+
+## ✅ Correct Answers
+
+**b. Begin packaging their game backend artifacts in container images and running them on Google Kubernetes Engine**  
+**c. Set up a CI/CD pipeline using Jenkins and Spinnaker**
+
+---
+
+## Explanation
+
+Mountkirk Games wants to be **future-ready**, meaning they want to easily adopt:
+
+- New cloud technologies  
+- Faster release cycles  
+- New infrastructure models  
+- Automated, low-risk deployments  
+
+### **Why B is correct**
+Running services in **containers on Google Kubernetes Engine (GKE)** provides:
+
+- **Portability** across clouds and environments  
+- **Elastic scaling** based on player activity  
+- **Easy upgrades** as Google improves Kubernetes and infrastructure  
+- **Future-proof architecture** aligned with modern cloud-native platforms  
+
+This lets Mountkirk Games quickly adopt new compute technologies without rewriting applications.
+
+---
+
+### **Why C is correct**
+A **CI/CD pipeline with Jenkins and Spinnaker** enables:
+
+- **Automated testing and deployment**
+- **Canary releases** (safe rollout of new versions)
+- **Fast rollback** if a new release fails
+- **High development velocity**
+
+This allows Mountkirk Games to continuously improve their platform while reducing risk, which is essential for long-term growth.
+
+---
+
+## ❌ Why the other options are wrong
+
+**a. Store all data now for future ML**  
+- Not cost-effective and not aligned with **cloud-native, on-demand storage strategies**
+
+**d. Schema versioning**  
+- Useful, but it does not directly help them **adopt new cloud technologies**
+
+**e. Weekly VM maintenance**  
+- This is **operational hygiene**, not a strategy for **future-ready architecture**
+
+---
+
+## ✅ Final Answer
+
+**b and c**
+
+---
+
+# 10. Testing Analytics Platform Resilience to Mobile Network Latency
+
+## Question
+
+For this question, refer to the **Mountkirk Games case study**.  
+Mountkirk Games wants you to design a way to **test the analytics platform’s resilience** to changes in **mobile network latency**.
+
+What should you do?
+
+a. Deploy failure injection software to the game analytics platform that can inject additional latency to mobile client analytics traffic.  
+b. Build a test client that can be run from a mobile phone emulator on a Compute Engine virtual machine, and run multiple copies in Google Cloud Platform regions all over the world to generate realistic traffic.  
+c. Add the ability to introduce a random amount of delay before beginning to process analytics files uploaded from mobile devices.  
+d. Create an opt-in beta of the game that runs on players' mobile devices and collects response times from analytics endpoints running in Google Cloud Platform regions all over the world.
+
+---
+
+## ✅ Correct Answer
+
+**a. Deploy failure injection software to the game analytics platform that can inject additional latency to mobile client analytics traffic.**
+
+---
+
+## Explanation
+
+Mountkirk Games wants to test **resilience**, which means validating how the system behaves when conditions degrade — specifically when **network latency increases**.
+
+Injecting latency directly into the platform allows you to:
+
+- Simulate **real-world mobile network conditions**  
+- Test **timeouts, retries, and backpressure handling**  
+- Measure how analytics ingestion behaves under **poor connectivity**  
+- Run **repeatable, controlled experiments**
+
+This approach follows **Site Reliability Engineering (SRE)** best practices using **failure injection** (also called chaos engineering).
+
+---
+
+## ❌ Why the other options are wrong
+
+**b. Running emulators in different regions**  
+- Simulates geography, not **unpredictable mobile network latency**  
+- Does not model packet loss, jitter, or congestion
+
+**c. Adding random delay on uploads**  
+- Tests **processing delay**, not **network latency**  
+- Does not reflect real mobile network behavior
+
+**d. Using real players in a beta**  
+- Not **controlled, repeatable, or safe**  
+- Can harm user experience and produce inconsistent results
+
+---
+
+## ✅ Final Answer
+
+**a**
+
+---
+
+# 11. Database Architecture for Mountkirk Games
+
+## Question
+
+For this question, refer to the **Mountkirk Games case study**.  
+You need to analyze and define the **technical architecture for the database workloads** for your company, Mountkirk Games. Considering the **business and technical requirements**, what should you do?
+
+a. Use **Cloud SQL** for time series data, and use **Cloud Bigtable** for historical data queries.  
+b. Use **Cloud SQL** to replace MySQL, and use **Cloud Spanner** for historical data queries.  
+c. Use **Cloud Bigtable** to replace MySQL, and use **BigQuery** for historical data queries.  
+d. Use **Cloud Bigtable** for time series data, use **Cloud Spanner** for transactional data, and use **BigQuery** for historical data queries.
+
+---
+
+## ✅ Correct Answer
+
+**d. Use Cloud Bigtable for time series data, use Cloud Spanner for transactional data, and use BigQuery for historical data queries.**
+
+---
+
+## Explanation
+
+Mountkirk Games has **three distinct database workloads**:
+
+1. **Time-series game telemetry (high volume, low latency writes)**  
+2. **Transactional player data (strong consistency, global scale)**  
+3. **Historical analytics and reporting**
+
+Each Google Cloud database is optimized for one of these use cases:
+
+| Workload | Best Service | Why |
+|--------|-------------|-----|
+| Time-series telemetry | **Cloud Bigtable** | Handles **massive write throughput** and **low-latency key-value access** |
+| Player transactions | **Cloud Spanner** | Provides **global consistency**, **ACID transactions**, and **horizontal scalability** |
+| Analytics & reporting | **BigQuery** | Designed for **petabyte-scale analytics** and **SQL-based reporting** |
+
+This architecture matches Mountkirk’s need for **high scalability, performance, and future growth**.
+
+---
+
+## ❌ Why the other options are wrong
+
+**a. Cloud SQL for time series**  
+- Cloud SQL does **not scale** to high-volume telemetry ingestion  
+
+**b. Cloud Spanner for historical queries**  
+- BigQuery is far better for **large-scale analytics**
+
+**c. Cloud Bigtable to replace MySQL**  
+- Bigtable does **not support relational transactions**
+
+---
+
+## ✅ Final Answer
+
+**d**
+
+---
+
+# 12. Time-Series Storage for Game Activity
+
+## Question
+
+For this question, refer to the **Mountkirk Games case study**.  
+Which **managed storage option** meets Mountkirk's **technical requirement** for storing **game activity in a time-series database service**?
+
+a. **Cloud Bigtable**  
+b. **Cloud Spanner**  
+c. **BigQuery**  
+d. **Cloud Datastore**
+
+---
+
+## ✅ Correct Answer
+
+**a. Cloud Bigtable**
+
+---
+
+## Explanation
+
+Mountkirk Games generates **massive volumes of time-series data** such as:
+
+- Player actions  
+- Game telemetry  
+- Session activity  
+- Performance metrics  
+
+This data is:
+
+- **Write-heavy**
+- **Append-only**
+- **Queried by time range and player ID**
+- Needs **very low-latency ingestion**
+
+**Cloud Bigtable** is specifically designed for this type of workload.
+
+### Why Cloud Bigtable is the best fit 🚀
+
+- Handles **millions of writes per second**
+- Optimized for **time-series and IoT data**
+- Supports **row-key designs using timestamps**
+- Horizontally scalable with **no downtime**
+- Used by Google internally for services like **Search, Maps, and Ads**
+
+---
+
+## ❌ Why the other options are wrong
+
+**b. Cloud Spanner**  
+- Designed for **relational transactional data**, not high-volume telemetry  
+
+**c. BigQuery**  
+- Optimized for **analytics**, not real-time ingestion  
+
+**d. Cloud Datastore (Firestore Datastore mode)**  
+- Not built for **high-throughput time-series writes**
+
+---
+
+## ✅ Final Answer
+
+**a**
+
+---
+
