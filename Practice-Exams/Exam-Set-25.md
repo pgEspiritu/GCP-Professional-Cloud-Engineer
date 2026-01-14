@@ -720,3 +720,347 @@ The primary goals are **scalability, automation, and real-time operational adjus
 ## ✅ Final Answer
 
 **B**
+
+---
+
+# 10. GDPR Data Retention Compliance for TerramEarth
+
+## Question
+
+For this question, refer to the TerramEarth case study. To be compliant with European GDPR regulation, TerramEarth is required to delete data generated from its
+European customers after a period of 36 months when it contains personal data. In the new architecture, this data will be stored in both Cloud Storage and
+BigQuery. What should you do?
+
+A. Create a BigQuery table for the European data, and set the table retention period to 36 months. For Cloud Storage, use gsutil to enable lifecycle management using a DELETE action with an Age condition of 36 months.  
+B. Create a BigQuery table for the European data, and set the table retention period to 36 months. For Cloud Storage, use gsutil to create a SetStorageClass to NONE action when with an Age condition of 36 months.  
+C. Create a BigQuery time-partitioned table for the European data, and set the partition expiration period to 36 months. For Cloud Storage, use gsutil to enable lifecycle management using a DELETE action with an Age condition of 36 months.  
+D. Create a BigQuery time-partitioned table for the European data, and set the partition expiration period to 36 months. For Cloud Storage, use gsutil to create a SetStorageClass to NONE action with an Age condition of 36 months.  
+
+---
+
+## ✅ Correct Answer
+
+**C. Create a BigQuery time-partitioned table for the European data, and set the partition expiration period to 36 months. For Cloud Storage, use gsutil to enable lifecycle management using a DELETE action with an Age condition of 36 months.**
+
+---
+
+## Explanation
+
+- **BigQuery**:  
+  Using a **time-partitioned table** with a **partition expiration** of 36 months ensures that data is **automatically deleted** at the partition level, which is the recommended and scalable approach for managing time-based data retention.
+
+- **Cloud Storage**:  
+  **Lifecycle management with a DELETE action** and an **Age condition of 36 months** automatically removes objects that exceed the GDPR retention requirement.
+
+This solution is **fully automated**, **scalable**, and **GDPR-compliant** across both storage services.
+
+---
+
+## ❌ Why the other options are wrong
+
+**A. Non-partitioned BigQuery table**  
+- Table-level expiration is less flexible and not ideal for large, time-series datasets.
+
+**B. SetStorageClass to NONE**  
+- Does **not delete data**, which violates GDPR requirements.
+
+**D. SetStorageClass instead of DELETE**  
+- Changing storage class does not remove personal data and is **not GDPR compliant**.
+
+---
+
+## ✅ Final Answer
+
+**C**
+
+---
+
+# 11. Cloud Storage Lifecycle Rules for TerramEarth
+
+## Question
+
+For this question, refer to the TerramEarth case study. TerramEarth has decided to store data files in Cloud Storage. You need to configure Cloud Storage lifecycle rule to store 1 year of data and minimize file storage cost.  
+Which two actions should you take?
+
+A. Create a Cloud Storage lifecycle rule with Age: “30”, Storage Class: “Standard”, and Action: “Set to Coldline”, and create a second GCS life-cycle rule with Age: “365”, Storage Class: “Coldline”, and Action: “Delete”.  
+B. Create a Cloud Storage lifecycle rule with Age: “30”, Storage Class: “Coldline”, and Action: “Set to Nearline”, and create a second GCS life-cycle rule with Age: “91”, Storage Class: “Coldline”, and Action: “Set to Nearline”.  
+C. Create a Cloud Storage lifecycle rule with Age: “90”, Storage Class: “Standard”, and Action: “Set to Nearline”, and create a second GCS life-cycle rule with Age: “91”, Storage Class: “Nearline”, and Action: “Set to Coldline”.  
+D. Create a Cloud Storage lifecycle rule with Age: “30”, Storage Class: “Standard”, and Action: “Set to Coldline”, and create a second GCS life-cycle rule with Age: “365”, Storage Class: “Nearline”, and Action: “Delete”.
+
+---
+
+## ✅ Correct Answer
+
+**A**
+
+---
+
+## Explanation
+
+TerramEarth needs to:
+
+- **Retain data for exactly 1 year**
+- **Minimize storage costs**
+- **Automatically manage storage transitions and deletion**
+
+Option **A** meets these requirements:
+
+- Data starts in **Standard** storage for active access
+- After **30 days**, it moves to **Coldline**, which is much cheaper for infrequently accessed data
+- After **365 days**, the data is **deleted**, ensuring compliance with the 1-year retention requirement
+
+This approach balances **cost optimization** and **data retention** using Google Cloud Storage lifecycle rules.
+
+---
+
+## ❌ Why the other options are wrong
+
+**B.**  
+- Attempts to move data from **Coldline to Nearline**, which increases cost  
+- Does **not delete data after 1 year**
+
+**C.**  
+- Proper tiering from Standard → Nearline → Coldline  
+- **No deletion rule**, so data is stored longer than 1 year
+
+**D.**  
+- Deletes data based on **Nearline** storage class, but data was already moved to **Coldline**, so deletion may never occur as intended
+
+---
+
+## ✅ Final Answer
+
+**A**
+
+---
+
+# 12. Data Warehouse Solution for TerramEarth
+
+## Question
+
+For this question, refer to the TerramEarth case study. You need to implement a reliable, scalable GCP solution for the data warehouse for your company,  
+TerramEarth.  
+Considering the TerramEarth business and technical requirements, what should you do?
+
+A. Replace the existing data warehouse with BigQuery. Use table partitioning.  
+B. Replace the existing data warehouse with a Compute Engine instance with 96 CPUs.  
+C. Replace the existing data warehouse with BigQuery. Use federated data sources.  
+D. Replace the existing data warehouse with a Compute Engine instance with 96 CPUs. Add an additional Compute Engine preemptible instance with 32 CPUs.  
+
+---
+
+## ✅ Correct Answer
+
+**A. Replace the existing data warehouse with BigQuery. Use table partitioning.**
+
+---
+
+## Explanation
+
+TerramEarth requires a **reliable**, **scalable**, and **low-maintenance** data warehouse solution to handle massive and growing datasets.
+
+**BigQuery** is Google Cloud’s fully managed, serverless data warehouse and is designed for:
+
+- Massive data volumes  
+- High concurrency analytics  
+- Minimal operational overhead  
+
+Using **table partitioning**:
+
+- Improves **query performance**
+- Reduces **query cost** by scanning only relevant partitions
+- Supports **time-based analytics**, which is common for telemetry and historical data
+
+This aligns perfectly with TerramEarth’s business and technical requirements.
+
+---
+
+## ❌ Why the other options are wrong
+
+**B. Compute Engine with 96 CPUs**  
+- Requires manual scaling and maintenance  
+- Not cost-effective or elastic for analytics workloads  
+
+**C. BigQuery with federated data sources**  
+- Federated queries are useful for ad-hoc access  
+- Not optimal for a **primary enterprise data warehouse**
+
+**D. Compute Engine with additional preemptible instance**  
+- Preemptible VMs are unreliable for core data warehouse workloads  
+- Still requires heavy operational management
+
+---
+
+## ✅ Final Answer
+
+**A**
+
+---
+
+# 13. Automated Data Quality Management for BigQuery
+
+## Question
+
+For this question, refer to the TerramEarth case study. A new architecture that writes all incoming data to BigQuery has been introduced. You notice that the data is dirty, and want to ensure data quality on an automated daily basis while managing cost.  
+What should you do?
+
+A. Set up a streaming Cloud Dataflow job, receiving data by the ingestion process. Clean the data in a Cloud Dataflow pipeline.  
+B. Create a Cloud Function that reads data from BigQuery and cleans it. Trigger the Cloud Function from a Compute Engine instance.  
+C. Create a SQL statement on the data in BigQuery, and save it as a view. Run the view daily, and save the result to a new table.  
+D. Use Cloud Dataprep and configure the BigQuery tables as the source. Schedule a daily job to clean the data.  
+
+---
+
+## ✅ Correct Answer
+
+**D. Use Cloud Dataprep and configure the BigQuery tables as the source. Schedule a daily job to clean the data.**
+
+---
+
+## Explanation
+
+TerramEarth needs an **automated**, **cost-effective**, and **low-maintenance** solution to ensure **data quality** in BigQuery.
+
+**Cloud Dataprep** is designed specifically for:
+
+- Visual and rule-based **data cleaning**
+- Native **BigQuery integration**
+- **Scheduled jobs** for recurring data preparation
+- Minimal operational overhead
+
+Scheduling a daily Dataprep job ensures consistent data quality without the cost and complexity of running always-on streaming pipelines.
+
+---
+
+## ❌ Why the other options are wrong
+
+**A. Streaming Cloud Dataflow job**  
+- More complex and costly than needed for **daily batch cleaning**
+- Best suited for real-time transformation, not scheduled data quality checks  
+
+**B. Cloud Function triggered by Compute Engine**  
+- Adds unnecessary orchestration and operational overhead  
+- Not designed for large-scale data cleaning  
+
+**C. BigQuery view with daily execution**  
+- Views do not modify or clean source data  
+- Requires additional orchestration and still leaves dirty data intact  
+
+---
+
+## ✅ Final Answer
+
+**D**
+
+---
+
+# 14. Reducing Unplanned Vehicle Downtime in GCP
+
+## Question
+
+For this question, refer to the TerramEarth case study. Considering the technical requirements, how should you reduce the unplanned vehicle downtime in GCP?
+
+A. Use BigQuery as the data warehouse. Connect all vehicles to the network and stream data into BigQuery using Cloud Pub/Sub and Cloud Dataflow. Use Google Data Studio for analysis and reporting.  
+B. Use BigQuery as the data warehouse. Connect all vehicles to the network and upload gzip files to a Multi-Regional Cloud Storage bucket using gcloud. Use Google Data Studio for analysis and reporting.  
+C. Use Cloud Dataproc Hive as the data warehouse. Upload gzip files to a Multi-Regional Cloud Storage bucket. Upload this data into BigQuery using gcloud. Use Google Data Studio for analysis and reporting.  
+D. Use Cloud Dataproc Hive as the data warehouse. Directly stream data into partitioned Hive tables. Use Pig scripts to analyze data.  
+
+---
+
+## ✅ Correct Answer
+
+**A. Use BigQuery as the data warehouse. Connect all vehicles to the network and stream data into BigQuery using Cloud Pub/Sub and Cloud Dataflow. Use Google Data Studio for analysis and reporting.**
+
+---
+
+## Explanation
+
+Reducing **unplanned vehicle downtime** requires **near real-time visibility** into vehicle telemetry data so issues can be detected and addressed early.
+
+This option provides:
+
+- **Real-time data ingestion** using **Cloud Pub/Sub**
+- **Scalable stream processing** with **Cloud Dataflow**
+- A fully managed, highly scalable **analytics data warehouse (BigQuery)**
+- Fast visualization and reporting with **Google Data Studio**
+
+Streaming data enables **predictive maintenance**, anomaly detection, and faster operational insights—directly supporting downtime reduction.
+
+---
+
+## ❌ Why the other options are wrong
+
+**B. Batch uploads to Cloud Storage**  
+- Introduces **latency**
+- Delays insights and corrective actions  
+
+**C. Dataproc Hive with batch ingestion**  
+- Adds unnecessary operational complexity  
+- Slower analytics compared to BigQuery  
+
+**D. Dataproc Hive with Pig scripts**  
+- Uses legacy technologies  
+- High maintenance overhead and poor real-time capabilities  
+
+---
+
+## ✅ Final Answer
+
+**A**
+
+---
+
+# 15. Vehicle Data Ingestion Architecture
+
+## Question
+
+For this question, refer to the TerramEarth case study. You are asked to design a new architecture for the ingestion of the data of the 200,000 vehicles that are connected to a cellular network. You want to follow Google-recommended practices.  
+Considering the technical requirements, which components should you use for the ingestion of the data?
+
+A. Google Kubernetes Engine with an SSL Ingress  
+B. Cloud IoT Core with public/private key pairs  
+C. Compute Engine with project-wide SSH keys  
+D. Compute Engine with specific SSH keys  
+
+---
+
+## ✅ Correct Answer
+
+**B. Cloud IoT Core with public/private key pairs**
+
+---
+
+## Explanation
+
+For large-scale ingestion of data from **connected vehicles**, Google-recommended practices focus on **secure device identity**, **scalability**, and **managed services**.
+
+**Cloud IoT Core** provides:
+
+- **Device-level authentication** using **public/private key pairs**
+- Secure ingestion over **MQTT or HTTP**
+- Native integration with **Cloud Pub/Sub** for scalable downstream processing
+- Designed specifically for **IoT and telemetry workloads** at massive scale
+
+This makes it the best fit for ingesting data from **200,000 cellular-connected vehicles** securely and reliably.
+
+---
+
+## ❌ Why the other options are wrong
+
+**A. Google Kubernetes Engine with an SSL Ingress**  
+- Not designed for device-level authentication  
+- Adds unnecessary operational complexity for ingestion  
+
+**C. Compute Engine with project-wide SSH keys**  
+- Insecure for large fleets  
+- Not scalable or appropriate for IoT devices  
+
+**D. Compute Engine with specific SSH keys**  
+- Still not designed for IoT-scale ingestion  
+- High management overhead and poor security posture  
+
+---
+
+## ✅ Final Answer
+
+**B**
