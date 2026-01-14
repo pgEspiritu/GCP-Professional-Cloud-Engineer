@@ -833,3 +833,420 @@ This data is:
 
 ---
 
+# 13. Optimizing Batch File Transfers to Cloud Storage
+
+## Question
+
+You need to **optimize batch file transfers into Cloud Storage** for **Mountkirk Games' new Google Cloud solution**.  
+The batch files contain **game statistics** that need to be **staged in Cloud Storage** and then processed by an **extract transform load (ETL)** tool.  
+
+What should you do?
+
+a. Use **gsutil** to batch move files in **sequence**.  
+b. Use **gsutil** to batch copy the files in **parallel**.  
+c. Use **gsutil** to **extract** the files as the first part of ETL.  
+d. Use **gsutil** to **load** the files as the last part of ETL.
+
+---
+
+## ✅ Correct Answer
+
+**b. Use gsutil to batch copy the files in parallel.**
+
+---
+
+## Explanation
+
+Mountkirk Games needs to **move large volumes of batch data efficiently** into **Cloud Storage** for **ETL processing**.
+
+**gsutil supports parallel transfers**, which:
+
+- Uses **multiple threads**
+- Maximizes **network bandwidth**
+- Significantly **reduces transfer time**
+- Is ideal for **large datasets**
+
+This is done using commands like:
+
+```bash
+gsutil -m cp -r ./local-data gs://bucket-name
+```
+> The `-m` (multi-threaded) flag enables parallel copying.
+
+---
+
+## ❌ Why the other options are wrong
+
+**a. Sequential copy**
+Too slow for large datasets
+
+**c. Extracting with gsutil**
+gsutil is a storage transfer tool, not an ETL engine
+
+**d. Loading with gsutil**
+gsutil does not perform ETL loading or transformation
+
+---
+
+## ✅ Final Answer
+
+**b**
+
+---
+
+# 14. Secure Cross-Project Firestore Access
+
+## Question
+
+You are implementing **Firestore for Mountkirk Games**.  
+Mountkirk Games wants to give a **new game programmatic access** to a **legacy game's Firestore database**.  
+Access should be **as restricted as possible**.
+
+What should you do?
+
+a. Create a **service account (SA)** in the legacy game's Google Cloud project, add a second SA in the new game's IAM page, and then give the **Organization Admin** role to both SAs.  
+b. Create a **service account (SA)** in the legacy game's Google Cloud project, give the SA the **Organization Admin** role, and then give it the **Firebase Admin** role in both projects.  
+c. Create a **service account (SA)** in the legacy game's Google Cloud project, add this SA in the new game's IAM page, and then give it the **Firebase Admin** role in both projects.  
+d. Create a **service account (SA)** in the legacy game's Google Cloud project, give it the **Firebase Admin** role, and then migrate the new game to the legacy game's project.
+
+---
+
+## ✅ Correct Answer
+
+**c. Create a service account (SA) in the legacy game's Google Cloud project, add this SA in the new game's IAM page, and then give it the Firebase Admin role in both projects.**
+
+---
+
+## Explanation
+
+The goal is to provide **cross-project Firestore access** while following **least-privilege security principles**.
+
+### Why this works
+
+- A **service account** acts as the **trusted identity** that the new game uses to access Firestore.
+- The service account is **owned by the legacy project**, which controls the data.
+- By adding the SA to the **new game's IAM**, the new game can authenticate as that service account.
+- Granting **Firebase Admin** gives **only the permissions required** to access Firestore—not organization-wide control.
+
+This setup:
+- Enables **secure cross-project access**
+- Avoids **broad administrative privileges**
+- Keeps **data ownership** with the legacy game
+
+---
+
+## ❌ Why the other options are wrong
+
+**a & b — Organization Admin role**  
+- Grants **extreme privileges** across the entire organization  
+- Violates **least privilege**
+
+**d — Migrate projects**  
+- Unnecessary and risky  
+- Breaks **project isolation**
+
+---
+
+## ✅ Final Answer
+
+**c**
+
+---
+
+# 14. Limiting Resource Locations for Mountkirk Games
+
+## Question
+
+Mountkirk Games wants to **limit the physical location of resources** to their operating **Google Cloud regions**.  
+
+What should you do?
+
+a. Configure an **organizational policy** which constrains where resources can be deployed.  
+b. Configure **IAM conditions** to limit what resources can be configured.  
+c. Configure the **quotas** for resources in the regions not being used to 0.  
+d. Configure a **custom alert** in Cloud Monitoring so you can disable resources as they are created in other regions.  
+
+---
+
+## ✅ Correct Answer
+
+**a. Configure an organizational policy which constrains where resources can be deployed.**
+
+---
+
+## Explanation
+
+Google Cloud provides **Org Policies** to enforce restrictions on resources across a project, folder, or organization.
+
+### Why an organizational policy works
+
+- You can use the **`constraints/gcp.resourceLocations`** policy to restrict resources to **specific regions or multi-regions**.  
+- Enforces **compliance automatically** at creation time.  
+- Prevents accidental deployment in unauthorized regions.  
+- Applies **organization-wide** if needed, ensuring consistent regional control.
+
+---
+
+## ❌ Why the other options are wrong
+
+**b. IAM conditions**  
+- Controls **who can create or modify resources**, not **where resources are located**
+
+**c. Setting quotas to 0 in other regions**  
+- Only **limits capacity**, does not fully prevent resource creation  
+- Can be bypassed if new quotas are applied
+
+**d. Cloud Monitoring alert**  
+- Reactive, not proactive  
+- Only **notifies** you after the resource is created, not ideal for compliance
+
+---
+
+## ✅ Final Answer
+
+**a**
+
+---
+
+# 15. Network Ingress for Multi-Region Game Instances
+
+## Question
+
+You need to implement a **network ingress** for a new game that meets the defined **business and technical requirements**.  
+Mountkirk Games wants each **regional game instance** to be located in **multiple Google Cloud regions**.  
+
+What should you do?
+
+a. Configure a **global load balancer** connected to a **managed instance group** running Compute Engine instances.  
+b. Configure **kubemci** with a **global load balancer** and **Google Kubernetes Engine**.  
+c. Configure a **global load balancer** with **Google Kubernetes Engine**.  
+d. Configure **Ingress for Anthos** with a **global load balancer** and **Google Kubernetes Engine**.  
+
+---
+
+## ✅ Correct Answer
+
+**b. Configure kubemci with a global load balancer and Google Kubernetes Engine**
+
+---
+
+## Explanation
+
+Mountkirk Games requires:
+
+- **Multi-region deployment** for low-latency access  
+- **Global load balancing** for REST APIs and game traffic  
+- **Kubernetes-based backend services**  
+
+### Why **kubemci** is correct
+
+- **kubemci** (Kubernetes Multi-Cluster Ingress) allows you to:
+
+  - Create a **single global IP address** for multiple GKE clusters in different regions  
+  - Distribute traffic intelligently across regions  
+  - Maintain **high availability** and **redundancy**  
+  - Integrate with **HTTP(S) global load balancer**
+
+- Supports **cross-region failover** automatically
+
+---
+
+## ❌ Why the other options are wrong
+
+**a. Global LB with MIGs**  
+- Works only for **Compute Engine**, not GKE  
+- Does not leverage Kubernetes features
+
+**c. Global LB with GKE**  
+- Standard GKE Ingress **does not natively support multi-cluster/multi-region**  
+- Would require additional configuration
+
+**d. Ingress for Anthos**  
+- Designed for **Anthos clusters**, which may not be used in this scenario  
+- Adds unnecessary complexity
+
+---
+
+## ✅ Final Answer
+
+**b**
+
+---
+
+# 16. Defining SLIs for GKE Game Releases
+
+## Question
+
+Your development teams release **new versions of games** running on **Google Kubernetes Engine (GKE)** daily.  
+You want to create **service level indicators (SLIs)** to evaluate the **quality of the new versions from the user's perspective**.  
+
+What should you do?
+
+a. Create **CPU Utilization** and **Request Latency** as service level indicators.  
+b. Create **GKE CPU Utilization** and **Memory Utilization** as service level indicators.  
+c. Create **Request Latency** and **Error Rate** as service level indicators.  
+d. Create **Server Uptime** and **Error Rate** as service level indicators.  
+
+---
+
+## ✅ Correct Answer
+
+**c. Create Request Latency and Error Rate as service level indicators**
+
+---
+
+## Explanation
+
+Service Level Indicators (SLIs) measure **user-perceived quality**, not internal system metrics.  
+
+### Why **Request Latency** and **Error Rate** are correct
+
+- **Request Latency**: Measures how long users wait for responses from the game backend  
+- **Error Rate**: Measures the frequency of failed requests or failed game actions  
+
+These SLIs:
+
+- Directly reflect **user experience**  
+- Can be used to define **Service Level Objectives (SLOs)** and track **release quality**  
+- Help detect **regressions** in new versions  
+
+---
+
+## ❌ Why the other options are wrong
+
+**a. CPU Utilization and Request Latency**  
+- CPU is an **infrastructure metric**, not user-perceived  
+
+**b. CPU and Memory Utilization**  
+- Purely internal metrics; do not measure **user experience**  
+
+**d. Server Uptime and Error Rate**  
+- Uptime is too coarse; it may not capture **performance degradation** that affects users  
+
+---
+
+## ✅ Final Answer
+
+**c**
+
+---
+
+# 17. Securing Connectivity for Mountkirk Games Application Platform
+
+## Question
+
+Mountkirk Games wants you to **secure the connectivity** from the **new gaming application platform** to **Google Cloud**.  
+You want to **streamline the process** and follow **Google-recommended practices**.  
+
+What should you do?
+
+a. Configure **Workload Identity** and **service accounts** to be used by the application platform.  
+b. Use **Kubernetes Secrets**, which are obfuscated by default. Configure these Secrets to be used by the application platform.  
+c. Configure **Kubernetes Secrets** to store the secret, enable **Application-Layer Secrets Encryption**, and use **Cloud Key Management Service (Cloud KMS)** to manage the encryption keys. Configure these Secrets to be used by the application platform.  
+d. Configure **HashiCorp Vault** on Compute Engine, and use **customer managed encryption keys** and **Cloud KMS** to manage the encryption keys. Configure these Secrets to be used by the application platform.  
+
+---
+
+## ✅ Correct Answer
+
+**a. Configure Workload Identity and service accounts to be used by the application platform**
+
+---
+
+## Explanation
+
+Mountkirk Games wants **secure, streamlined authentication** between the gaming platform and Google Cloud services.
+
+### Why **Workload Identity** is recommended
+
+- **Maps Kubernetes service accounts to Google service accounts**  
+- Eliminates the need to **manually manage long-lived service account keys**  
+- Provides **fine-grained IAM access** to GCP resources  
+- Fully managed and **integrates seamlessly with GKE**  
+- Follows **Google Cloud security best practices** for workloads
+
+Workload Identity ensures that the **application platform authenticates securely** to Google Cloud without exposing credentials.
+
+---
+
+## ❌ Why the other options are wrong
+
+**b. Kubernetes Secrets (obfuscated)**  
+- Only **base64-encoded**, not truly secure  
+- Not recommended for sensitive GCP credentials  
+
+**c. Kubernetes Secrets + KMS**  
+- More secure than b, but adds **unnecessary complexity**  
+- Workload Identity is simpler and fully managed
+
+**d. HashiCorp Vault + KMS**  
+- Overly complex for GKE workloads  
+- Requires **managing additional infrastructure**  
+- Not needed when **Workload Identity** provides secure keyless access
+
+---
+
+## ✅ Final Answer
+
+**a**
+
+---
+
+# 17. Efficient Mobile App Testing for Mountkirk Games
+
+## Question
+
+Your development team has created a **mobile game app**.  
+You want to **test the new mobile app** on **Android and iOS devices** with a variety of configurations.  
+You need to ensure that testing is **efficient and cost-effective**.  
+
+What should you do?
+
+a. Upload your **mobile app** to the **Firebase Test Lab**, and test the mobile app on Android and iOS devices.  
+b. Create **Android and iOS VMs** on Google Cloud, install the mobile app on the VMs, and test the mobile app.  
+c. Create **Android and iOS containers** on Google Kubernetes Engine (GKE), install the mobile app on the containers, and test the mobile app.  
+d. Upload your mobile app with different configurations to **Firebase Hosting** and test each configuration.  
+
+---
+
+## ✅ Correct Answer
+
+**a. Upload your mobile app to the Firebase Test Lab, and test the mobile app on Android and iOS devices.**
+
+---
+
+## Explanation
+
+**Firebase Test Lab** is a **managed testing environment** for mobile applications that allows:
+
+- Testing on **real and virtual devices** across multiple Android and iOS versions  
+- Running tests **in parallel**, improving efficiency  
+- Supporting a variety of **screen sizes, locales, and device configurations**  
+- Integration with CI/CD pipelines for **automated testing**  
+- Cost-effective usage, paying only for the tests run  
+
+This is the **best practice recommended by Google** for scalable and reliable mobile app testing.
+
+---
+
+## ❌ Why the other options are wrong
+
+**b. Android and iOS VMs on Google Cloud**  
+- Not cost-effective or scalable  
+- Requires **manual setup and maintenance**  
+
+**c. Containers on GKE**  
+- Mobile apps cannot run natively in containers  
+- GKE is not suitable for **real device testing**  
+
+**d. Firebase Hosting**  
+- Firebase Hosting is for **web apps**, not mobile app testing  
+
+---
+
+## ✅ Final Answer
+
+**a**
+
+---
+
