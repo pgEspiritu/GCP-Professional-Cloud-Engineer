@@ -1064,3 +1064,283 @@ This makes it the best fit for ingesting data from **200,000 cellular-connected 
 ## ✅ Final Answer
 
 **B**
+
+---
+
+# 16. Securing Cloud Function-to-Cloud Function Invocation
+
+## Question
+
+For this question, refer to the TerramEarth case study. You start to build a new application that uses a few Cloud Functions for the backend. One use case requires a Cloud Function func_display to invoke another Cloud Function func_query. You want func_query only to accept invocations from func_display. You also want to follow Google's recommended best practices. What should you do?
+
+A. Create a token and pass it in as an environment variable to func_display. When invoking func_query, include the token in the request. Pass the same token to func_query and reject the invocation if the tokens are different.  
+B. Make func_query 'Require authentication.' Create a unique service account and associate it to func_display. Grant the service account invoker role for func_query. Create an id token in func_display and include the token to the request when invoking func_query.  
+C. Make func_query 'Require authentication' and only accept internal traffic. Create those two functions in the same VPC. Create an ingress firewall rule for func_query to only allow traffic from func_display.  
+D. Create those two functions in the same project and VPC. Make func_query only accept internal traffic. Create an ingress firewall for func_query to only allow traffic from func_display. Also, make sure both functions use the same service account.  
+
+---
+
+## ✅ Correct Answer
+
+**B. Make func_query 'Require authentication.' Create a unique service account and associate it to func_display. Grant the service account invoker role for func_query. Create an id token in func_display and include the token to the request when invoking func_query.**
+
+---
+
+## Explanation
+
+Google-recommended best practices for securing **Cloud Function–to–Cloud Function** communication rely on **IAM-based authentication**, not network controls or shared secrets.
+
+This approach provides:
+
+- **Strong identity-based access control** using IAM  
+- **Least privilege** by granting only the `Cloud Functions Invoker` role  
+- **Secure, short-lived ID tokens** instead of static secrets  
+- Works across regions and does not depend on VPC networking  
+
+This is the **official and recommended pattern** for service-to-service authentication in Google Cloud.
+
+---
+
+## ❌ Why the other options are wrong
+
+**A. Shared token via environment variables**  
+- Uses static secrets  
+- Difficult to rotate and manage securely  
+
+**C. VPC and firewall-based restriction**  
+- Cloud Functions do not support traditional ingress firewall rules  
+- Network-level controls are not the recommended security boundary  
+
+**D. Same service account for both functions**  
+- Violates **least privilege principle**  
+- Firewall rules still do not properly secure Cloud Functions  
+
+---
+
+## ✅ Final Answer
+
+**B**
+
+---
+
+# 17. Highly Available and Low-Latency Cloud Run Microservices
+
+## Question
+
+For this question, refer to the TerramEarth case study. You have broken down a legacy monolithic application into a few containerized RESTful microservices.  
+You want to run those microservices on Cloud Run. You also want to make sure the services are highly available with low latency to your customers. What should you do?
+
+A. Deploy Cloud Run services to multiple availability zones. Create Cloud Endpoints that point to the services. Create a global HTTP(S) Load Balancing instance and attach the Cloud Endpoints to its backend.  
+B. Deploy Cloud Run services to multiple regions. Create serverless network endpoint groups pointing to the services. Add the serverless NEGs to a backend service that is used by a global HTTP(S) Load Balancing instance.  
+C. Deploy Cloud Run services to multiple regions. In Cloud DNS, create a latency-based DNS name that points to the services.  
+D. Deploy Cloud Run services to multiple availability zones. Create a TCP/IP global load balancer. Add the Cloud Run Endpoints to its backend service.  
+
+---
+
+## ✅ Correct Answer
+
+**B. Deploy Cloud Run services to multiple regions. Create serverless network endpoint groups pointing to the services. Add the serverless NEGs to a backend service that is used by a global HTTP(S) Load Balancing instance.**
+
+---
+
+## Explanation
+
+To achieve **high availability** and **low latency** for Cloud Run services, Google-recommended best practices use:
+
+- **Multi-region Cloud Run deployments** for resiliency  
+- **Global HTTP(S) Load Balancing** for intelligent traffic routing  
+- **Serverless Network Endpoint Groups (NEGs)** to integrate Cloud Run with load balancers  
+
+This design enables:
+
+- Automatic routing to the **closest healthy region**
+- **Global failover** if a region becomes unavailable
+- Fully **managed, scalable, and serverless** infrastructure  
+
+---
+
+## ❌ Why the other options are wrong
+
+**A. Cloud Endpoints with zonal deployment**  
+- Cloud Run is regional, not zonal  
+- Cloud Endpoints is unnecessary for load balancing  
+
+**C. DNS-based latency routing**  
+- DNS does not provide real-time health checks or fast failover  
+- Slower reaction to failures compared to HTTP(S) Load Balancer  
+
+**D. TCP/IP load balancer**  
+- Cloud Run only supports **HTTP(S)** traffic  
+- TCP load balancers are not compatible with Cloud Run  
+
+---
+
+## ✅ Final Answer
+
+**B**
+
+---
+
+# 18. Understanding Linux CVE Impact During Migration
+
+## Question
+
+For this question, refer to the TerramEarth case study. You are migrating a Linux-based application from your private data center to Google Cloud. The  
+TerramEarth security team sent you several recent Linux vulnerabilities published by Common Vulnerabilities and Exposures (CVE). You need assistance in understanding how these vulnerabilities could impact your migration. What should you do? (Choose two.)
+
+A. Open a support case regarding the CVE and chat with the support engineer.  
+B. Read the CVEs from the Google Cloud Status Dashboard to understand the impact.  
+C. Read the CVEs from the Google Cloud Platform Security Bulletins to understand the impact.  
+D. Post a question regarding the CVE in Stack Overflow to get an explanation.  
+E. Post a question regarding the CVE in a Google Cloud discussion group to get an explanation.  
+
+---
+
+## ✅ Correct Answers
+
+**A. Open a support case regarding the CVE and chat with the support engineer.**  
+**C. Read the CVEs from the Google Cloud Platform Security Bulletins to understand the impact.**
+
+---
+
+## Explanation
+
+To accurately understand how **Linux CVEs** affect workloads on **Google Cloud**, you should rely on **authoritative and official sources**:
+
+- **Google Cloud Platform Security Bulletins** provide:
+  - Verified information on vulnerabilities
+  - Impact assessment on Google-managed infrastructure
+  - Mitigation steps and patch availability  
+
+- **Google Cloud Support** can:
+  - Clarify how specific CVEs impact your migration
+  - Provide guidance tailored to your architecture and services
+  - Help assess shared responsibility boundaries  
+
+This combination ensures **accurate, actionable, and support-backed guidance**.
+
+---
+
+## ❌ Why the other options are wrong
+
+**B. Google Cloud Status Dashboard**  
+- Used for **service outages and incidents**, not CVE analysis  
+
+**D. Stack Overflow**  
+- Community-driven and **not authoritative** for security impact analysis  
+
+**E. Google Cloud discussion groups**  
+- Informal and not guaranteed to provide accurate or official security guidance  
+
+---
+
+## ✅ Final Answer
+
+**A and C**
+
+---
+
+# 20. Continuous Build and Artifact Storage for Microservices
+
+## Question
+
+For this question, refer to the TerramEarth case study. You are building a microservice-based application for TerramEarth. The application is based on Docker containers. You want to follow Google-recommended practices to build the application continuously and store the build artifacts. What should you do?
+
+A. Configure a trigger in Cloud Build for new source changes. Invoke Cloud Build to build container images for each microservice, and tag them using the code commit hash. Push the images to the Container Registry.  
+B. Configure a trigger in Cloud Build for new source changes. The trigger invokes build jobs and build container images for the microservices. Tag the images with a version number, and push them to Cloud Storage.  
+C. Create a Scheduler job to check the repo every minute. For any new change, invoke Cloud Build to build container images for the microservices. Tag the images using the current timestamp, and push them to the Container Registry.  
+D. Configure a trigger in Cloud Build for new source changes. Invoke Cloud Build to build one container image, and tag the image with the label 'latest.' Push the image to the Container Registry.  
+
+---
+
+## ✅ Correct Answer
+
+**A. Configure a trigger in Cloud Build for new source changes. Invoke Cloud Build to build container images for each microservice, and tag them using the code commit hash. Push the images to the Container Registry.**
+
+---
+
+## Explanation
+
+Google-recommended best practices for **continuous builds** and **container artifact management** include:
+
+- **Cloud Build triggers** to automatically start builds on source changes
+- **One image per microservice** to support independent deployment and scaling
+- **Immutable image tagging** using the **commit hash**
+- **Container Registry** (or Artifact Registry) for storing container images securely
+
+This approach ensures:
+- Traceability between source code and deployed artifacts  
+- Easy rollback and reproducible builds  
+- Fully managed, serverless CI/CD infrastructure  
+
+---
+
+## ❌ Why the other options are wrong
+
+**B. Pushing container images to Cloud Storage**  
+- Cloud Storage is not designed for container image management  
+
+**C. Polling the repository with Cloud Scheduler**  
+- Inefficient and unnecessary  
+- Cloud Build triggers already provide event-driven builds  
+
+**D. Using the `latest` tag**  
+- Breaks immutability  
+- Makes rollback and debugging difficult  
+
+---
+
+## ✅ Final Answer
+
+**A**
+
+---
+
+# 21. Migrating Petabyte-Scale Vehicle Testing Data
+
+## Question
+
+For this question, refer to the TerramEarth case study. TerramEarth has about 1 petabyte (PB) of vehicle testing data in a private data center. You want to move the data to Cloud Storage for your machine learning team. Currently, a 1-Gbps interconnect link is available for you. The machine learning team wants to start using the data in a month. What should you do?
+
+A. Request Transfer Appliances from Google Cloud, export the data to appliances, and return the appliances to Google Cloud.  
+B. Configure the Storage Transfer service from Google Cloud to send the data from your data center to Cloud Storage.  
+C. Make sure there are no other users consuming the 1Gbps link, and use multi-thread transfer to upload the data to Cloud Storage.  
+D. Export files to an encrypted USB device, send the device to Google Cloud, and request an import of the data to Cloud Storage.  
+
+---
+
+## ✅ Correct Answer
+
+**A. Request Transfer Appliances from Google Cloud, export the data to appliances, and return the appliances to Google Cloud.**
+
+---
+
+## Explanation
+
+For **large-scale data migrations** (petabyte-level) with **limited network bandwidth**, Google-recommended practices include:
+
+- **Transfer Appliance**: physically ships high-capacity storage devices to Google Cloud  
+- **High-speed bulk ingestion**: avoids saturating your 1-Gbps link for months  
+- Supports **encryption at rest** and integrity checks  
+- Allows your ML team to start using data **within a predictable timeframe**  
+
+This approach is faster, more reliable, and cost-effective compared to transferring PBs over limited network bandwidth.
+
+---
+
+## ❌ Why the other options are wrong
+
+**B. Storage Transfer service over 1 Gbps link**  
+- Too slow for 1 PB within one month  
+
+**C. Multi-thread transfer over 1 Gbps**  
+- Network is still the bottleneck; impractical  
+
+**D. USB device shipment**  
+- Too small capacity, not scalable for PB-scale data  
+
+---
+
+## ✅ Final Answer
+
+**A**
